@@ -1,4 +1,4 @@
-IMAGE?=DockerPulse/DockerPulse
+IMAGE?=dockerpulse/dockerpulse
 TAG?=latest
 
 BUILDER=buildx-multi-arch
