@@ -2,7 +2,7 @@ import express from 'express';
 import fs from 'fs';
 import http from 'http';
 
-const SOCKETFILE = '/run/guest-services/backend.sock';
+const SOCKETFILE = '/run/guest-services/backend.sock'; // Unix socket
 const app = express();
 
 // After a server is done with the unix domain socket, it is not automatically destroyed.
