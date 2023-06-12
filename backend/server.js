@@ -37,7 +37,7 @@ const statsRequest = http.request(
     res.on('data', (chunk) => {
       console.log('---------------------stats-----------------------');
       const stats = JSON.parse(chunk.toString());
-      console.log(stats.read);
+      console.log(stats);
     });
 
     // The whole response has been received.
