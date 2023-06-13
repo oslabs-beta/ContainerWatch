@@ -1,11 +1,12 @@
-import React from "react";
-import ReactDOM from "react-dom/client";
-import CssBaseline from "@mui/material/CssBaseline";
-import { DockerMuiThemeProvider } from "@docker/docker-mui-theme";
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import { HashRouter } from 'react-router-dom';
+import CssBaseline from '@mui/material/CssBaseline';
+import { DockerMuiThemeProvider } from '@docker/docker-mui-theme';
 
-import { App } from './App';
+import App from './App';
 
-ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
+ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
     {/*
       If you eject from MUI (which we don't recommend!), you should add
@@ -14,7 +15,9 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
     */}
     <DockerMuiThemeProvider>
       <CssBaseline />
-      <App />
+      <HashRouter>
+        <App />
+      </HashRouter>
     </DockerMuiThemeProvider>
   </React.StrictMode>
 );
