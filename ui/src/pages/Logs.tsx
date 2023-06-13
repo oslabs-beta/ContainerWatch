@@ -8,26 +8,26 @@ import {
   TableHead,
   TablePagination,
   TableRow,
-} from "@mui/material";
-import * as React from "react";
+} from '@mui/material';
+import * as React from 'react';
 
 // Define Column interface
 interface Column {
   id: string;
   label: string;
   minWidth?: number;
-  align?: "right"; // Feel free to change this to center instead
+  align?: 'right'; // Feel free to change this to center instead
 }
 
 // Defining columns array, readonly just means that it can't be altered after declaration
 const columns: readonly Column[] = [
-  { id: "TimeStamp", label: "TimeStamp", minWidth: 170 },
-  { id: "Container", label: "Container", minWidth: 100 },
+  { id: 'TimeStamp', label: 'TimeStamp', minWidth: 170 },
+  { id: 'Container', label: 'Container', minWidth: 100 },
   {
-    id: "Log Messages",
-    label: "Log Messages",
+    id: 'Log Messages',
+    label: 'Log Messages',
     minWidth: 170,
-    align: "right",
+    align: 'right',
   },
 ];
 
@@ -49,21 +49,21 @@ function createData(
 }
 // Array of mock data container names
 const words = [
-  "apple",
-  "banana",
-  "carrot",
-  "dog",
-  "elephant",
-  "flower",
-  "guitar",
-  "honey",
-  "island",
-  "jazz",
-  "kangaroo",
-  "lemon",
-  "monkey",
-  "noodle",
-  "orange",
+  'apple',
+  'banana',
+  'carrot',
+  'dog',
+  'elephant',
+  'flower',
+  'guitar',
+  'honey',
+  'island',
+  'jazz',
+  'kangaroo',
+  'lemon',
+  'monkey',
+  'noodle',
+  'orange',
 ];
 
 // Function to generate mock data for now
@@ -73,21 +73,21 @@ function getRandomWord() {
 }
 
 const rows: LogData[] = [
-  createData("10:00 AM", getRandomWord(), "this is a message"),
-  createData("11:30 AM", getRandomWord(), "this is a message"),
-  createData("01:45 PM", getRandomWord(), "this is a message"),
-  createData("02:15 PM", getRandomWord(), "this is a message"),
-  createData("03:30 PM", getRandomWord(), "this is a message"),
-  createData("05:00 PM", getRandomWord(), "this is a message"),
-  createData("06:45 PM", getRandomWord(), "this is a message"),
-  createData("08:15 PM", getRandomWord(), "this is a message"),
-  createData("09:30 PM", getRandomWord(), "this is a message"),
-  createData("10:45 PM", getRandomWord(), "this is a message"),
-  createData("11:30 PM", getRandomWord(), "this is a message"),
-  createData("01:15 AM", getRandomWord(), "this is a message"),
-  createData("03:00 AM", getRandomWord(), "this is a message"),
-  createData("04:45 AM", getRandomWord(), "this is a message"),
-  createData("06:30 AM", getRandomWord(), "this is a message"),
+  createData('10:00 AM', getRandomWord(), 'this is a message'),
+  createData('11:30 AM', getRandomWord(), 'this is a message'),
+  createData('01:45 PM', getRandomWord(), 'this is a message'),
+  createData('02:15 PM', getRandomWord(), 'this is a message'),
+  createData('03:30 PM', getRandomWord(), 'this is a message'),
+  createData('05:00 PM', getRandomWord(), 'this is a message'),
+  createData('06:45 PM', getRandomWord(), 'this is a message'),
+  createData('08:15 PM', getRandomWord(), 'this is a message'),
+  createData('09:30 PM', getRandomWord(), 'this is a message'),
+  createData('10:45 PM', getRandomWord(), 'this is a message'),
+  createData('11:30 PM', getRandomWord(), 'this is a message'),
+  createData('01:15 AM', getRandomWord(), 'this is a message'),
+  createData('03:00 AM', getRandomWord(), 'this is a message'),
+  createData('04:45 AM', getRandomWord(), 'this is a message'),
+  createData('06:30 AM', getRandomWord(), 'this is a message'),
 ];
 
 export default function Logs() {
@@ -98,7 +98,7 @@ export default function Logs() {
         label="Filter Logs Here"
         variant="outlined"
       />
-      <Paper sx={{ width: "100%", overflow: "hidden" }}>
+      <Paper sx={{ width: '100%', overflow: 'hidden' }}>
         <TableContainer sx={{ maxHeight: 440 }}>
           <Table stickyHeader aria-label="sticky table">
             <TableHead>
