@@ -3,7 +3,7 @@ import { Routes, Route } from 'react-router-dom';
 import Stats from './pages/Stats';
 import Logs from './pages/Logs';
 import Settings from './pages/Settings';
-import NavBar from './components/NavBar';
+import NavBar from './components/NavBar/NavBar';
 
 export default function App() {
   return (
