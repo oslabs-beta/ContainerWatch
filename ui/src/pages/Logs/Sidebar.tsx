@@ -26,6 +26,7 @@ import CssBaseline from '@mui/material/CssBaseline';
 import MuiAppBar, { AppBarProps as MuiAppBarProps } from '@mui/material/AppBar';
 import * as React from 'react';
 
+// Function for the search bar in the appBar
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
   borderRadius: theme.shape.borderRadius,
@@ -41,6 +42,7 @@ const Search = styled('div')(({ theme }) => ({
   },
 }));
 
+// Function for the magnify glass icon in the search bar
 const SearchIconWrapper = styled('div')(({ theme }) => ({
   padding: theme.spacing(0, 2),
   height: '100%',
@@ -51,6 +53,7 @@ const SearchIconWrapper = styled('div')(({ theme }) => ({
   justifyContent: 'center',
 }));
 
+// Function for the users input in the search bar
 const StyledInputBase = styled(InputBase)(({ theme }) => ({
   color: 'inherit',
   '& .MuiInputBase-input': {
@@ -67,6 +70,8 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
     },
   },
 }));
+
+// SideBar component
 export const SideBar: React.FC = () => {
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
@@ -75,28 +80,33 @@ export const SideBar: React.FC = () => {
   const [day, setDay] = React.useState('');
   const [month, setMonth] = React.useState('');
 
-  // Setting state of open to true
+  /******* These two functions handle the state for opening and closing the sidebar *******/
+  // Sets state open to true
   const handleDrawerOpen = () => {
     setOpen(true);
   };
-  // Setting state of open to false
+  // Sets state open to false
   const handleDrawerClose = () => {
     setOpen(false);
   };
+
+  /******** Container filter code ************/
   // Function for checking all container boxes
   const checkAllContainers = (event: React.ChangeEvent<HTMLInputElement>) => {
     setContainer([event.target.checked, event.target.checked]);
   };
+
   // Function for checking first box
   const checkContainer1 = (event: React.ChangeEvent<HTMLInputElement>) => {
     setContainer([event.target.checked, container[1]]);
   };
+
   // Function for checking second box
   const checkContainer2 = (event: React.ChangeEvent<HTMLInputElement>) => {
     setContainer([container[0], event.target.checked]);
   };
 
-  // jsx for the container filter section in sidebar
+  // Container filter section in sidebar
   const containers = (
     <Box sx={{ display: 'flex', flexDirection: 'column', ml: 3 }}>
       <FormControlLabel
@@ -109,19 +119,22 @@ export const SideBar: React.FC = () => {
       />
     </Box>
   );
-  // Function for checking all container boxes
+
+  /******** Type filter code ************/
+  // Function for checking all type boxes
   const checkAllTypes = (event: React.ChangeEvent<HTMLInputElement>) => {
     setType([event.target.checked, event.target.checked]);
   };
-  // Function for checking first box
+  // Function for checking Stdout box
   const checkStdout = (event: React.ChangeEvent<HTMLInputElement>) => {
     setType([event.target.checked, type[1]]);
   };
-  // Function for checking second box
+  // Function for checking Stderr box
   const checkStderr = (event: React.ChangeEvent<HTMLInputElement>) => {
     setType([type[0], event.target.checked]);
   };
 
+  // Type log section in sidebar
   const typeLog = (
     <Box sx={{ display: 'flex', flexDirection: 'column', ml: 3 }}>
       <FormControlLabel
@@ -135,10 +148,12 @@ export const SideBar: React.FC = () => {
     </Box>
   );
 
+  // Defining prop types for the AppBar component, allowing us to customize/add the open prop on top of the built in MuiAppBarProps
   interface AppBarProps extends MuiAppBarProps {
     open?: boolean;
   }
 
+  // Styling for the Appbar that displays "Process Logs" and the search bar
   const AppBar = styled(MuiAppBar, {
     shouldForwardProp: (prop) => prop !== 'open',
   })<AppBarProps>(({ theme, open }) => ({
@@ -156,23 +171,26 @@ export const SideBar: React.FC = () => {
     }),
   }));
 
+  // Styling for drawer button and back button
   const DrawerHeader = styled('div')(({ theme }) => ({
     display: 'flex',
     alignItems: 'center',
     padding: theme.spacing(0, 1),
-    // necessary for content to be below app bar
     ...theme.mixins.toolbar,
     justifyContent: 'flex-end',
   }));
 
+  // Function for Day menu in sidebar
   const chooseDay = (event: SelectChangeEvent) => {
     setDay(event.target.value);
   };
 
+  // Function for Month menu in sidebar
   const chooseMonth = (event: SelectChangeEvent) => {
     setMonth(event.target.value);
   };
 
+  // Styling for the drop down menus used for time filtering
   const BootstrapInput = styled(InputBase)(({ theme }) => ({
     'label + &': {
       marginTop: theme.spacing(3),

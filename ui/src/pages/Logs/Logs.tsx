@@ -1,3 +1,4 @@
+// This file contains code for loading the Process Logs page
 import {
   Box,
   Paper,
@@ -91,7 +92,8 @@ const rows: LogData[] = [
   createData('06:30 AM', getRandomWord(), 'this is a message'),
 ];
 
-export const drawerOpen: React.FC = () => {
+//
+export const ProcessLogs: React.FC = () => {
   const [open, setOpen] = React.useState(false);
   const Main = styled('main', {
     shouldForwardProp: (prop) => prop !== 'open',
@@ -168,4 +170,4 @@ export const drawerOpen: React.FC = () => {
   );
 };
 
-export default drawerOpen;
+export default ProcessLogs;
