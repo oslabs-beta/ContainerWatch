@@ -6,8 +6,13 @@ import {
   Button,
   Checkbox,
   FormControlLabel,
+  FormHelperText,
+  FormControl,
   IconButton,
   InputBase,
+  InputLabel,
+  MenuItem,
+  NativeSelect,
   Drawer,
   Paper,
   Table,
@@ -20,6 +25,7 @@ import {
   Typography,
   Slider,
 } from '@mui/material';
+import Select, { SelectChangeEvent } from '@mui/material/Select';
 import MenuIcon from '@mui/icons-material/Menu';
 import SearchIcon from '@mui/icons-material/Search';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
@@ -155,6 +161,10 @@ export default function drawerOpen() {
   const [open, setOpen] = React.useState(false);
   const [container, setContainer] = React.useState([true, false]);
   const [type, setType] = React.useState([true, false]);
+  const [day, setDay] = React.useState('');
+  const [month, setMonth] = React.useState('');
+  const [year, setYear] = React.useState('');
+  const [time, setTime] = React.useState('');
 
   // Setting state of open to true
   const handleDrawerOpen = () => {
@@ -216,31 +226,6 @@ export default function drawerOpen() {
     </Box>
   );
 
-  // Array containing times for the time slider
-  const marks = [
-    {
-      value: 0,
-      label: '12:00am',
-    },
-    {
-      value: 20,
-      label: '1:00am',
-    },
-    {
-      value: 37,
-      label: '2:00am',
-    },
-    {
-      value: 100,
-      label: '3:00am',
-    },
-  ];
-
-  // Displays the time on the slider
-  function valuetext(value: number) {
-    return `${value}`;
-  }
-
   //
   const Main = styled('main', {
     shouldForwardProp: (prop) => prop !== 'open',
@@ -301,6 +286,50 @@ export default function drawerOpen() {
     justifyContent: 'flex-end',
   }));
 
+  const chooseDay = (event: SelectChangeEvent) => {
+    setDay(event.target.value);
+  };
+
+  const chooseMonth = (event: SelectChangeEvent) => {
+    setMonth(event.target.value);
+  };
+
+  const chooseYear = (event: SelectChangeEvent) => {
+    setYear(event.target.value);
+  };
+
+  const BootstrapInput = styled(InputBase)(({ theme }) => ({
+    'label + &': {
+      marginTop: theme.spacing(3),
+    },
+    '& .MuiInputBase-input': {
+      borderRadius: 4,
+      position: 'relative',
+      backgroundColor: theme.palette.background.paper,
+      border: '1px solid #ced4da',
+      fontSize: 16,
+      padding: '10px 26px 10px 12px',
+      transition: theme.transitions.create(['border-color', 'box-shadow']),
+      // Use the system font instead of the default Roboto font.
+      fontFamily: [
+        '-apple-system',
+        'BlinkMacSystemFont',
+        '"Segoe UI"',
+        'Roboto',
+        '"Helvetica Neue"',
+        'Arial',
+        'sans-serif',
+        '"Apple Color Emoji"',
+        '"Segoe UI Emoji"',
+        '"Segoe UI Symbol"',
+      ].join(','),
+      '&:focus': {
+        borderRadius: 4,
+        borderColor: '#80bdff',
+        boxShadow: '0 0 0 0.2rem rgba(0,123,255,.25)',
+      },
+    },
+  }));
   return (
     <>
       <Box sx={{ display: 'flex' }}>
@@ -385,14 +414,57 @@ export default function drawerOpen() {
           <Divider />
           <List>
             <ListItem>Time Selection</ListItem>
-            <Slider
-              aria-label="Custom marks"
-              defaultValue={20}
-              getAriaValueText={valuetext}
-              step={10}
-              valueLabelDisplay="auto"
-              marks={marks}
-            />
+            <FormControl sx={{ m: 1 }} variant="standard">
+              <InputLabel htmlFor="timeTextbox">Time</InputLabel>
+              <BootstrapInput id="timeTextbox" />
+            </FormControl>
+            <FormControl sx={{ m: 1 }} variant="standard">
+              <InputLabel id="day">Day</InputLabel>
+              <Select
+                labelId="daymenu"
+                id="daymenu"
+                value={day}
+                onChange={chooseDay}
+                input={<BootstrapInput />}
+              >
+                <MenuItem value="">
+                  <em>None</em>
+                </MenuItem>
+                <MenuItem value={'Monday'}>Monday</MenuItem>
+                <MenuItem value={'Tuesday'}>Tuesday</MenuItem>
+                <MenuItem value={'Wednesday'}>Wednesday</MenuItem>
+                <MenuItem value={'Thursday'}>Thursday</MenuItem>
+                <MenuItem value={'Friday'}>Friday</MenuItem>
+                <MenuItem value={'Saturday'}>Saturday</MenuItem>
+                <MenuItem value={'Sunday'}>Sunday</MenuItem>
+              </Select>
+            </FormControl>
+            <FormControl sx={{ m: 1 }} variant="standard">
+              <InputLabel id="month">Month</InputLabel>
+              <Select
+                labelId="monthmenu"
+                id="monthmenu"
+                value={month}
+                onChange={chooseMonth}
+                input={<BootstrapInput />}
+              >
+                <MenuItem value="">
+                  <em>None</em>
+                </MenuItem>
+                <MenuItem value={'January'}>January</MenuItem>
+                <MenuItem value={'February'}>February</MenuItem>
+                <MenuItem value={'March'}>March</MenuItem>
+                <MenuItem value={'April'}>April</MenuItem>
+                <MenuItem value={'May'}>May</MenuItem>
+                <MenuItem value={'June'}>June</MenuItem>
+                <MenuItem value={'July'}>July</MenuItem>
+                <MenuItem value={'August'}>August</MenuItem>
+                <MenuItem value={'September'}>September</MenuItem>
+                <MenuItem value={'October'}>October</MenuItem>
+                <MenuItem value={'November'}>November</MenuItem>
+                <MenuItem value={'December'}>December</MenuItem>
+              </Select>
+            </FormControl>
           </List>
         </Drawer>
         <Main open={open}>
