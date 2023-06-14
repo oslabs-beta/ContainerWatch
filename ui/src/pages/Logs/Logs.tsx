@@ -1,12 +1,13 @@
-import './Logstyles.css';
 import {
   List,
   ListItem,
   Divider,
   Box,
+  Button,
   Checkbox,
   FormControlLabel,
   IconButton,
+  InputBase,
   Drawer,
   Paper,
   Table,
@@ -20,14 +21,13 @@ import {
   Slider,
 } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
+import SearchIcon from '@mui/icons-material/Search';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-import { styled, useTheme } from '@mui/material/styles';
+import { styled, useTheme, alpha } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import MuiAppBar, { AppBarProps as MuiAppBarProps } from '@mui/material/AppBar';
 import * as React from 'react';
-
-type Anchor = 'left';
 
 // Define Column interface
 interface Column {
@@ -108,10 +108,53 @@ const rows: LogData[] = [
   createData('06:30 AM', getRandomWord(), 'this is a message'),
 ];
 
+const Search = styled('div')(({ theme }) => ({
+  position: 'relative',
+  borderRadius: theme.shape.borderRadius,
+  backgroundColor: alpha(theme.palette.common.white, 0.15),
+  '&:hover': {
+    backgroundColor: alpha(theme.palette.common.white, 0.25),
+  },
+  marginLeft: 0,
+  width: '100%',
+  [theme.breakpoints.up('sm')]: {
+    marginLeft: theme.spacing(1),
+    width: 'auto',
+  },
+}));
+
+const SearchIconWrapper = styled('div')(({ theme }) => ({
+  padding: theme.spacing(0, 2),
+  height: '100%',
+  position: 'absolute',
+  pointerEvents: 'none',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+}));
+
+const StyledInputBase = styled(InputBase)(({ theme }) => ({
+  color: 'inherit',
+  '& .MuiInputBase-input': {
+    padding: theme.spacing(1, 1, 1, 0),
+    // vertical padding + font size from searchIcon
+    paddingLeft: `calc(1em + ${theme.spacing(4)})`,
+    transition: theme.transitions.create('width'),
+    width: '100%',
+    [theme.breakpoints.up('sm')]: {
+      width: '12ch',
+      '&:focus': {
+        width: '20ch',
+      },
+    },
+  },
+}));
+
 export default function drawerOpen() {
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
-  const [checked, setChecked] = React.useState([true, false]);
+  const [container, setContainer] = React.useState([true, false]);
+  const [type, setType] = React.useState([true, false]);
 
   // Setting state of open to true
   const handleDrawerOpen = () => {
@@ -123,27 +166,52 @@ export default function drawerOpen() {
   };
   // Function for checking all container boxes
   const checkAllContainers = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setChecked([event.target.checked, event.target.checked]);
+    setContainer([event.target.checked, event.target.checked]);
   };
   // Function for checking first box
   const checkContainer1 = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setChecked([event.target.checked, checked[1]]);
+    setContainer([event.target.checked, container[1]]);
   };
   // Function for checking second box
   const checkContainer2 = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setChecked([checked[0], event.target.checked]);
+    setContainer([container[0], event.target.checked]);
   };
 
   // jsx for the container filter section in sidebar
-  const children = (
+  const containers = (
     <Box sx={{ display: 'flex', flexDirection: 'column', ml: 3 }}>
       <FormControlLabel
         label="Container 1"
-        control={<Checkbox checked={checked[0]} onChange={checkContainer1} />}
+        control={<Checkbox checked={container[0]} onChange={checkContainer1} />}
       />
       <FormControlLabel
         label="Container 2"
-        control={<Checkbox checked={checked[1]} onChange={checkContainer2} />}
+        control={<Checkbox checked={container[1]} onChange={checkContainer2} />}
+      />
+    </Box>
+  );
+  // Function for checking all container boxes
+  const checkAllTypes = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setType([event.target.checked, event.target.checked]);
+  };
+  // Function for checking first box
+  const checkStdout = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setType([event.target.checked, type[1]]);
+  };
+  // Function for checking second box
+  const checkStderr = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setType([type[0], event.target.checked]);
+  };
+
+  const typeLog = (
+    <Box sx={{ display: 'flex', flexDirection: 'column', ml: 3 }}>
+      <FormControlLabel
+        label="stdout"
+        control={<Checkbox checked={type[0]} onChange={checkStdout} />}
+      />
+      <FormControlLabel
+        label="stderr"
+        control={<Checkbox checked={type[1]} onChange={checkStderr} />}
       />
     </Box>
   );
@@ -243,6 +311,15 @@ export default function drawerOpen() {
             <Typography variant="h6" noWrap component="div">
               Process Logs
             </Typography>
+            <Search>
+              <SearchIconWrapper>
+                <SearchIcon />
+              </SearchIconWrapper>
+              <StyledInputBase
+                placeholder="Search…"
+                inputProps={{ 'aria-label': 'search' }}
+              />
+            </Search>
           </Toolbar>
         </AppBar>
         <Drawer
@@ -267,18 +344,34 @@ export default function drawerOpen() {
               )}
             </IconButton>
           </DrawerHeader>
+          <Typography variant="h6">Log Filters</Typography>
+          <Button>Apply Filters</Button>
+          <List>
+            <FormControlLabel
+              label="Type"
+              control={
+                <Checkbox
+                  checked={type[0] && type[1]}
+                  indeterminate={type[0] !== type[1]}
+                  onChange={checkAllTypes}
+                />
+              }
+            />
+            {typeLog}
+          </List>
+          <Divider />
           <List>
             <FormControlLabel
               label="Container"
               control={
                 <Checkbox
-                  checked={checked[0] && checked[1]}
-                  indeterminate={checked[0] !== checked[1]}
+                  checked={container[0] && container[1]}
+                  indeterminate={container[0] !== container[1]}
                   onChange={checkAllContainers}
                 />
               }
             />
-            {children}
+            {containers}
           </List>
           <Divider />
           <List>
