@@ -34,7 +34,7 @@ interface Column {
   id: string;
   label: string;
   minWidth?: number;
-  align?: 'right'; // Feel free to change this to center instead
+  align?: 'left'; // Feel free to change this to center instead
 }
 
 // Defining columns array, readonly just means that it can't be altered after declaration
@@ -45,7 +45,7 @@ const columns: readonly Column[] = [
     id: 'Log Messages',
     label: 'Log Messages',
     minWidth: 170,
-    align: 'right',
+    align: 'left',
   },
 ];
 
@@ -253,13 +253,21 @@ export default function drawerOpen() {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.leavingScreen,
     }),
-    marginLeft: `-240px`,
+    marginLeft: '-300px',
     ...(open && {
       transition: theme.transitions.create('margin', {
         easing: theme.transitions.easing.easeOut,
         duration: theme.transitions.duration.enteringScreen,
       }),
       marginLeft: 0,
+    }),
+    marginRight: '-80px',
+    ...(open && {
+      transition: theme.transitions.create('margin', {
+        easing: theme.transitions.easing.easeOut,
+        duration: theme.transitions.duration.enteringScreen,
+      }),
+      marginRight: 0,
     }),
   }));
 
@@ -346,6 +354,7 @@ export default function drawerOpen() {
           </DrawerHeader>
           <Typography variant="h6">Log Filters</Typography>
           <Button>Apply Filters</Button>
+          <Divider />
           <List>
             <FormControlLabel
               label="Type"
@@ -388,7 +397,7 @@ export default function drawerOpen() {
         </Drawer>
         <Main open={open}>
           <Paper sx={{ width: '100%', overflow: 'hidden' }}>
-            <TableContainer sx={{ maxHeight: 440 }}>
+            <TableContainer sx={{ maxHeight: '100%' }}>
               <Table stickyHeader aria-label="sticky table">
                 <TableHead>
                   <TableRow>
@@ -414,7 +423,7 @@ export default function drawerOpen() {
                       >
                         <TableCell align="left">{row.time}</TableCell>
                         <TableCell align="left">{row.container}</TableCell>
-                        <TableCell align="right">{row.logMessages}</TableCell>
+                        <TableCell align="left">{row.logMessages}</TableCell>
                       </TableRow>
                     );
                   })}
