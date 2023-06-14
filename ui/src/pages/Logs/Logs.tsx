@@ -2,24 +2,19 @@ import './Logstyles.css';
 import {
   List,
   ListItem,
-  ListItemText,
-  ListItemButton,
   Divider,
   Box,
   Checkbox,
   FormControlLabel,
   Button,
   Drawer,
-  TextField,
   Paper,
   Table,
   TableBody,
   TableCell,
   TableContainer,
   TableHead,
-  TablePagination,
   TableRow,
-  Typography,
   Slider,
 } from '@mui/material';
 import * as React from 'react';
@@ -105,8 +100,10 @@ const rows: LogData[] = [
   createData('06:30 AM', getRandomWord(), 'this is a message'),
 ];
 
-export default function Logs() {
+export default function drawerOpen() {
   const [state, setState] = React.useState({ left: false });
+  const [checked, setChecked] = React.useState([true, false]);
+
   const anchor = 'left';
 
   const toggleDrawer =
@@ -121,17 +118,15 @@ export default function Logs() {
       setState({ ...state, left: open });
     };
 
-  const [checked, setChecked] = React.useState([true, false]);
-
-  const handleChange1 = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const checkAllContainers = (event: React.ChangeEvent<HTMLInputElement>) => {
     setChecked([event.target.checked, event.target.checked]);
   };
 
-  const handleChange2 = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const checkContainer1 = (event: React.ChangeEvent<HTMLInputElement>) => {
     setChecked([event.target.checked, checked[1]]);
   };
 
-  const handleChange3 = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const checkContainer2 = (event: React.ChangeEvent<HTMLInputElement>) => {
     setChecked([checked[0], event.target.checked]);
   };
 
@@ -139,11 +134,11 @@ export default function Logs() {
     <Box sx={{ display: 'flex', flexDirection: 'column', ml: 3 }}>
       <FormControlLabel
         label="Container 1"
-        control={<Checkbox checked={checked[0]} onChange={handleChange2} />}
+        control={<Checkbox checked={checked[0]} onChange={checkContainer1} />}
       />
       <FormControlLabel
         label="Container 2"
-        control={<Checkbox checked={checked[1]} onChange={handleChange3} />}
+        control={<Checkbox checked={checked[1]} onChange={checkContainer2} />}
       />
     </Box>
   );
@@ -162,7 +157,7 @@ export default function Logs() {
             <Checkbox
               checked={checked[0] && checked[1]}
               indeterminate={checked[0] !== checked[1]}
-              onChange={handleChange1}
+              onChange={checkAllContainers}
             />
           }
         />
@@ -201,6 +196,7 @@ export default function Logs() {
     },
   ];
 
+  // Displays the time on the slider
   function valuetext(value: number) {
     return `${value}`;
   }
@@ -210,7 +206,7 @@ export default function Logs() {
       <div className="parentDiv">
         <div className="left-div">
           <React.Fragment key="left">
-            <Button onClick={toggleDrawer(true)}>Left</Button>
+            <Button onClick={toggleDrawer(true)}>Filters</Button>
             <Drawer
               anchor={anchor}
               open={state[anchor]}

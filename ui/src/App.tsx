@@ -1,7 +1,7 @@
 // import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 import Stats from './pages/Stats';
-import Logs from './pages/Logfiles/Logs';
+import Logs from './pages/Logs/Logs';
 import Settings from './pages/Settings';
 import NavBar from './components/NavBar';
 
