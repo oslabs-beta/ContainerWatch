@@ -6,7 +6,7 @@ import {
   Box,
   Checkbox,
   FormControlLabel,
-  Button,
+  IconButton,
   Drawer,
   Paper,
   Table,
@@ -15,8 +15,16 @@ import {
   TableContainer,
   TableHead,
   TableRow,
+  Toolbar,
+  Typography,
   Slider,
 } from '@mui/material';
+import MenuIcon from '@mui/icons-material/Menu';
+import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
+import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+import { styled, useTheme } from '@mui/material/styles';
+import CssBaseline from '@mui/material/CssBaseline';
+import MuiAppBar, { AppBarProps as MuiAppBarProps } from '@mui/material/AppBar';
 import * as React from 'react';
 
 type Anchor = 'left';
@@ -101,35 +109,32 @@ const rows: LogData[] = [
 ];
 
 export default function drawerOpen() {
-  const [state, setState] = React.useState({ left: false });
+  const theme = useTheme();
+  const [open, setOpen] = React.useState(false);
   const [checked, setChecked] = React.useState([true, false]);
 
-  const anchor = 'left';
-
-  const toggleDrawer =
-    (open: boolean) => (event: React.KeyboardEvent | React.MouseEvent) => {
-      if (
-        event.type === 'keydown' &&
-        ((event as React.KeyboardEvent).key === 'Tab' ||
-          (event as React.KeyboardEvent).key === 'Shift')
-      ) {
-        return;
-      }
-      setState({ ...state, left: open });
-    };
-
+  // Setting state of open to true
+  const handleDrawerOpen = () => {
+    setOpen(true);
+  };
+  // Setting state of open to false
+  const handleDrawerClose = () => {
+    setOpen(false);
+  };
+  // Function for checking all container boxes
   const checkAllContainers = (event: React.ChangeEvent<HTMLInputElement>) => {
     setChecked([event.target.checked, event.target.checked]);
   };
-
+  // Function for checking first box
   const checkContainer1 = (event: React.ChangeEvent<HTMLInputElement>) => {
     setChecked([event.target.checked, checked[1]]);
   };
-
+  // Function for checking second box
   const checkContainer2 = (event: React.ChangeEvent<HTMLInputElement>) => {
     setChecked([checked[0], event.target.checked]);
   };
 
+  // jsx for the container filter section in sidebar
   const children = (
     <Box sx={{ display: 'flex', flexDirection: 'column', ml: 3 }}>
       <FormControlLabel
@@ -143,40 +148,7 @@ export default function drawerOpen() {
     </Box>
   );
 
-  const list = (anchor: Anchor) => (
-    <Box
-      sx={{ width: 350 }}
-      role="presentation"
-      onClick={toggleDrawer(false)}
-      onKeyDown={toggleDrawer(false)}
-    >
-      <List>
-        <FormControlLabel
-          label="Container"
-          control={
-            <Checkbox
-              checked={checked[0] && checked[1]}
-              indeterminate={checked[0] !== checked[1]}
-              onChange={checkAllContainers}
-            />
-          }
-        />
-        {children}
-      </List>
-      <Divider />
-      <List>
-        <ListItem>Time Selection</ListItem>
-        <Slider
-          aria-label="Custom marks"
-          defaultValue={20}
-          getAriaValueText={valuetext}
-          step={10}
-          valueLabelDisplay="auto"
-          marks={marks}
-        />
-      </List>
-    </Box>
-  );
+  // Array containing times for the time slider
   const marks = [
     {
       value: 0,
@@ -201,22 +173,127 @@ export default function drawerOpen() {
     return `${value}`;
   }
 
+  //
+  const Main = styled('main', {
+    shouldForwardProp: (prop) => prop !== 'open',
+  })<{
+    open?: boolean;
+  }>(({ theme, open }) => ({
+    flexGrow: 1,
+    padding: theme.spacing(3),
+    transition: theme.transitions.create('margin', {
+      easing: theme.transitions.easing.sharp,
+      duration: theme.transitions.duration.leavingScreen,
+    }),
+    marginLeft: `-240px`,
+    ...(open && {
+      transition: theme.transitions.create('margin', {
+        easing: theme.transitions.easing.easeOut,
+        duration: theme.transitions.duration.enteringScreen,
+      }),
+      marginLeft: 0,
+    }),
+  }));
+
+  interface AppBarProps extends MuiAppBarProps {
+    open?: boolean;
+  }
+
+  const AppBar = styled(MuiAppBar, {
+    shouldForwardProp: (prop) => prop !== 'open',
+  })<AppBarProps>(({ theme, open }) => ({
+    transition: theme.transitions.create(['margin', 'width'], {
+      easing: theme.transitions.easing.sharp,
+      duration: theme.transitions.duration.leavingScreen,
+    }),
+    ...(open && {
+      width: `calc(100% - 240px)`,
+      marginLeft: `240px`,
+      transition: theme.transitions.create(['margin', 'width'], {
+        easing: theme.transitions.easing.easeOut,
+        duration: theme.transitions.duration.enteringScreen,
+      }),
+    }),
+  }));
+
+  const DrawerHeader = styled('div')(({ theme }) => ({
+    display: 'flex',
+    alignItems: 'center',
+    padding: theme.spacing(0, 1),
+    // necessary for content to be below app bar
+    ...theme.mixins.toolbar,
+    justifyContent: 'flex-end',
+  }));
+
   return (
     <>
-      <div className="parentDiv">
-        <div className="left-div">
-          <React.Fragment key="left">
-            <Button onClick={toggleDrawer(true)}>Filters</Button>
-            <Drawer
-              anchor={anchor}
-              open={state[anchor]}
-              onClose={toggleDrawer(false)}
+      <Box sx={{ display: 'flex' }}>
+        <CssBaseline />
+        <AppBar position="fixed" open={open}>
+          <Toolbar>
+            <IconButton
+              color="inherit"
+              aria-label="open drawer"
+              onClick={handleDrawerOpen}
+              edge="start"
+              sx={{ mr: 2, ...(open && { display: 'none' }) }}
             >
-              {list(anchor)}
-            </Drawer>
-          </React.Fragment>
-        </div>
-        <div className="right-div">
+              <MenuIcon />
+            </IconButton>
+            <Typography variant="h6" noWrap component="div">
+              Process Logs
+            </Typography>
+          </Toolbar>
+        </AppBar>
+        <Drawer
+          sx={{
+            width: 240,
+            flexShrink: 0,
+            '& .MuiDrawer-paper': {
+              width: 240,
+              boxSizing: 'border-box',
+            },
+          }}
+          variant="persistent"
+          anchor="left"
+          open={open}
+        >
+          <DrawerHeader>
+            <IconButton onClick={handleDrawerClose}>
+              {theme.direction === 'ltr' ? (
+                <ChevronLeftIcon />
+              ) : (
+                <ChevronRightIcon />
+              )}
+            </IconButton>
+          </DrawerHeader>
+          <List>
+            <FormControlLabel
+              label="Container"
+              control={
+                <Checkbox
+                  checked={checked[0] && checked[1]}
+                  indeterminate={checked[0] !== checked[1]}
+                  onChange={checkAllContainers}
+                />
+              }
+            />
+            {children}
+          </List>
+          <Divider />
+          <List>
+            <ListItem>Time Selection</ListItem>
+            <Slider
+              aria-label="Custom marks"
+              defaultValue={20}
+              getAriaValueText={valuetext}
+              step={10}
+              valueLabelDisplay="auto"
+              marks={marks}
+            />
+          </List>
+        </Drawer>
+        <Main open={open}>
           <Paper sx={{ width: '100%', overflow: 'hidden' }}>
             <TableContainer sx={{ maxHeight: 440 }}>
               <Table stickyHeader aria-label="sticky table">
@@ -252,8 +329,8 @@ export default function drawerOpen() {
               </Table>
             </TableContainer>
           </Paper>
-        </div>
-      </div>
+        </Main>
+      </Box>
     </>
   );
 }
