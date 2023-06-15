@@ -126,7 +126,7 @@ export const ProcessLogs: React.FC = () => {
 
   return (
     <>
-      <Box sx={{ display: 'flex' }}>
+      <Box sx={{ display: 'flex', flexGrow: 1 }}>
         <SideBar />
         <Main open={open}>
           <Paper sx={{ width: '100%', overflow: 'hidden' }}>
