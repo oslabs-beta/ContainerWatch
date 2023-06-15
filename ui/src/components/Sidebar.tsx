@@ -6,6 +6,7 @@ import {
   Checkbox,
   FormControlLabel,
   Drawer,
+  Divider,
   Typography,
 } from '@mui/material';
 
@@ -77,18 +78,42 @@ export const SideBar: React.FC = () => {
         <Box role="presentation">
           <Typography variant="h6">Filters</Typography>
           <Button onClick={toggleDrawer('left', false)}>Apply Filters</Button>
-          <Box sx={{ display: 'flex', flexDirection: 'column', ml: 3 }}>
-            <List>
+          <Divider />
+          <List>
+            <FormControlLabel
+              label="Type"
+              control={
+                <Checkbox
+                  checked={type[0] && type[1]}
+                  indeterminate={type[0] !== type[1]}
+                  onChange={checkAllTypes}
+                />
+              }
+            />
+            <Box sx={{ display: 'flex', flexDirection: 'column', ml: 3 }}>
               <FormControlLabel
-                label="Type"
-                control={
-                  <Checkbox
-                    checked={type[0] && type[1]}
-                    indeterminate={type[0] !== type[1]}
-                    onChange={checkAllTypes}
-                  />
-                }
+                label="stdout"
+                control={<Checkbox checked={type[0]} onChange={checkStdout} />}
               />
+              <FormControlLabel
+                label="stderr"
+                control={<Checkbox checked={type[1]} onChange={checkStderr} />}
+              />
+            </Box>
+          </List>
+          <Divider />
+          <List>
+            <FormControlLabel
+              label="Container"
+              control={
+                <Checkbox
+                  checked={container[0] && container[1]}
+                  indeterminate={container[0] !== container[1]}
+                  onChange={checkAllContainers}
+                />
+              }
+            />
+            <Box sx={{ display: 'flex', flexDirection: 'column', ml: 3 }}>
               <FormControlLabel
                 label="Container 1"
                 control={
@@ -101,30 +126,8 @@ export const SideBar: React.FC = () => {
                   <Checkbox checked={container[1]} onChange={checkContainer2} />
                 }
               />
-            </List>
-          </Box>
-          <Box sx={{ display: 'flex', flexDirection: 'column', ml: 3 }}>
-            <List>
-              <FormControlLabel
-                label="Container"
-                control={
-                  <Checkbox
-                    checked={container[0] && container[1]}
-                    indeterminate={container[0] !== container[1]}
-                    onChange={checkAllContainers}
-                  />
-                }
-              />
-              <FormControlLabel
-                label="stdout"
-                control={<Checkbox checked={type[0]} onChange={checkStdout} />}
-              />
-              <FormControlLabel
-                label="stderr"
-                control={<Checkbox checked={type[1]} onChange={checkStderr} />}
-              />
-            </List>
-          </Box>
+            </Box>
+          </List>
         </Box>
       </Drawer>
     </>
