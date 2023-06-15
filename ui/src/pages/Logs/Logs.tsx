@@ -11,7 +11,7 @@ import {
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import * as React from 'react';
-import { SideBar } from './Sidebar';
+import { SideBar } from '../../components/Sidebar';
 
 // Define Column interface
 interface Column {
