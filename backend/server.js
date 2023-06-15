@@ -27,7 +27,7 @@ const ID = 'bc4ed69f39b9';
 
 const statsRequest = http.request(
   {
-    socketPath: '/var/run/docker.sock',
+    socketPath: '/var/run/docker.sock', // path to docker engine
     path: `/containers/${ID}/stats`, // stream=true -> keep the connection open
   },
   (res) => {
@@ -49,4 +49,6 @@ const statsRequest = http.request(
 
 statsRequest.end();
 
-app.listen(SOCKETFILE, () => console.log(`🚀 Server listening on ${SOCKETFILE}`));
+app.listen(SOCKETFILE, () =>
+  console.log(`🚀 Server listening on ${SOCKETFILE}`)
+);
