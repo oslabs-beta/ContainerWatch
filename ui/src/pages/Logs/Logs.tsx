@@ -1,6 +1,11 @@
 // This file contains code for loading the Process Logs page
 import {
   Box,
+  FormControl,
+  InputLabel,
+  OutlinedInput,
+  InputAdornment,
+  IconButton,
   Paper,
   Table,
   TableBody,
@@ -9,7 +14,7 @@ import {
   TableHead,
   TableRow,
 } from '@mui/material';
-import { styled } from '@mui/material/styles';
+import SearchIcon from '@mui/icons-material/Search';
 import * as React from 'react';
 import { SideBar } from '../../components/Sidebar';
 
@@ -94,69 +99,56 @@ const rows: LogData[] = [
 
 //
 export const ProcessLogs: React.FC = () => {
-  const [open, setOpen] = React.useState(false);
-  const Main = styled('main', {
-    shouldForwardProp: (prop) => prop !== 'open',
-  })<{
-    open?: boolean;
-  }>(({ theme, open }) => ({
-    flexGrow: 1,
-    padding: theme.spacing(3),
-    transition: theme.transitions.create('margin', {
-      easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.leavingScreen,
-    }),
-    marginLeft: '-240px',
-    ...(open && {
-      transition: theme.transitions.create('margin', {
-        easing: theme.transitions.easing.easeOut,
-        duration: theme.transitions.duration.enteringScreen,
-      }),
-      marginLeft: 0,
-    }),
-  }));
-
   return (
     <>
-      <Box sx={{ display: 'flex', flexGrow: 1 }}>
+      <Box sx={{ flexGrow: 1 }}>
+        <FormControl sx={{ m: 1, width: '25ch' }} variant="outlined">
+          <InputLabel>Search...</InputLabel>
+          <OutlinedInput
+            id="search-outline"
+            endAdornment={
+              <InputAdornment position="end">
+                <IconButton>{<SearchIcon />}</IconButton>
+              </InputAdornment>
+            }
+          />
+        </FormControl>
         <SideBar />
-        <Main open={open}>
-          <Paper sx={{ width: '100%', overflow: 'hidden' }}>
-            <TableContainer sx={{ maxHeight: '100%' }}>
-              <Table stickyHeader aria-label="sticky table">
-                <TableHead>
-                  <TableRow>
-                    {columns.map((column) => (
-                      <TableCell
-                        key={column.id}
-                        align={column.align}
-                        style={{ minWidth: column.minWidth }}
-                      >
-                        {column.label}
-                      </TableCell>
-                    ))}
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {rows.map((row) => {
-                    return (
-                      <TableRow
-                        hover
-                        role="checkbox"
-                        tabIndex={-1}
-                        key={row.container}
-                      >
-                        <TableCell align="left">{row.time}</TableCell>
-                        <TableCell align="left">{row.container}</TableCell>
-                        <TableCell align="left">{row.logMessages}</TableCell>
-                      </TableRow>
-                    );
-                  })}
-                </TableBody>
-              </Table>
-            </TableContainer>
-          </Paper>
-        </Main>
+        <Paper sx={{ width: '100%', overflow: 'hidden' }}>
+          <TableContainer sx={{ maxHeight: '100%' }}>
+            <Table stickyHeader aria-label="sticky table">
+              <TableHead>
+                <TableRow>
+                  {columns.map((column) => (
+                    <TableCell
+                      key={column.id}
+                      align={column.align}
+                      style={{ minWidth: column.minWidth }}
+                    >
+                      {column.label}
+                    </TableCell>
+                  ))}
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {rows.map((row) => {
+                  return (
+                    <TableRow
+                      hover
+                      role="checkbox"
+                      tabIndex={-1}
+                      key={row.container}
+                    >
+                      <TableCell align="left">{row.time}</TableCell>
+                      <TableCell align="left">{row.container}</TableCell>
+                      <TableCell align="left">{row.logMessages}</TableCell>
+                    </TableRow>
+                  );
+                })}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </Paper>
       </Box>
     </>
   );
