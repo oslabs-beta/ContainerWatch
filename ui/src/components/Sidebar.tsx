@@ -162,6 +162,7 @@ export const SideBar: React.FC = () => {
             </Box>
           </List>
           <Divider />
+          <Typography variant="subtitle1">Time Filter</Typography>
           <FormControl fullWidth>
             <InputLabel id="hoursago">Hours Ago</InputLabel>
             <Select
