@@ -14,55 +14,9 @@ import {
   Box,
   Stack,
   LinearProgress,
+  CircularProgress,
 } from '@mui/material';
-
-interface DockerStats {
-  Container?: string;
-  Name: string;
-  ID: string;
-  CPUPerc: string;
-  MemPerc: string;
-  MemUsage: string;
-  NetIO: string;
-  BlockIO: string;
-  PIDs: string;
-}
-
-const MOCK_STATS: Array<DockerStats> = [
-  {
-    BlockIO: '46.3MB / 24MB',
-    CPUPerc: '4.00%',
-    Container: '083cd15faa7f7853f60bde5712b8eb5c87828bbfaa6789ca62681c9632176b59',
-    ID: '083cd15faa7f7853f60bde5712b8eb5c87828bbfaa6789ca62681c9632176b59',
-    MemPerc: '5.03%',
-    MemUsage: '73.77MiB / 3.841GiB',
-    Name: 'loving_shannon',
-    NetIO: '232MB / 33.9MB',
-    PIDs: '25',
-  },
-  {
-    BlockIO: '0B / 2.15MB',
-    CPUPerc: '1.00%',
-    Container: '1bc20b67e59b65e8ef0007bdc7c6b61e77c3b236e55d47572f85f6cf12d44f51',
-    ID: '1bc20b67e59b65e8ef0007bdc7c6b61e77c3b236e55d47572f85f6cf12d44f51',
-    MemPerc: '22.5%',
-    MemUsage: '40.19MiB / 3.841GiB',
-    Name: 'service',
-    NetIO: '4.32MB / 25.2kB',
-    PIDs: '22',
-  },
-  {
-    BlockIO: '7.86MB / 1.76MB',
-    CPUPerc: '20.1%',
-    Container: 'e7b85b0e30b5e524649ae52f2633ca61291b411b18d97fb403d1aedd00f0b801',
-    ID: 'e7b85b0e30b5e524649ae52f2633ca61291b411b18d97fb403d1aedd00f0b801',
-    MemPerc: '31.1%',
-    MemUsage: '2.738MiB / 3.841GiB',
-    Name: 'docker-tutorial',
-    NetIO: '36.4kB / 618kB',
-    PIDs: '5',
-  },
-];
+import { useStats, DockerStats } from '../../hooks/useStats';
 
 const HEADERS: Array<string> = [
   '',
@@ -76,9 +30,9 @@ const HEADERS: Array<string> = [
 ];
 
 export default function Stats() {
-  const [stats, setStats] = useState<Array<DockerStats>>(MOCK_STATS);
+  const stats = useStats();
 
-  return (
+  return stats ? (
     <TableContainer component={Paper} sx={{ background: 'none', border: 'none' }}>
       <Table size="small" stickyHeader>
         <TableHead>
@@ -97,6 +51,10 @@ export default function Stats() {
         </TableBody>
       </Table>
     </TableContainer>
+  ) : (
+    <Box sx={{ p: 4, display: 'flex', justifyContent: 'center' }}>
+      <CircularProgress />
+    </Box>
   );
 }
 
@@ -145,7 +103,7 @@ function Row({ Name, ID, CPUPerc, MemUsage, MemPerc, NetIO, BlockIO, PIDs }: Doc
         </TableCell>
       </TableRow>
       <TableRow>
-        <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={9}>
+        <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={HEADERS.length}>
           <Collapse in={open} timeout="auto" unmountOnExit>
             {/*********** This Box is a placeholder for a Graph component ************/}
             <Box
