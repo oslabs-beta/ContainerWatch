@@ -75,7 +75,7 @@ export const SideBar: React.FC = () => {
         open={toggle['left']}
         onClose={toggleDrawer('left', false)}
       >
-        <Box role="presentation">
+        <Box role="presentation" sx={{ width: '250px' }}>
           <Typography variant="h6">Filters</Typography>
           <Button onClick={toggleDrawer('left', false)}>Apply Filters</Button>
           <Divider />
@@ -128,6 +128,7 @@ export const SideBar: React.FC = () => {
               />
             </Box>
           </List>
+          <Divider />
         </Box>
       </Drawer>
     </>
