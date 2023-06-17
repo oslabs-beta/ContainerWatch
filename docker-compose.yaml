@@ -11,20 +11,53 @@ services:
     image: ${DESKTOP_PLUGIN_IMAGE}
     volumes:
       - /var/run/docker.sock.raw:/var/run/docker.sock
-
-  Prometheus:
-    image: prom/prometheus:latest
-    container_name: prometheus
-    ports:
-      - '9090:9090'
-
-  Node-exporter:
-    image: prom/node-exporter:latest
-    container_name: node-exporter
-
-  Ca-advisor:
-    image: gcr.io/cadvisor/cadvisor:latest
+  # prometheus:
+  #   image: prom/prometheus:latest
+  #   container_name: prometheus
+  #   ports:
+  #     - 9090:9090
+  #   command:
+  #     - --config.file=/etc/prometheus/prometheus.yml
+  #   volumes:
+  #     # - /var/lib/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+  #     - /var/run/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+  #   depends_on:
+  #     - cadvisor
+  cadvisor:
+    # image: gcr.io/google-containers/cadvisor:latest
+    # image: gcr.io/cadvisor/cadvisor
+    # image: google/cadvisor:latest
+    image: gcr.io/cadvisor/cadvisor:v0.46.0
     container_name: cadvisor
+    ports:
+      - 8080:8080
+    volumes:
+      - /:/rootfs:ro
+      - /var/run/docker.sock:/var/run/docker.sock:rw
+      # - /var/run/:/var/run/:rw  // what the guy had
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+    depends_on:
+      - redis
+  redis:
+    image: redis:latest
+    container_name: redis
+    ports:
+      - 6379:6379
+
+  # Prometheus:
+  #   image: prom/prometheus:latest
+  #   container_name: prometheus
+  #   ports:
+  #     - '9090:9090'
+
+  # Node-exporter:
+  #   image: prom/node-exporter:latest
+  #   container_name: node-exporter
+
+  # Ca-advisor:
+  #   image: gcr.io/cadvisor/cadvisor:latest
+  #   container_name: cadvisor
 
   #   node-exporter:
   #     image: prom/node-exporter:latest
