@@ -1,22 +1,29 @@
+// This file contains code for loading the Process Logs page
 import {
-  TextField,
+  Box,
+  FormControl,
+  InputLabel,
+  OutlinedInput,
+  InputAdornment,
+  IconButton,
   Paper,
   Table,
   TableBody,
   TableCell,
   TableContainer,
   TableHead,
-  TablePagination,
   TableRow,
 } from '@mui/material';
+import SearchIcon from '@mui/icons-material/Search';
 import * as React from 'react';
+import { SideBar } from '../../components/Sidebar';
 
 // Define Column interface
 interface Column {
   id: string;
   label: string;
   minWidth?: number;
-  align?: 'right'; // Feel free to change this to center instead
+  align?: 'left'; // Feel free to change this to center instead
 }
 
 // Defining columns array, readonly just means that it can't be altered after declaration
@@ -27,7 +34,7 @@ const columns: readonly Column[] = [
     id: 'Log Messages',
     label: 'Log Messages',
     minWidth: 170,
-    align: 'right',
+    align: 'left',
   },
 ];
 
@@ -90,49 +97,61 @@ const rows: LogData[] = [
   createData('06:30 AM', getRandomWord(), 'this is a message'),
 ];
 
-export default function Logs() {
+//
+export const ProcessLogs: React.FC = () => {
   return (
     <>
-      <TextField
-        id="filter-searchbar"
-        label="Filter Logs Here"
-        variant="outlined"
-      />
-      <Paper sx={{ width: '100%', overflow: 'hidden' }}>
-        <TableContainer sx={{ maxHeight: 440 }}>
-          <Table stickyHeader aria-label="sticky table">
-            <TableHead>
-              <TableRow>
-                {columns.map((column) => (
-                  <TableCell
-                    key={column.id}
-                    align={column.align}
-                    style={{ minWidth: column.minWidth }}
-                  >
-                    {column.label}
-                  </TableCell>
-                ))}
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {rows.map((row) => {
-                return (
-                  <TableRow
-                    hover
-                    role="checkbox"
-                    tabIndex={-1}
-                    key={row.container}
-                  >
-                    <TableCell align="left">{row.time}</TableCell>
-                    <TableCell align="left">{row.container}</TableCell>
-                    <TableCell align="right">{row.logMessages}</TableCell>
-                  </TableRow>
-                );
-              })}
-            </TableBody>
-          </Table>
-        </TableContainer>
-      </Paper>
+      <Box sx={{ flexGrow: 1 }}>
+        <FormControl sx={{ m: 1, width: '25ch' }} variant="outlined">
+          <InputLabel>Search...</InputLabel>
+          <OutlinedInput
+            id="search-outline"
+            endAdornment={
+              <InputAdornment position="end">
+                <IconButton>{<SearchIcon />}</IconButton>
+              </InputAdornment>
+            }
+          />
+        </FormControl>
+        <SideBar />
+        <Paper sx={{ width: '100%', overflow: 'hidden' }}>
+          <TableContainer sx={{ maxHeight: '100%' }}>
+            <Table stickyHeader aria-label="sticky table">
+              <TableHead>
+                <TableRow>
+                  {columns.map((column) => (
+                    <TableCell
+                      key={column.id}
+                      align={column.align}
+                      style={{ minWidth: column.minWidth }}
+                    >
+                      {column.label}
+                    </TableCell>
+                  ))}
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {rows.map((row) => {
+                  return (
+                    <TableRow
+                      hover
+                      role="checkbox"
+                      tabIndex={-1}
+                      key={row.container}
+                    >
+                      <TableCell align="left">{row.time}</TableCell>
+                      <TableCell align="left">{row.container}</TableCell>
+                      <TableCell align="left">{row.logMessages}</TableCell>
+                    </TableRow>
+                  );
+                })}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </Paper>
+      </Box>
     </>
   );
-}
+};
+
+export default ProcessLogs;
