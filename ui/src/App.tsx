@@ -1,6 +1,6 @@
 import { Routes, Route } from 'react-router-dom';
 import { Box } from '@mui/material';
-import Stats from './pages/Stats';
+import Stats from './pages/Stats/Stats';
 import Logs from './pages/Logs/Logs';
 import Settings from './pages/Settings';
 import NavBar from './components/NavBar/NavBar';
