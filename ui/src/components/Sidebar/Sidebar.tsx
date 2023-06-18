@@ -104,7 +104,7 @@ export const SideBar: React.FC = () => {
   return (
     <>
       <Button sx={{ position: 'fixed' }} onClick={toggleDrawer('left', true)}>
-        Filterz
+        Filters
       </Button>
       <Drawer
         anchor="left"
