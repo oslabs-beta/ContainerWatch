@@ -11,18 +11,23 @@ services:
     image: ${DESKTOP_PLUGIN_IMAGE}
     volumes:
       - /var/run/docker.sock.raw:/var/run/docker.sock
-  # prometheus:
-  #   image: prom/prometheus:latest
-  #   container_name: prometheus
-  #   ports:
-  #     - 9090:9090
-  #   command:
-  #     - --config.file=/etc/prometheus/prometheus.yml
-  #   volumes:
-  #     # - /var/lib/prometheus.yml:/etc/prometheus/prometheus.yml:ro
-  #     - /var/run/prometheus.yml:/etc/prometheus/prometheus.yml:ro
-  #   depends_on:
-  #     - cadvisor
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    ports:
+      - 9090:9090
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+    volumes:
+      # - ../../DockerPulse/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ../../../../../../../Desktop/OSP/DockerPulse/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    # - /var/lib/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    # - /var/run/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    # /Users/junlee/Desktop/OSP/DockerPulse/prometheus.yml
+    # /Users/junlee/Desktop/OSP/DockerPulse/prometheus.yml
+    depends_on:
+      - cadvisor
+
   cadvisor:
     # image: gcr.io/google-containers/cadvisor:latest
     # image: gcr.io/cadvisor/cadvisor
@@ -37,13 +42,13 @@ services:
       # - /var/run/:/var/run/:rw  // what the guy had
       - /sys:/sys:ro
       - /var/lib/docker/:/var/lib/docker:ro
-    depends_on:
-      - redis
-  redis:
-    image: redis:latest
-    container_name: redis
-    ports:
-      - 6379:6379
+  #   depends_on:
+  #     - redis
+  # redis:
+  #   image: redis:latest
+  #   container_name: redis
+  #   ports:
+  #     - 6379:6379
 
   # Prometheus:
   #   image: prom/prometheus:latest
