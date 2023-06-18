@@ -86,17 +86,14 @@ export default function SideBar() {
   /******** Type filter code ************/
   // Function for checking all type boxes
   const checkAllTypes = (event: React.ChangeEvent<HTMLInputElement>) => {
-    console.log('All types box checked');
     setType([event.target.checked, event.target.checked]);
   };
   // Function for checking Stdout box
   const checkStdout = (event: React.ChangeEvent<HTMLInputElement>) => {
-    console.log('Stdout box checked');
     setType([event.target.checked, type[1]]);
   };
   // Function for checking Stderr box
   const checkStderr = (event: React.ChangeEvent<HTMLInputElement>) => {
-    console.log('Stderr box chekced');
     setType([type[0], event.target.checked]);
   };
   /********* **********/
