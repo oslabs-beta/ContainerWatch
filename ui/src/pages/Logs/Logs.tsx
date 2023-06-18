@@ -16,7 +16,7 @@ import {
 } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import * as React from 'react';
-import { SideBar } from '../../components/Sidebar/Sidebar';
+import SideBar from '../../components/Sidebar/Sidebar';
 
 // Define Column interface
 interface Column {
@@ -98,7 +98,7 @@ const rows: LogData[] = [
 ];
 
 //
-export const ProcessLogs: React.FC = () => {
+export default function ProcessLogs() {
   return (
     <>
       <Box sx={{ flexGrow: 1 }}>
@@ -152,6 +152,6 @@ export const ProcessLogs: React.FC = () => {
       </Box>
     </>
   );
-};
+}
 
-export default ProcessLogs;
+//export default ProcessLogs;
