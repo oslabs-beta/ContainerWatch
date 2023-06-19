@@ -19,7 +19,7 @@ import * as React from 'react';
 
 type Anchor = 'left';
 // SideBar component
-export const SideBar: React.FC = () => {
+export default function SideBar() {
   const [container, setContainer] = React.useState([true, false]);
   const [type, setType] = React.useState([true, false]);
   const [hoursAgo, setHoursAgo] = React.useState('');
@@ -191,6 +191,4 @@ export const SideBar: React.FC = () => {
       </Drawer>
     </>
   );
-};
-
-export default SideBar;
+}
