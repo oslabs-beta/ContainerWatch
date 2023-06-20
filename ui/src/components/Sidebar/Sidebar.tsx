@@ -1,4 +1,3 @@
-// This file contains the code for the sidebar
 import {
   List,
   Box,
@@ -28,18 +27,14 @@ export default function SideBar({ drawerOpen, setDrawerOpen }: SideBarProps) {
   const [hoursAgo, setHoursAgo] = React.useState('');
   const [upUntil, setUpUntil] = React.useState('');
 
-  /************ Code for time filters in the sidebar ************/
-  // Function for setting hoursAgo state for time filter
   const hoursFrom = (e: SelectChangeEvent) => {
     setHoursAgo(e.target.value as string);
   };
 
-  // Function for setting upUntil state for time filter
   const hoursTo = (e: SelectChangeEvent) => {
     setUpUntil(e.target.value as string);
   };
 
-  // Function for generating hours list for time filter drop down  menus
   const generateHours = (): JSX.Element[] => {
     const hours: JSX.Element[] = [];
     for (let i = 1; i <= 72; i++) {
@@ -48,47 +43,36 @@ export default function SideBar({ drawerOpen, setDrawerOpen }: SideBarProps) {
     return hours;
   };
 
-  // Declaring variable to use for time menu
   const hours: JSX.Element[] = generateHours();
-  /************ ************/
 
-  /******** Container filter code ************/
-  // Function for checking all container boxes
   const checkAllContainers = (event: React.ChangeEvent<HTMLInputElement>) => {
     setContainer([event.target.checked, event.target.checked]);
   };
 
-  // Function for checking first box
   const checkContainer1 = (event: React.ChangeEvent<HTMLInputElement>) => {
     setContainer([event.target.checked, container[1]]);
   };
 
-  // Function for checking second box
   const checkContainer2 = (event: React.ChangeEvent<HTMLInputElement>) => {
     setContainer([container[0], event.target.checked]);
   };
-  /********* **********/
 
-  /******** Type filter code ************/
-  // Function for checking all type boxes
   const checkAllTypes = (event: React.ChangeEvent<HTMLInputElement>) => {
     setType([event.target.checked, event.target.checked]);
   };
-  // Function for checking Stdout box
+
   const checkStdout = (event: React.ChangeEvent<HTMLInputElement>) => {
     setType([event.target.checked, type[1]]);
   };
-  // Function for checking Stderr box
+
   const checkStderr = (event: React.ChangeEvent<HTMLInputElement>) => {
     setType([type[0], event.target.checked]);
   };
-  /********* **********/
 
   return (
     <Drawer anchor="left" open={drawerOpen} onClose={() => setDrawerOpen(false)}>
       <Box role="presentation" sx={{ width: '250px' }}>
         <Typography variant="h6">Filters</Typography>
-        {/* <Button onClick={setDrawerOpen(false)}>Apply Filters</Button> */}
         <Divider />
         <List>
           <FormControlLabel
