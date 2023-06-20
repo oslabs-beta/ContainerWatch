@@ -1,8 +1,10 @@
-// This file contains code for loading the Process Logs page
+import { useState } from 'react';
+import { Search, Clear, FilterList, KeyboardArrowUp, KeyboardArrowDown } from '@mui/icons-material';
 import {
   Box,
-  FormControl,
-  InputLabel,
+  Stack,
+  Typography,
+  Chip,
   OutlinedInput,
   InputAdornment,
   IconButton,
@@ -13,142 +15,176 @@ import {
   TableContainer,
   TableHead,
   TableRow,
+  Collapse,
+  useTheme,
 } from '@mui/material';
-import SearchIcon from '@mui/icons-material/Search';
+import ContainerIcon from '../../components/ContainerIcon/ContainerIcon';
 import SideBar from '../../components/Sidebar/Sidebar';
 
-// Define Column interface
-interface Column {
-  id: string;
-  label: string;
-  minWidth?: number;
-  align?: 'left'; // Feel free to change this to center instead
-}
-
-// Defining columns array, readonly just means that it can't be altered after declaration
-const columns: readonly Column[] = [
-  { id: 'TimeStamp', label: 'TimeStamp', minWidth: 170 },
-  { id: 'Container', label: 'Container', minWidth: 100 },
-  {
-    id: 'Log Messages',
-    label: 'Log Messages',
-    minWidth: 170,
-    align: 'left',
-  },
-];
-
-// Define LogData interface that gets returned when createData function is invoked
-interface LogData {
+interface DockerLog {
+  containerName: string;
+  containerId: string;
   time: string;
-  container: string;
-  logMessages: string;
-  [key: string]: string;
+  stream: string;
+  log: string;
 }
 
-// This function just returns a LogData object with time, container, and logMessages
-function createData(
-  time: string,
-  container: string,
-  logMessages: string
-): LogData {
-  return { time, container, logMessages };
+const createMockLogs = (n: number) => {
+  return Array(n)
+    .fill(null)
+    .map((_, i) => {
+      return {
+        containerName: 'container_name',
+        containerId: 'asdfasdf',
+        time: new Date(Date.now() + i * 1000).toISOString(),
+        stream: 'stdout',
+        log: 'this is really long content long content long content\n'.repeat(
+          Math.floor(Math.random() * 10)
+        ),
+      } as DockerLog;
+    });
+};
+
+const HEADERS = ['', 'Timestamp', 'Container', 'Message'];
+
+export default function Logs() {
+  // Access the custom theme (provided by DockerMuiThemeProvider)
+  const theme = useTheme();
+
+  const [logs, setLogs] = useState<DockerLog[]>(createMockLogs(100));
+  const [filteredLogs, setFilteredLogs] = useState<DockerLog[]>(logs);
+  const [searchText, setSearchText] = useState('');
+
+  return (
+    <Box sx={{ minHeight: 0, display: 'flex', flexDirection: 'column' }}>
+      <Stack direction="row" spacing={2}>
+        <OutlinedInput
+          placeholder="Search"
+          size="small"
+          sx={{ width: '50%' }}
+          startAdornment={
+            <InputAdornment position="start">
+              <Search fontSize="small" />
+            </InputAdornment>
+          }
+          endAdornment={
+            <InputAdornment position="end">
+              <Clear
+                fontSize="small"
+                // Use visibility instead of conditional rendering (`searchText && <InputAdornment>`)
+                // so that the width of the <OutlinedInput> does not change.
+                sx={{ cursor: 'pointer', visibility: searchText ? 'visible' : 'hidden' }}
+                onClick={() => setSearchText('')}
+              />
+            </InputAdornment>
+          }
+          value={searchText}
+          onChange={(e) => setSearchText(e.target.value)}
+        />
+        <IconButton>
+          <FilterList />
+        </IconButton>
+      </Stack>
+
+      <TableContainer
+        component={Paper}
+        sx={{
+          marginTop: 2,
+          flexGrow: 1,
+          background: 'none',
+          border: 'none',
+        }}
+      >
+        <Table size="small" stickyHeader>
+          <TableHead>
+            <TableRow>
+              {HEADERS.map((header) => (
+                <TableCell>
+                  <Typography sx={{ whiteSpace: 'nowrap', fontWeight: 'bold' }}>
+                    {header}
+                  </Typography>
+                </TableCell>
+              ))}
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {filteredLogs.map((row) => (
+              <Row {...row} />
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
+    </Box>
+  );
 }
-// Array of mock data container names
-const words = [
-  'apple',
-  'banana',
-  'carrot',
-  'dog',
-  'elephant',
-  'flower',
-  'guitar',
-  'honey',
-  'island',
-  'jazz',
-  'kangaroo',
-  'lemon',
-  'monkey',
-  'noodle',
-  'orange',
-];
 
-// Function to generate mock data for now
-function getRandomWord() {
-  const randomIndex = Math.floor(Math.random() * words.length);
-  return words[randomIndex];
-}
+function Row({ containerName, containerId, time, stream, log }: DockerLog) {
+  const [open, setOpen] = useState<boolean>(false);
 
-const rows: LogData[] = [
-  createData('10:00 AM', getRandomWord(), 'this is a message'),
-  createData('11:30 AM', getRandomWord(), 'this is a message'),
-  createData('01:45 PM', getRandomWord(), 'this is a message'),
-  createData('02:15 PM', getRandomWord(), 'this is a message'),
-  createData('03:30 PM', getRandomWord(), 'this is a message'),
-  createData('05:00 PM', getRandomWord(), 'this is a message'),
-  createData('06:45 PM', getRandomWord(), 'this is a message'),
-  createData('08:15 PM', getRandomWord(), 'this is a message'),
-  createData('09:30 PM', getRandomWord(), 'this is a message'),
-  createData('10:45 PM', getRandomWord(), 'this is a message'),
-  createData('11:30 PM', getRandomWord(), 'this is a message'),
-  createData('01:15 AM', getRandomWord(), 'this is a message'),
-  createData('03:00 AM', getRandomWord(), 'this is a message'),
-  createData('04:45 AM', getRandomWord(), 'this is a message'),
-  createData('06:30 AM', getRandomWord(), 'this is a message'),
-];
-
-//
-export default function ProcessLogs() {
   return (
     <>
-      <Box sx={{ flexGrow: 1 }}>
-        <FormControl sx={{ m: 1, width: '25ch' }} variant="outlined">
-          <InputLabel>Search...</InputLabel>
-          <OutlinedInput
-            id="search-outline"
-            endAdornment={
-              <InputAdornment position="end">
-                <IconButton>{<SearchIcon />}</IconButton>
-              </InputAdornment>
-            }
-          />
-        </FormControl>
-        <SideBar />
-        <Paper sx={{ width: '100%', overflow: 'hidden' }}>
-          <TableContainer sx={{ maxHeight: '100%' }}>
-            <Table stickyHeader aria-label="sticky table">
-              <TableHead>
-                <TableRow>
-                  {columns.map((column) => (
-                    <TableCell
-                      key={column.id}
-                      align={column.align}
-                      style={{ minWidth: column.minWidth }}
-                    >
-                      {column.label}
-                    </TableCell>
-                  ))}
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {rows.map((row) => {
-                  return (
-                    <TableRow
-                      hover
-                      role="checkbox"
-                      tabIndex={-1}
-                      key={row.container}
-                    >
-                      <TableCell align="left">{row.time}</TableCell>
-                      <TableCell align="left">{row.container}</TableCell>
-                      <TableCell align="left">{row.logMessages}</TableCell>
-                    </TableRow>
-                  );
-                })}
-              </TableBody>
-            </Table>
-          </TableContainer>
-        </Paper>
-      </Box>
+      <TableRow hover sx={{ '& td': { border: 'none', paddingTop: 0, paddingBottom: 0 } }}>
+        <TableCell sx={{ p: 0 }}>
+          <IconButton size="small" sx={{ background: 'none' }} onClick={() => setOpen(!open)}>
+            {open ? <KeyboardArrowUp /> : <KeyboardArrowDown />}
+          </IconButton>
+        </TableCell>
+        <TableCell>
+          <Typography sx={{ whiteSpace: 'nowrap' }}>{time}</Typography>
+        </TableCell>
+        <TableCell>
+          <Box sx={{ height: '100%', display: 'flex', alignItems: 'center', gap: 1 }}>
+            {/* TODO: access the custom theme colors instead of hardcoding the color */}
+            <ContainerIcon htmlColor="#228375" />
+            <Typography>{containerName}</Typography>
+          </Box>
+        </TableCell>
+        <TableCell
+          sx={{
+            // The combination of width: 100% and maxWidth: 0 makes the cell grow to fit
+            // the horizontal space. The table will not overflow in the x direction.
+            width: '100%',
+            maxWidth: 0,
+          }}
+        >
+          <Typography
+            sx={{
+              // Logs will be cut off with an ellipsis instead of wrapping or overflowing.
+              whiteSpace: 'nowrap',
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              fontFamily: 'monospace',
+            }}
+          >
+            {log}
+          </Typography>
+        </TableCell>
+      </TableRow>
+      <TableRow>
+        <TableCell sx={{ p: 0 }} />
+        <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={HEADERS.length - 1}>
+          <Collapse in={open} timeout="auto" unmountOnExit>
+            <Box
+              sx={{
+                display: 'flex',
+                border: 'lightgray',
+                backgroundColor: 'black',
+                borderRadius: '5px',
+                paddingTop: 0.5,
+                paddingBottom: 0.5,
+                paddingLeft: 1,
+                paddingRight: 1,
+                marginTop: 1,
+                marginBottom: 1,
+              }}
+            >
+              <Typography sx={{ fontFamily: 'monospace', whiteSpace: 'pre' }}>
+                {log || ' '}
+              </Typography>
+            </Box>
+          </Collapse>
+        </TableCell>
+      </TableRow>
     </>
   );
 }
