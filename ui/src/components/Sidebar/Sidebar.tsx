@@ -70,7 +70,7 @@ export default function SideBar({ drawerOpen, setDrawerOpen }: SideBarProps) {
   };
 
   return (
-    <Drawer anchor="left" open={drawerOpen} onClose={() => setDrawerOpen(false)}>
+    <Drawer anchor="right" open={drawerOpen} onClose={() => setDrawerOpen(false)}>
       <Box role="presentation" sx={{ width: '250px' }}>
         <Typography variant="h6">Filters</Typography>
         <Divider />
