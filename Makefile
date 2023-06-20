@@ -10,10 +10,10 @@ build-extension: ## Build service image to be deployed as a desktop extension
 	docker build --tag=$(IMAGE):$(TAG) .
 
 install-extension: build-extension ## Install the extension
-	docker extension install $(IMAGE):$(TAG)
+	docker extension install $(IMAGE):$(TAG) -f
 
 update-extension: build-extension ## Update the extension
-	docker extension update $(IMAGE):$(TAG)
+	docker extension update $(IMAGE):$(TAG) -f
 
 update-debug-extension: update-extension # Update the extension and put it into debug mode
 	docker extension dev debug $(IMAGE):$(TAG)
