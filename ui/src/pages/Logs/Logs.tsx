@@ -51,70 +51,80 @@ export default function Logs() {
   // Access the custom theme (provided by DockerMuiThemeProvider)
   const theme = useTheme();
 
+  const [drawerOpen, setDrawerOpen] = useState(false);
   const [logs, setLogs] = useState<DockerLog[]>(createMockLogs(100));
   const [filteredLogs, setFilteredLogs] = useState<DockerLog[]>(logs);
   const [searchText, setSearchText] = useState('');
 
   return (
-    <Box sx={{ minHeight: 0, display: 'flex', flexDirection: 'column' }}>
-      <Stack direction="row" spacing={2}>
-        <OutlinedInput
-          placeholder="Search"
-          size="small"
-          sx={{ width: '50%' }}
-          startAdornment={
-            <InputAdornment position="start">
-              <Search fontSize="small" />
-            </InputAdornment>
-          }
-          endAdornment={
-            <InputAdornment position="end">
-              <Clear
-                fontSize="small"
-                // Use visibility instead of conditional rendering (`searchText && <InputAdornment>`)
-                // so that the width of the <OutlinedInput> does not change.
-                sx={{ cursor: 'pointer', visibility: searchText ? 'visible' : 'hidden' }}
-                onClick={() => setSearchText('')}
-              />
-            </InputAdornment>
-          }
-          value={searchText}
-          onChange={(e) => setSearchText(e.target.value)}
-        />
-        <IconButton>
-          <FilterList />
-        </IconButton>
-      </Stack>
+    <>
+      <SideBar drawerOpen={drawerOpen} setDrawerOpen={setDrawerOpen} />
+      <Box sx={{ minHeight: 0, display: 'flex', flexDirection: 'column' }}>
+        <Stack direction="row" spacing={2}>
+          <OutlinedInput
+            placeholder="Search"
+            size="small"
+            sx={{ width: '50%' }}
+            startAdornment={
+              <InputAdornment position="start">
+                <Search fontSize="small" />
+              </InputAdornment>
+            }
+            endAdornment={
+              <InputAdornment position="end">
+                <Clear
+                  fontSize="small"
+                  // Use visibility instead of conditional rendering (`searchText && <InputAdornment>`)
+                  // so that the width of the <OutlinedInput> does not change.
+                  sx={{ cursor: 'pointer', visibility: searchText ? 'visible' : 'hidden' }}
+                  onClick={() => setSearchText('')}
+                />
+              </InputAdornment>
+            }
+            value={searchText}
+            onChange={(e) => setSearchText(e.target.value)}
+          />
+          <IconButton
+            onClick={(e) => {
+              console.log('click');
+              e.stopPropagation();
+              setDrawerOpen(true);
+            }}
+          >
+            <FilterList />
+          </IconButton>
+        </Stack>
 
-      <TableContainer
-        component={Paper}
-        sx={{
-          marginTop: 2,
-          flexGrow: 1,
-          background: 'none',
-          border: 'none',
-        }}
-      >
-        <Table size="small" stickyHeader>
-          <TableHead>
-            <TableRow>
-              {HEADERS.map((header) => (
-                <TableCell>
-                  <Typography sx={{ whiteSpace: 'nowrap', fontWeight: 'bold' }}>
-                    {header}
-                  </Typography>
-                </TableCell>
+        <TableContainer
+          component={Paper}
+          sx={{
+            marginTop: 2,
+            flexGrow: 1,
+            background: 'none',
+            border: 'none',
+          }}
+        >
+          <Table size="small" stickyHeader>
+            <TableHead>
+              <TableRow>
+                {HEADERS.map((header) => (
+                  <TableCell>
+                    <Typography sx={{ whiteSpace: 'nowrap', fontWeight: 'bold' }}>
+                      {header}
+                    </Typography>
+                  </TableCell>
+                ))}
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {filteredLogs.map((row) => (
+                <Row {...row} />
               ))}
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {filteredLogs.map((row) => (
-              <Row {...row} />
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
-    </Box>
+            </TableBody>
+          </Table>
+        </TableContainer>
+      </Box>
+    </>
   );
 }
 

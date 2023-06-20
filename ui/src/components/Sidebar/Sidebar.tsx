@@ -17,14 +17,16 @@ import {
 
 import * as React from 'react';
 
-type Anchor = 'left';
-// SideBar component
-export default function SideBar() {
+type SideBarProps = {
+  drawerOpen: boolean;
+  setDrawerOpen: Function;
+};
+
+export default function SideBar({ drawerOpen, setDrawerOpen }: SideBarProps) {
   const [container, setContainer] = React.useState([true, false]);
   const [type, setType] = React.useState([true, false]);
   const [hoursAgo, setHoursAgo] = React.useState('');
   const [upUntil, setUpUntil] = React.useState('');
-  const [toggle, setToggle] = React.useState({ left: false });
 
   /************ Code for time filters in the sidebar ************/
   // Function for setting hoursAgo state for time filter
@@ -49,22 +51,6 @@ export default function SideBar() {
   // Declaring variable to use for time menu
   const hours: JSX.Element[] = generateHours();
   /************ ************/
-
-  // Function for opening and closing the sidebar
-  const toggleDrawer =
-    (anchor: Anchor, open: boolean) =>
-    (event: React.KeyboardEvent | React.MouseEvent) => {
-      if (
-        event &&
-        event.type === 'keydown' &&
-        ((event as React.KeyboardEvent).key === 'Tab' ||
-          (event as React.KeyboardEvent).key === 'Shift')
-      ) {
-        return;
-      }
-
-      setToggle({ ...toggle, [anchor]: open });
-    };
 
   /******** Container filter code ************/
   // Function for checking all container boxes
@@ -99,96 +85,83 @@ export default function SideBar() {
   /********* **********/
 
   return (
-    <>
-      <Button sx={{ position: 'fixed' }} onClick={toggleDrawer('left', true)}>
-        Filters
-      </Button>
-      <Drawer
-        anchor="left"
-        open={toggle['left']}
-        onClose={toggleDrawer('left', false)}
-      >
-        <Box role="presentation" sx={{ width: '250px' }}>
-          <Typography variant="h6">Filters</Typography>
-          <Button onClick={toggleDrawer('left', false)}>Apply Filters</Button>
-          <Divider />
-          <List>
+    <Drawer anchor="left" open={drawerOpen} onClose={() => setDrawerOpen(false)}>
+      <Box role="presentation" sx={{ width: '250px' }}>
+        <Typography variant="h6">Filters</Typography>
+        {/* <Button onClick={setDrawerOpen(false)}>Apply Filters</Button> */}
+        <Divider />
+        <List>
+          <FormControlLabel
+            label="Type"
+            control={
+              <Checkbox
+                checked={type[0] && type[1]}
+                indeterminate={type[0] !== type[1]}
+                onChange={checkAllTypes}
+              />
+            }
+          />
+          <Box sx={{ display: 'flex', flexDirection: 'column', ml: 3 }}>
             <FormControlLabel
-              label="Type"
-              control={
-                <Checkbox
-                  checked={type[0] && type[1]}
-                  indeterminate={type[0] !== type[1]}
-                  onChange={checkAllTypes}
-                />
-              }
+              label="stdout"
+              control={<Checkbox checked={type[0]} onChange={checkStdout} />}
             />
-            <Box sx={{ display: 'flex', flexDirection: 'column', ml: 3 }}>
-              <FormControlLabel
-                label="stdout"
-                control={<Checkbox checked={type[0]} onChange={checkStdout} />}
-              />
-              <FormControlLabel
-                label="stderr"
-                control={<Checkbox checked={type[1]} onChange={checkStderr} />}
-              />
-            </Box>
-          </List>
-          <Divider />
-          <List>
             <FormControlLabel
-              label="Container"
-              control={
-                <Checkbox
-                  checked={container[0] && container[1]}
-                  indeterminate={container[0] !== container[1]}
-                  onChange={checkAllContainers}
-                />
-              }
+              label="stderr"
+              control={<Checkbox checked={type[1]} onChange={checkStderr} />}
             />
-            <Box sx={{ display: 'flex', flexDirection: 'column', ml: 3 }}>
-              <FormControlLabel
-                label="Container 1"
-                control={
-                  <Checkbox checked={container[0]} onChange={checkContainer1} />
-                }
+          </Box>
+        </List>
+        <Divider />
+        <List>
+          <FormControlLabel
+            label="Container"
+            control={
+              <Checkbox
+                checked={container[0] && container[1]}
+                indeterminate={container[0] !== container[1]}
+                onChange={checkAllContainers}
               />
-              <FormControlLabel
-                label="Container 2"
-                control={
-                  <Checkbox checked={container[1]} onChange={checkContainer2} />
-                }
-              />
-            </Box>
-          </List>
-          <Divider />
-          <Typography variant="subtitle1">Time Filter</Typography>
-          <FormControl fullWidth>
-            <InputLabel id="hoursago">Hours Ago</InputLabel>
-            <Select
-              labelId="hoursAgoLabel"
-              id="hoursAgoId"
-              value={hoursAgo}
-              label="HoursAgo"
-              onChange={hoursFrom}
-            >
-              {hours}
-            </Select>
-          </FormControl>
-          <FormControl fullWidth>
-            <InputLabel id="hoursto">Hours To</InputLabel>
-            <Select
-              labelId="hoursToLabel"
-              id="hoursToId"
-              value={upUntil}
-              label="HoursTo"
-              onChange={hoursTo}
-            >
-              {hours}
-            </Select>
-          </FormControl>
-        </Box>
-      </Drawer>
-    </>
+            }
+          />
+          <Box sx={{ display: 'flex', flexDirection: 'column', ml: 3 }}>
+            <FormControlLabel
+              label="Container 1"
+              control={<Checkbox checked={container[0]} onChange={checkContainer1} />}
+            />
+            <FormControlLabel
+              label="Container 2"
+              control={<Checkbox checked={container[1]} onChange={checkContainer2} />}
+            />
+          </Box>
+        </List>
+        <Divider />
+        <Typography variant="subtitle1">Time Filter</Typography>
+        <FormControl fullWidth>
+          <InputLabel id="hoursago">Hours Ago</InputLabel>
+          <Select
+            labelId="hoursAgoLabel"
+            id="hoursAgoId"
+            value={hoursAgo}
+            label="HoursAgo"
+            onChange={hoursFrom}
+          >
+            {hours}
+          </Select>
+        </FormControl>
+        <FormControl fullWidth>
+          <InputLabel id="hoursto">Hours To</InputLabel>
+          <Select
+            labelId="hoursToLabel"
+            id="hoursToId"
+            value={upUntil}
+            label="HoursTo"
+            onChange={hoursTo}
+          >
+            {hours}
+          </Select>
+        </FormControl>
+      </Box>
+    </Drawer>
   );
 }
