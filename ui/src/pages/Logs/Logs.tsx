@@ -1,10 +1,9 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Search, Clear, FilterList, KeyboardArrowUp, KeyboardArrowDown } from '@mui/icons-material';
 import {
   Box,
   Stack,
   Typography,
-  Chip,
   OutlinedInput,
   InputAdornment,
   IconButton,
@@ -20,30 +19,7 @@ import {
 } from '@mui/material';
 import ContainerIcon from '../../components/ContainerIcon/ContainerIcon';
 import SideBar from '../../components/Sidebar/Sidebar';
-
-interface DockerLog {
-  containerName: string;
-  containerId: string;
-  time: string;
-  stream: string;
-  log: string;
-}
-
-const createMockLogs = (n: number) => {
-  return Array(n)
-    .fill(null)
-    .map((_, i) => {
-      return {
-        containerName: 'container_name',
-        containerId: 'asdfasdf',
-        time: new Date(Date.now() + i * 1000).toISOString(),
-        stream: 'stdout',
-        log: 'this is really long content long content long content\n'.repeat(
-          Math.floor(Math.random() * 10)
-        ),
-      } as DockerLog;
-    });
-};
+import fetchAllContainerLogs, { DockerLog } from '../../actions/fetchAllContainerLogs';
 
 const HEADERS = ['', 'Timestamp', 'Container', 'Message'];
 
@@ -51,70 +27,87 @@ export default function Logs() {
   // Access the custom theme (provided by DockerMuiThemeProvider)
   const theme = useTheme();
 
-  const [logs, setLogs] = useState<DockerLog[]>(createMockLogs(100));
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [logs, setLogs] = useState<DockerLog[]>([]);
   const [filteredLogs, setFilteredLogs] = useState<DockerLog[]>(logs);
   const [searchText, setSearchText] = useState('');
 
-  return (
-    <Box sx={{ minHeight: 0, display: 'flex', flexDirection: 'column' }}>
-      <Stack direction="row" spacing={2}>
-        <OutlinedInput
-          placeholder="Search"
-          size="small"
-          sx={{ width: '50%' }}
-          startAdornment={
-            <InputAdornment position="start">
-              <Search fontSize="small" />
-            </InputAdornment>
-          }
-          endAdornment={
-            <InputAdornment position="end">
-              <Clear
-                fontSize="small"
-                // Use visibility instead of conditional rendering (`searchText && <InputAdornment>`)
-                // so that the width of the <OutlinedInput> does not change.
-                sx={{ cursor: 'pointer', visibility: searchText ? 'visible' : 'hidden' }}
-                onClick={() => setSearchText('')}
-              />
-            </InputAdornment>
-          }
-          value={searchText}
-          onChange={(e) => setSearchText(e.target.value)}
-        />
-        <IconButton>
-          <FilterList />
-        </IconButton>
-      </Stack>
+  useEffect(() => {
+    fetchAllContainerLogs().then((allLogs) => {
+      setLogs(allLogs);
+      setFilteredLogs(allLogs);
+    });
+  }, []);
 
-      <TableContainer
-        component={Paper}
-        sx={{
-          marginTop: 2,
-          flexGrow: 1,
-          background: 'none',
-          border: 'none',
-        }}
-      >
-        <Table size="small" stickyHeader>
-          <TableHead>
-            <TableRow>
-              {HEADERS.map((header) => (
-                <TableCell>
-                  <Typography sx={{ whiteSpace: 'nowrap', fontWeight: 'bold' }}>
-                    {header}
-                  </Typography>
-                </TableCell>
+  return (
+    <>
+      <SideBar drawerOpen={drawerOpen} setDrawerOpen={setDrawerOpen} />
+      <Box sx={{ minHeight: 0, display: 'flex', flexDirection: 'column' }}>
+        <Stack direction="row" spacing={2}>
+          <OutlinedInput
+            placeholder="Search"
+            size="small"
+            sx={{ width: '50%' }}
+            startAdornment={
+              <InputAdornment position="start">
+                <Search fontSize="small" />
+              </InputAdornment>
+            }
+            endAdornment={
+              <InputAdornment position="end">
+                <Clear
+                  fontSize="small"
+                  // Use visibility instead of conditional rendering (`searchText && <InputAdornment>`)
+                  // so that the width of the <OutlinedInput> does not change.
+                  sx={{ cursor: 'pointer', visibility: searchText ? 'visible' : 'hidden' }}
+                  onClick={() => setSearchText('')}
+                />
+              </InputAdornment>
+            }
+            value={searchText}
+            onChange={(e) => setSearchText(e.target.value)}
+          />
+          <IconButton
+            onClick={(e) => {
+              console.log('click');
+              e.stopPropagation();
+              setDrawerOpen(true);
+            }}
+          >
+            <FilterList />
+          </IconButton>
+        </Stack>
+
+        <TableContainer
+          component={Paper}
+          sx={{
+            marginTop: 2,
+            flexGrow: 1,
+            background: 'none',
+            border: 'none',
+          }}
+        >
+          <Table size="small" stickyHeader>
+            <TableHead>
+              <TableRow>
+                {HEADERS.map((header) => (
+                  <TableCell>
+                    <Typography sx={{ whiteSpace: 'nowrap', fontWeight: 'bold' }}>
+                      {header}
+                    </Typography>
+                  </TableCell>
+                ))}
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {filteredLogs.map((row) => (
+                <Row {...row} />
               ))}
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {filteredLogs.map((row) => (
-              <Row {...row} />
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
-    </Box>
+            </TableBody>
+          </Table>
+        </TableContainer>
+      </Box>
+    </>
   );
 }
 
