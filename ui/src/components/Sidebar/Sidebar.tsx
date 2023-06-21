@@ -19,11 +19,17 @@ import * as React from 'react';
 type SideBarProps = {
   drawerOpen: boolean;
   setDrawerOpen: Function;
+  type: boolean[];
+  setType: Function;
 };
 
-export default function SideBar({ drawerOpen, setDrawerOpen }: SideBarProps) {
+export default function SideBar({
+  drawerOpen,
+  setDrawerOpen,
+  type,
+  setType,
+}: SideBarProps) {
   const [container, setContainer] = React.useState([true, false]);
-  const [type, setType] = React.useState([true, false]);
   const [hoursAgo, setHoursAgo] = React.useState('');
   const [upUntil, setUpUntil] = React.useState('');
 
@@ -70,7 +76,11 @@ export default function SideBar({ drawerOpen, setDrawerOpen }: SideBarProps) {
   };
 
   return (
-    <Drawer anchor="right" open={drawerOpen} onClose={() => setDrawerOpen(false)}>
+    <Drawer
+      anchor="right"
+      open={drawerOpen}
+      onClose={() => setDrawerOpen(false)}
+    >
       <Box role="presentation" sx={{ width: '250px' }}>
         <Typography variant="h6">Filters</Typography>
         <Divider />
@@ -111,11 +121,15 @@ export default function SideBar({ drawerOpen, setDrawerOpen }: SideBarProps) {
           <Box sx={{ display: 'flex', flexDirection: 'column', ml: 3 }}>
             <FormControlLabel
               label="Container 1"
-              control={<Checkbox checked={container[0]} onChange={checkContainer1} />}
+              control={
+                <Checkbox checked={container[0]} onChange={checkContainer1} />
+              }
             />
             <FormControlLabel
               label="Container 2"
-              control={<Checkbox checked={container[1]} onChange={checkContainer2} />}
+              control={
+                <Checkbox checked={container[1]} onChange={checkContainer2} />
+              }
             />
           </Box>
         </List>
