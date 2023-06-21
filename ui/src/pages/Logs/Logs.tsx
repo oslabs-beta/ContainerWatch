@@ -1,10 +1,9 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Search, Clear, FilterList, KeyboardArrowUp, KeyboardArrowDown } from '@mui/icons-material';
 import {
   Box,
   Stack,
   Typography,
-  Chip,
   OutlinedInput,
   InputAdornment,
   IconButton,
@@ -20,30 +19,7 @@ import {
 } from '@mui/material';
 import ContainerIcon from '../../components/ContainerIcon/ContainerIcon';
 import SideBar from '../../components/Sidebar/Sidebar';
-
-interface DockerLog {
-  containerName: string;
-  containerId: string;
-  time: string;
-  stream: string;
-  log: string;
-}
-
-const createMockLogs = (n: number) => {
-  return Array(n)
-    .fill(null)
-    .map((_, i) => {
-      return {
-        containerName: 'container_name',
-        containerId: 'asdfasdf',
-        time: new Date(Date.now() + i * 1000).toISOString(),
-        stream: 'stdout',
-        log: 'this is really long content long content long content\n'.repeat(
-          Math.floor(Math.random() * 10)
-        ),
-      } as DockerLog;
-    });
-};
+import fetchAllContainerLogs, { DockerLog } from '../../actions/fetchAllContainerLogs';
 
 const HEADERS = ['', 'Timestamp', 'Container', 'Message'];
 
@@ -52,9 +28,16 @@ export default function Logs() {
   const theme = useTheme();
 
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const [logs, setLogs] = useState<DockerLog[]>(createMockLogs(100));
+  const [logs, setLogs] = useState<DockerLog[]>([]);
   const [filteredLogs, setFilteredLogs] = useState<DockerLog[]>(logs);
   const [searchText, setSearchText] = useState('');
+
+  useEffect(() => {
+    fetchAllContainerLogs().then((allLogs) => {
+      setLogs(allLogs);
+      setFilteredLogs(allLogs);
+    });
+  }, []);
 
   return (
     <>
