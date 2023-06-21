@@ -22,7 +22,11 @@ const useDockerDesktopClient = () => {
 
 const ddClient = useDockerDesktopClient();
 
-export default async function fetchAllContainerLogs() {
+export default async function fetchAllContainerLogs(
+  stdout?: 'stdout',
+  stderr?: 'stderr',
+  off?: 'off'
+) {
   try {
     // Get an array of all (running and stopped) containers
     const allContainers = (await ddClient.docker.listContainers({
@@ -51,8 +55,16 @@ export default async function fetchAllContainerLogs() {
               container.Id
             );
 
-            // Resolve with the array of all logs
-            resolve([...stderrLogs, ...stdoutLogs]);
+            //Resolve with the array of all logs
+            if (stderr) {
+              resolve([...stderrLogs]);
+            } else if (stdout) {
+              resolve([...stdoutLogs]);
+            } else if (off) {
+              resolve([]);
+            } else {
+              resolve([...stderrLogs, ...stdoutLogs]);
+            }
           })
           .catch((err) => reject(err));
       });

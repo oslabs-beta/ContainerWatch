@@ -1,5 +1,11 @@
 import { useEffect, useState } from 'react';
-import { Search, Clear, FilterList, KeyboardArrowUp, KeyboardArrowDown } from '@mui/icons-material';
+import {
+  Search,
+  Clear,
+  FilterList,
+  KeyboardArrowUp,
+  KeyboardArrowDown,
+} from '@mui/icons-material';
 import {
   Box,
   Stack,
@@ -19,14 +25,16 @@ import {
 } from '@mui/material';
 import ContainerIcon from '../../components/ContainerIcon/ContainerIcon';
 import SideBar from '../../components/Sidebar/Sidebar';
-import fetchAllContainerLogs, { DockerLog } from '../../actions/fetchAllContainerLogs';
+import fetchAllContainerLogs, {
+  DockerLog,
+} from '../../actions/fetchAllContainerLogs';
 
 const HEADERS = ['', 'Timestamp', 'Container', 'Message'];
 
 export default function Logs() {
   // Access the custom theme (provided by DockerMuiThemeProvider)
   const theme = useTheme();
-
+  const [type, setType] = useState([true, true]);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [logs, setLogs] = useState<DockerLog[]>([]);
   const [filteredLogs, setFilteredLogs] = useState<DockerLog[]>(logs);
@@ -39,9 +47,40 @@ export default function Logs() {
     });
   }, []);
 
+  useEffect(() => {
+    if (JSON.stringify(type) === JSON.stringify([true, false])) {
+      fetchAllContainerLogs('stdout').then((allLogs) => {
+        setLogs(allLogs);
+        setFilteredLogs(allLogs);
+        console.log('only stdout');
+      });
+    } else if (JSON.stringify(type) === JSON.stringify([false, true])) {
+      fetchAllContainerLogs(undefined, 'stderr').then((allLogs) => {
+        setLogs(allLogs);
+        setFilteredLogs(allLogs);
+        console.log('only stout');
+      });
+    } else if (JSON.stringify(type) === JSON.stringify([false, false])) {
+      fetchAllContainerLogs(undefined, undefined, 'off').then((allLogs) => {
+        setLogs(allLogs);
+        setFilteredLogs(allLogs);
+      });
+    } else {
+      fetchAllContainerLogs().then((allLogs) => {
+        setLogs(allLogs);
+        setFilteredLogs(allLogs);
+      });
+    }
+  }, type);
+
   return (
     <>
-      <SideBar drawerOpen={drawerOpen} setDrawerOpen={setDrawerOpen} />
+      <SideBar
+        drawerOpen={drawerOpen}
+        setDrawerOpen={setDrawerOpen}
+        type={type}
+        setType={setType}
+      />
       <Box sx={{ minHeight: 0, display: 'flex', flexDirection: 'column' }}>
         <Stack direction="row" spacing={2}>
           <OutlinedInput
@@ -59,7 +98,10 @@ export default function Logs() {
                   fontSize="small"
                   // Use visibility instead of conditional rendering (`searchText && <InputAdornment>`)
                   // so that the width of the <OutlinedInput> does not change.
-                  sx={{ cursor: 'pointer', visibility: searchText ? 'visible' : 'hidden' }}
+                  sx={{
+                    cursor: 'pointer',
+                    visibility: searchText ? 'visible' : 'hidden',
+                  }}
                   onClick={() => setSearchText('')}
                 />
               </InputAdornment>
@@ -92,7 +134,9 @@ export default function Logs() {
               <TableRow>
                 {HEADERS.map((header) => (
                   <TableCell>
-                    <Typography sx={{ whiteSpace: 'nowrap', fontWeight: 'bold' }}>
+                    <Typography
+                      sx={{ whiteSpace: 'nowrap', fontWeight: 'bold' }}
+                    >
                       {header}
                     </Typography>
                   </TableCell>
@@ -116,9 +160,16 @@ function Row({ containerName, containerId, time, stream, log }: DockerLog) {
 
   return (
     <>
-      <TableRow hover sx={{ '& td': { border: 'none', paddingTop: 0, paddingBottom: 0 } }}>
+      <TableRow
+        hover
+        sx={{ '& td': { border: 'none', paddingTop: 0, paddingBottom: 0 } }}
+      >
         <TableCell sx={{ p: 0 }}>
-          <IconButton size="small" sx={{ background: 'none' }} onClick={() => setOpen(!open)}>
+          <IconButton
+            size="small"
+            sx={{ background: 'none' }}
+            onClick={() => setOpen(!open)}
+          >
             {open ? <KeyboardArrowUp /> : <KeyboardArrowDown />}
           </IconButton>
         </TableCell>
@@ -126,7 +177,14 @@ function Row({ containerName, containerId, time, stream, log }: DockerLog) {
           <Typography sx={{ whiteSpace: 'nowrap' }}>{time}</Typography>
         </TableCell>
         <TableCell>
-          <Box sx={{ height: '100%', display: 'flex', alignItems: 'center', gap: 1 }}>
+          <Box
+            sx={{
+              height: '100%',
+              display: 'flex',
+              alignItems: 'center',
+              gap: 1,
+            }}
+          >
             {/* TODO: access the custom theme colors instead of hardcoding the color */}
             <ContainerIcon htmlColor="#228375" />
             <Typography>{containerName}</Typography>
@@ -155,7 +213,10 @@ function Row({ containerName, containerId, time, stream, log }: DockerLog) {
       </TableRow>
       <TableRow>
         <TableCell sx={{ p: 0 }} />
-        <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={HEADERS.length - 1}>
+        <TableCell
+          style={{ paddingBottom: 0, paddingTop: 0 }}
+          colSpan={HEADERS.length - 1}
+        >
           <Collapse in={open} timeout="auto" unmountOnExit>
             <Box
               sx={{
