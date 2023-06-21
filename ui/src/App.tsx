@@ -10,7 +10,7 @@ export default function App() {
     <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
       <NavBar />
       <Routes>
-        <Route path="/" element={<Logs />} />
+        <Route path="/" element={<Stats />} />
         <Route path="/logs" element={<Logs />} />
         <Route path="/settings" element={<Settings />} />
         <Route path="*" element={<div>Page not found</div>} />
