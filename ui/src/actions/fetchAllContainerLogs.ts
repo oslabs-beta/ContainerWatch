@@ -1,34 +1,10 @@
-import { createDockerDesktopClient } from '@docker/extension-api-client';
+import { DDClient, DockerContainer, DockerLog } from '../types';
 
-export interface DockerLog {
-  containerName: string;
-  containerId: string;
-  time: string;
-  stream: 'stdout' | 'stderr';
-  log: string;
-}
-
-type DockerContainer = {
-  Id: string;
-  Names: string[];
-  State: string;
-};
-
-// Obtain Docker Desktop client
-const client = createDockerDesktopClient();
-const useDockerDesktopClient = () => {
-  return client;
-};
-
-const ddClient = useDockerDesktopClient();
-
-export default async function fetchAllContainerLogs() {
+export default async function fetchAllContainerLogs(
+  ddClient: DDClient,
+  allContainers: DockerContainer[]
+) {
   try {
-    // Get an array of all (running and stopped) containers
-    const allContainers = (await ddClient.docker.listContainers({
-      all: true,
-    })) as DockerContainer[];
-
     // Create an array of Promises (to get the logs of a container)
     const logsPromises = allContainers.map((container) => {
       return new Promise<DockerLog[]>((resolve, reject) => {
