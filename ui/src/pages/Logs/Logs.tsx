@@ -44,8 +44,6 @@ export default function Logs() {
   const [filteredLogs, setFilteredLogs] = useState<DockerLog[]>(logs);
   const [searchText, setSearchText] = useState('');
 
-  console.log(containers);
-
   useEffect(() => {
     (async () => {
       try {
