@@ -22,7 +22,7 @@ import ContainerIcon from '../../components/ContainerIcon/ContainerIcon';
 import SideBar from '../../components/Sidebar/Sidebar';
 import fetchAllContainers from '../../actions/fetchAllContainers';
 import fetchAllContainerLogs from '../../actions/fetchAllContainerLogs';
-import { DockerLog, DockerContainer } from '../../types';
+import { DockerLog, DockerContainer, LogFilters } from '../../types';
 
 const HEADERS = ['', 'Timestamp', 'Container', 'Message'];
 
@@ -44,6 +44,12 @@ export default function Logs() {
   const [filteredLogs, setFilteredLogs] = useState<DockerLog[]>(logs);
   const [searchText, setSearchText] = useState('');
 
+  const [filters, setFilters] = useState<LogFilters>({
+    stdout: true,
+    stderr: true,
+    allowedContainers: new Set(),
+  });
+
   useEffect(() => {
     (async () => {
       try {
@@ -52,6 +58,7 @@ export default function Logs() {
         setContainers(allContainers);
         setLogs(allContainerLogs);
         setFilteredLogs(allContainerLogs);
+        setFilters({ ...filters, allowedContainers: new Set(allContainers.map(({ Id }) => Id)) });
       } catch (err) {
         console.error(err);
       }
@@ -60,7 +67,13 @@ export default function Logs() {
 
   return (
     <>
-      <SideBar drawerOpen={drawerOpen} setDrawerOpen={setDrawerOpen} containers={containers} />
+      <SideBar
+        drawerOpen={drawerOpen}
+        setDrawerOpen={setDrawerOpen}
+        containers={containers}
+        filters={filters}
+        setFilters={setFilters}
+      />
       <Box sx={{ minHeight: 0, display: 'flex', flexDirection: 'column' }}>
         <Stack direction="row" spacing={2}>
           <OutlinedInput
