@@ -13,19 +13,25 @@ import {
   Select,
   SelectChangeEvent,
 } from '@mui/material';
-import { DockerContainer } from '../../types';
+import { DockerContainer, LogFilters } from '../../types';
 
 import * as React from 'react';
 
 type SideBarProps = {
   containers: DockerContainer[];
+  filters: LogFilters;
+  setFilters: React.Dispatch<React.SetStateAction<LogFilters>>;
   drawerOpen: boolean;
   setDrawerOpen: Function;
 };
 
-export default function SideBar({ containers, drawerOpen, setDrawerOpen }: SideBarProps) {
-  const [container, setContainer] = React.useState([true, false]);
-  const [type, setType] = React.useState([true, false]);
+export default function SideBar({
+  containers,
+  filters,
+  setFilters,
+  drawerOpen,
+  setDrawerOpen,
+}: SideBarProps) {
   const [hoursAgo, setHoursAgo] = React.useState('');
   const [upUntil, setUpUntil] = React.useState('');
 
@@ -48,23 +54,24 @@ export default function SideBar({ containers, drawerOpen, setDrawerOpen }: SideB
   const hours: JSX.Element[] = generateHours();
 
   const checkAllContainers = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setContainer([event.target.checked, event.target.checked]);
+    const allContainerIds = containers.map(({ Id }) => Id);
+    setFilters({
+      ...filters,
+      allowedContainers: event.target.checked ? new Set(allContainerIds) : new Set(),
+    });
   };
 
-  const checkContainer = (id: string) => {
-    console.log('You checked the container with ID ', id);
-  };
+  const checkContainer = (event: React.ChangeEvent<HTMLInputElement>, id: string) => {
+    // Create a copy
+    const newAllowedContainers = new Set(filters.allowedContainers);
 
-  const checkAllTypes = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setType([event.target.checked, event.target.checked]);
-  };
+    if (event.target.checked) newAllowedContainers.add(id);
+    else newAllowedContainers.delete(id);
 
-  const checkStdout = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setType([event.target.checked, type[1]]);
-  };
-
-  const checkStderr = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setType([type[0], event.target.checked]);
+    setFilters({
+      ...filters,
+      allowedContainers: newAllowedContainers,
+    });
   };
 
   return (
@@ -74,34 +81,63 @@ export default function SideBar({ containers, drawerOpen, setDrawerOpen }: SideB
         <Divider />
         <List>
           <FormControlLabel
-            label="Type"
+            label="Log type"
             control={
               <Checkbox
-                checked={type[0] && type[1]}
-                indeterminate={type[0] !== type[1]}
-                onChange={checkAllTypes}
+                checked={filters.stdout && filters.stderr}
+                indeterminate={filters.stdout !== filters.stderr}
+                onChange={(event) => {
+                  setFilters({
+                    ...filters,
+                    stderr: event.target.checked,
+                    stdout: event.target.checked,
+                  });
+                }}
               />
             }
           />
           <Box sx={{ display: 'flex', flexDirection: 'column', ml: 3 }}>
             <FormControlLabel
               label="stdout"
-              control={<Checkbox checked={type[0]} onChange={checkStdout} />}
+              control={
+                <Checkbox
+                  checked={filters.stdout}
+                  onChange={(event) =>
+                    setFilters({
+                      ...filters,
+                      stdout: event.target.checked,
+                    })
+                  }
+                />
+              }
             />
             <FormControlLabel
               label="stderr"
-              control={<Checkbox checked={type[1]} onChange={checkStderr} />}
+              control={
+                <Checkbox
+                  checked={filters.stderr}
+                  onChange={(event) =>
+                    setFilters({
+                      ...filters,
+                      stderr: event.target.checked,
+                    })
+                  }
+                />
+              }
             />
           </Box>
         </List>
         <Divider />
         <List>
           <FormControlLabel
-            label="Container"
+            label="Containers"
             control={
               <Checkbox
-                checked={container[0] && container[1]}
-                indeterminate={container[0] !== container[1]}
+                checked={filters.allowedContainers.size === containers.length}
+                indeterminate={
+                  filters.allowedContainers.size !== 0 &&
+                  filters.allowedContainers.size !== containers.length
+                }
                 onChange={checkAllContainers}
               />
             }
@@ -110,7 +146,12 @@ export default function SideBar({ containers, drawerOpen, setDrawerOpen }: SideB
             {containers.map(({ Names, Id }) => (
               <FormControlLabel
                 label={Names}
-                control={<Checkbox checked={container[0]} onChange={() => checkContainer(Id)} />}
+                control={
+                  <Checkbox
+                    checked={filters.allowedContainers.has(Id)}
+                    onChange={(event) => checkContainer(event, Id)}
+                  />
+                }
               />
             ))}
           </Box>
