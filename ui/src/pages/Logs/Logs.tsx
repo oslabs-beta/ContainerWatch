@@ -60,7 +60,7 @@ export default function Logs() {
 
   return (
     <>
-      <SideBar drawerOpen={drawerOpen} setDrawerOpen={setDrawerOpen} />
+      <SideBar drawerOpen={drawerOpen} setDrawerOpen={setDrawerOpen} containers={containers} />
       <Box sx={{ minHeight: 0, display: 'flex', flexDirection: 'column' }}>
         <Stack direction="row" spacing={2}>
           <OutlinedInput
