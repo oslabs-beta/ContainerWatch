@@ -13,15 +13,17 @@ import {
   Select,
   SelectChangeEvent,
 } from '@mui/material';
+import { DockerContainer } from '../../types';
 
 import * as React from 'react';
 
 type SideBarProps = {
+  containers: DockerContainer[];
   drawerOpen: boolean;
   setDrawerOpen: Function;
 };
 
-export default function SideBar({ drawerOpen, setDrawerOpen }: SideBarProps) {
+export default function SideBar({ containers, drawerOpen, setDrawerOpen }: SideBarProps) {
   const [container, setContainer] = React.useState([true, false]);
   const [type, setType] = React.useState([true, false]);
   const [hoursAgo, setHoursAgo] = React.useState('');
@@ -49,12 +51,8 @@ export default function SideBar({ drawerOpen, setDrawerOpen }: SideBarProps) {
     setContainer([event.target.checked, event.target.checked]);
   };
 
-  const checkContainer1 = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setContainer([event.target.checked, container[1]]);
-  };
-
-  const checkContainer2 = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setContainer([container[0], event.target.checked]);
+  const checkContainer = (id: string) => {
+    console.log('You checked the container with ID ', id);
   };
 
   const checkAllTypes = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -109,14 +107,12 @@ export default function SideBar({ drawerOpen, setDrawerOpen }: SideBarProps) {
             }
           />
           <Box sx={{ display: 'flex', flexDirection: 'column', ml: 3 }}>
-            <FormControlLabel
-              label="Container 1"
-              control={<Checkbox checked={container[0]} onChange={checkContainer1} />}
-            />
-            <FormControlLabel
-              label="Container 2"
-              control={<Checkbox checked={container[1]} onChange={checkContainer2} />}
-            />
+            {containers.map(({ Names, Id }) => (
+              <FormControlLabel
+                label={Names}
+                control={<Checkbox checked={container[0]} onChange={() => checkContainer(Id)} />}
+              />
+            ))}
           </Box>
         </List>
         <Divider />
