@@ -16,3 +16,10 @@ export type DockerContainer = {
   Names: string[];
   State: string;
 };
+
+export type LogFilters = {
+  stdout: boolean;
+  stderr: boolean;
+  allowedContainers: Set<string>;
+}
+
