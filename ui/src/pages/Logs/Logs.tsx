@@ -41,7 +41,6 @@ export default function Logs() {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [containers, setContainers] = useState<DockerContainer[]>([]);
   const [logs, setLogs] = useState<DockerLog[]>([]);
-  const [filteredLogs, setFilteredLogs] = useState<DockerLog[]>(logs);
   const [searchText, setSearchText] = useState('');
 
   const [filters, setFilters] = useState<LogFilters>({
@@ -57,13 +56,20 @@ export default function Logs() {
         const allContainerLogs = await fetchAllContainerLogs(ddClient, allContainers);
         setContainers(allContainers);
         setLogs(allContainerLogs);
-        setFilteredLogs(allContainerLogs);
         setFilters({ ...filters, allowedContainers: new Set(allContainers.map(({ Id }) => Id)) });
       } catch (err) {
         console.error(err);
       }
     })();
   }, []);
+
+  // Apply the filters
+  const filteredLogs = logs.filter(({ containerName, containerId, time, stream, log }) => {
+    if (!filters.stdout && stream === 'stdout') return false; // Filter out stdout
+    if (!filters.stderr && stream === 'stderr') return false; // Filter out stderr
+    if (!filters.allowedContainers.has(containerId)) return false; // Filter out containers
+    return true;
+  });
 
   return (
     <>
