@@ -1,5 +1,8 @@
-FROM prom/prometheus
+#prometheus.yml - file
+#this must be in the same directory as of docker-compose.yml file
 
-COPY prometheus.yml /etc/prometheus/prometheus.yml
-
-CMD [ "--config.file=/etc/prometheus/prometheus.yml" ]
+scrape_configs:
+  - job_name: cadvisor
+    scrape_interval: 5s
+    static_configs:
+      - targets: ['cadvisor:8080']
