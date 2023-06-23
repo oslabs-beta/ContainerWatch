@@ -1,5 +1,4 @@
-#prometheus.yml - file
-#this must be in the same directory as of docker-compose.yml file
+#prometheus.yml - config file for Prometheus
 
 scrape_configs:
   - job_name: cadvisor
