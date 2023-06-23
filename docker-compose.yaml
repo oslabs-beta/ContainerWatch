@@ -5,3 +5,19 @@ services:
     image: ${DESKTOP_PLUGIN_IMAGE}
     volumes:
       - /var/run/docker.sock.raw:/var/run/docker.sock
+
+  prometheus:
+    # Pulling a custom image that has been pushed to the hub that has been configured to scrape
+    # from cadvisor so there is no need to create a bind mount that configures the prometheus.yml file
+    image: dockerpulse/prometheus:latest
+    container_name: prometheus
+    ports:
+      - 9090:9090
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+    volumes:
+      # Creating a named volume for the prometheus data
+      - prometheusdata:/prometheus
+
+volumes:
+  prometheusdata:
