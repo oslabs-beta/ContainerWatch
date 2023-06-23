@@ -5,3 +5,15 @@ services:
     image: ${DESKTOP_PLUGIN_IMAGE}
     volumes:
       - /var/run/docker.sock.raw:/var/run/docker.sock
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    ports:
+      - 9090:9090
+    volumes:
+      # Creating a named volume for the prometheus data
+      - prometheusdata:/prometheus
+
+volumes:
+  prometheusdata:
