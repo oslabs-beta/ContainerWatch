@@ -42,7 +42,7 @@ LABEL org.opencontainers.image.title="DockerPulse" \
 
 COPY docker-compose.yaml .
 COPY metadata.json .
-COPY docker.svg .
+COPY dockerpulse.svg .
 COPY --from=backend-builder /backend backend
 COPY --from=client-builder /ui/build ui
 
