@@ -174,7 +174,7 @@ function Row({ containerName, containerId, time, stream, log }: DockerLog) {
             }}
           >
             {/* TODO: access the custom theme colors instead of hardcoding the color */}
-            <ContainerIcon htmlColor="#228375" height="18" width="18" />
+            <ContainerIcon htmlColor="#228375" />
             <Typography
               sx={{
                 whiteSpace: 'nowrap',
