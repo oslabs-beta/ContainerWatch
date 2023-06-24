@@ -46,6 +46,8 @@ COPY dockerpulse.svg .
 COPY --from=backend-builder /backend backend
 COPY --from=client-builder /ui/build ui
 
+# Copy grafana configurations
+COPY imageConfigs/grafana grafana 
 
 # ============ Start the Extension ============ 
 WORKDIR /backend
