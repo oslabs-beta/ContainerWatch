@@ -42,7 +42,6 @@ export default function Logs() {
   const [containers, setContainers] = useState<DockerContainer[]>([]);
   const [logs, setLogs] = useState<DockerLog[]>([]);
   const [searchText, setSearchText] = useState('');
-  const [refresh, setRefresh] = useState(false);
 
   const [filters, setFilters] = useState<LogFilters>({
     stdout: true,
@@ -51,18 +50,22 @@ export default function Logs() {
   });
 
   useEffect(() => {
-    (async () => {
-      try {
-        const allContainers = await fetchAllContainers(ddClient);
-        const allContainerLogs = await fetchAllContainerLogs(ddClient, allContainers);
-        setContainers(allContainers);
-        setLogs(allContainerLogs);
-        setFilters({ ...filters, allowedContainers: new Set(allContainers.map(({ Id }) => Id)) });
-      } catch (err) {
-        console.error(err);
-      }
-    })();
-  }, [refresh]);
+    refreshAll();
+  }, []);
+
+  // Refreshes logs page fetching all new containers
+  const refreshAll = async() => {
+    try {
+      const allContainers = await fetchAllContainers(ddClient);
+      const allContainerLogs = await fetchAllContainerLogs(ddClient, allContainers);
+      setContainers(allContainers);
+      setLogs(allContainerLogs);
+      setFilters({ ...filters, allowedContainers: new Set(allContainers.map(({ Id }) => Id)) });
+    } catch (err) {
+      console.error(err);
+    }
+  };
+  
 
   // Apply the filters
   const filteredLogs = logs.filter(({ containerName, containerId, time, stream, log }) => {
@@ -117,7 +120,7 @@ export default function Logs() {
           </IconButton>
           <IconButton onClick={(e) => { 
             console.log('refreshed'); 
-            setRefresh(!refresh);
+            refreshAll();
           }}
           >
             <Refresh />
