@@ -28,19 +28,20 @@ services:
       - 8080:8080
     volumes:
       - /:/rootfs:ro
+      # Docker engine runs on the docker.sock unix socket, it seems we must explicitly bind mount (/var/run/ -> var/run/docker.sock)
+      # https://github.com/google/cadvisor/issues/1565#issuecomment-718812180
       - /var/run/docker.sock:/var/run/docker.sock:rw
       - /sys:/sys:ro
       - /var/lib/docker/:/var/lib/docker:ro
 
   grafana:
-    image: grafana/grafana:latest
+    image: dockerpulse/grafana:latest
     container_name: grafana
     ports:
       - 2999:3000
     volumes:
       #temporary bind-mount for MVP
       - ../../../../../../../Desktop/OSP/DockerPulse/imageConfigs/grafana/datasources:/etc/grafana/provisioning/datasources
-      - ../../../../../../../Desktop/OSP/DockerPulse/imageConfigs/grafana/grafana.ini:/etc/grafana/grafana.ini
     environment:
       GF_PATHS_CONFIG: /etc/grafana/grafana.ini
     depends_on:
