@@ -1,5 +1,5 @@
 {
-  "icon": "docker.svg",
+  "icon": "dockerpulse.svg",
   "vm": {
     "composefile": "docker-compose.yaml",
     "exposes": {

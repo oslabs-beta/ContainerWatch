@@ -45,8 +45,8 @@ export default function Stats() {
           </TableRow>
         </TableHead>
         <TableBody>
-          {stats.map((row) => (
-            <Row {...row} />
+          {stats.map((row: DockerStats, i: number) => (
+            <Row panelID={i + 1} rowStats={row} />
           ))}
         </TableBody>
       </Table>
@@ -58,8 +58,10 @@ export default function Stats() {
   );
 }
 
-function Row({ Name, ID, CPUPerc, MemUsage, MemPerc, NetIO, BlockIO, PIDs }: DockerStats) {
-  const [open, setOpen] = useState<boolean>(true);
+function Row(props: any) {
+  const [open, setOpen] = useState<boolean>(false);
+  const { rowStats, panelID } = props;
+  const { Name, ID, CPUPerc, MemUsage, MemPerc, NetIO, BlockIO, PIDs }: DockerStats = rowStats;
 
   return (
     <>
@@ -105,20 +107,13 @@ function Row({ Name, ID, CPUPerc, MemUsage, MemPerc, NetIO, BlockIO, PIDs }: Doc
       <TableRow>
         <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={HEADERS.length}>
           <Collapse in={open} timeout="auto" unmountOnExit>
-            {/*********** This Box is a placeholder for a Graph component ************/}
-            <Box
-              sx={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                height: 200,
-                border: 'lightgray',
-                backgroundColor: 'gray',
-                m: 2,
-              }}
-            >
-              <Typography>Graph</Typography>
-            </Box>
+            {/*********** The source in this iframe DOES NOT WORK. for MVP purposes ONLY ************/}
+            <iframe
+              src={`http://localhost:2999/d-solo/e3e5f4c2-896d-4cb0-9c51-550397faddd8/test-copy?orgId=1&refresh=15s&panelId=${panelID}`}
+              width="100%"
+              height="200"
+              frameBorder="0"
+            />
             {/***********************************************************************/}
           </Collapse>
         </TableCell>

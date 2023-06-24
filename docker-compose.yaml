@@ -11,27 +11,26 @@ services:
     image: ${DESKTOP_PLUGIN_IMAGE}
     volumes:
       - /var/run/docker.sock.raw:/var/run/docker.sock
+      # Create a named volume which is mapped to the /grafana folder in the extension container
+      # (The /grafana folder is added to the extension container in the Dockerfile)
+      - shared-grafana-volume:/grafana
+
   prometheus:
-    image: prom/prometheus:latest
+    # Pulling a custom image that has been pushed to the hub that has been configured to scrape
+    # from cadvisor so there is no need to create a bind mount that configures the prometheus.yml file
+    image: dockerpulse/prometheus:latest
     container_name: prometheus
     ports:
       - 9090:9090
     command:
       - --config.file=/etc/prometheus/prometheus.yml
     volumes:
-      # - ../../DockerPulse/prometheus.yml:/etc/prometheus/prometheus.yml:ro
-      - ../../../../../../../Desktop/OSP/DockerPulse/prometheus.yml:/etc/prometheus/prometheus.yml:ro
-    # - /var/lib/prometheus.yml:/etc/prometheus/prometheus.yml:ro
-    # - /var/run/prometheus.yml:/etc/prometheus/prometheus.yml:ro
-    # /Users/junlee/Desktop/OSP/DockerPulse/prometheus.yml
-    # /Users/junlee/Desktop/OSP/DockerPulse/prometheus.yml
+      # Creating a named volume for the prometheus data
+      - prometheusdata:/prometheus
     depends_on:
       - cadvisor
 
   cadvisor:
-    # image: gcr.io/google-containers/cadvisor:latest
-    # image: gcr.io/cadvisor/cadvisor
-    # image: google/cadvisor:latest
     image: gcr.io/cadvisor/cadvisor:v0.46.0
     container_name: cadvisor
     ports:
@@ -39,63 +38,22 @@ services:
     volumes:
       - /:/rootfs:ro
       - /var/run/docker.sock:/var/run/docker.sock:rw
-      # - /var/run/:/var/run/:rw  // what the guy had
       - /sys:/sys:ro
       - /var/lib/docker/:/var/lib/docker:ro
-  #   depends_on:
-  #     - redis
-  # redis:
-  #   image: redis:latest
-  #   container_name: redis
-  #   ports:
-  #     - 6379:6379
 
-  # Prometheus:
-  #   image: prom/prometheus:latest
-  #   container_name: prometheus
-  #   ports:
-  #     - '9090:9090'
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    ports:
+      - 2999:3000
+    volumes:
+      # Share the named volume with the grafana container by mapping it to /etc/grafana
+      - shared-grafana-volume:/etc/grafana
+    environment:
+      GF_PATHS_CONFIG: /etc/grafana/grafana.ini
+    depends_on:
+      - prometheus
 
-  # Node-exporter:
-  #   image: prom/node-exporter:latest
-  #   container_name: node-exporter
-
-  # Ca-advisor:
-  #   image: gcr.io/cadvisor/cadvisor:latest
-  #   container_name: cadvisor
-
-  #   node-exporter:
-  #     image: prom/node-exporter:latest
-  #     container_name: node-exporter
-  #     restart: unless-stopped
-  #     volumes:
-  #     - /proc:/host/proc:ro
-  #     - /sys:/host/sys:ro
-  #     - /:/rootfs:ro
-  #     command:
-  #     -'- path.procfs=/host/proc'
-  #     -'- path.rootfs=/rootfs'
-  #     -'— path.sysfs=/host/sys'
-  #     -'-collector.filesystem.mount-points-    exclude=^/(sys|proc|dev|host|etc)($$|/)'
-  #     expose:
-  #     - 9100
-  #     networks:
-  #     - monitoring
-
-  # dockerpulse:
-  #   image: leejun07/dockerpulse:1.0
-  #   container_name: dockerpulse
-  #   # extra_hosts:
-  #   #   - 'unixsocket:/run/guest-services/backend.sock'
-  #   volumes:
-  #     - /run/guest-services/backend.sock:/run/guest-services/backend.sock
-  #   command: npm start
-# version: '3'
-# services:
-#   my-service:
-#     build: .
-#     extra_hosts:
-#       - "unixsocket:/path/to/unix/socket"
-#     volumes:
-#       - /path/to/unix/socket:/path/to/unix/socket
-# ... other service configurations
+volumes:
+  prometheusdata:
+  shared-grafana-volume:

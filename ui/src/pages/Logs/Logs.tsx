@@ -1,8 +1,10 @@
-// This file contains code for loading the Process Logs page
+import { useEffect, useState } from 'react';
+import { createDockerDesktopClient } from '@docker/extension-api-client';
+import { Search, Clear, FilterList, KeyboardArrowUp, KeyboardArrowDown } from '@mui/icons-material';
 import {
   Box,
-  FormControl,
-  InputLabel,
+  Stack,
+  Typography,
   OutlinedInput,
   InputAdornment,
   IconButton,
@@ -13,145 +15,224 @@ import {
   TableContainer,
   TableHead,
   TableRow,
+  Collapse,
+  useTheme,
 } from '@mui/material';
-import SearchIcon from '@mui/icons-material/Search';
-import * as React from 'react';
-import { SideBar } from '../../components/Sidebar';
+import ContainerIcon from '../../components/ContainerIcon/ContainerIcon';
+import SideBar from '../../components/Sidebar/Sidebar';
+import fetchAllContainers from '../../actions/fetchAllContainers';
+import fetchAllContainerLogs from '../../actions/fetchAllContainerLogs';
+import { DockerLog, DockerContainer, LogFilters } from '../../types';
 
-// Define Column interface
-interface Column {
-  id: string;
-  label: string;
-  minWidth?: number;
-  align?: 'left'; // Feel free to change this to center instead
-}
+const HEADERS = ['', 'Timestamp', 'Container', 'Message'];
 
-// Defining columns array, readonly just means that it can't be altered after declaration
-const columns: readonly Column[] = [
-  { id: 'TimeStamp', label: 'TimeStamp', minWidth: 170 },
-  { id: 'Container', label: 'Container', minWidth: 100 },
-  {
-    id: 'Log Messages',
-    label: 'Log Messages',
-    minWidth: 170,
-    align: 'left',
-  },
-];
+// Obtain Docker Desktop client
+const client = createDockerDesktopClient();
+const useDockerDesktopClient = () => {
+  return client;
+};
 
-// Define LogData interface that gets returned when createData function is invoked
-interface LogData {
-  time: string;
-  container: string;
-  logMessages: string;
-  [key: string]: string;
-}
+export default function Logs() {
+  // Access the custom theme (provided by DockerMuiThemeProvider)
+  const theme = useTheme();
 
-// This function just returns a LogData object with time, container, and logMessages
-function createData(
-  time: string,
-  container: string,
-  logMessages: string
-): LogData {
-  return { time, container, logMessages };
-}
-// Array of mock data container names
-const words = [
-  'apple',
-  'banana',
-  'carrot',
-  'dog',
-  'elephant',
-  'flower',
-  'guitar',
-  'honey',
-  'island',
-  'jazz',
-  'kangaroo',
-  'lemon',
-  'monkey',
-  'noodle',
-  'orange',
-];
+  const ddClient = useDockerDesktopClient();
 
-// Function to generate mock data for now
-function getRandomWord() {
-  const randomIndex = Math.floor(Math.random() * words.length);
-  return words[randomIndex];
-}
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [containers, setContainers] = useState<DockerContainer[]>([]);
+  const [logs, setLogs] = useState<DockerLog[]>([]);
+  const [searchText, setSearchText] = useState('');
 
-const rows: LogData[] = [
-  createData('10:00 AM', getRandomWord(), 'this is a message'),
-  createData('11:30 AM', getRandomWord(), 'this is a message'),
-  createData('01:45 PM', getRandomWord(), 'this is a message'),
-  createData('02:15 PM', getRandomWord(), 'this is a message'),
-  createData('03:30 PM', getRandomWord(), 'this is a message'),
-  createData('05:00 PM', getRandomWord(), 'this is a message'),
-  createData('06:45 PM', getRandomWord(), 'this is a message'),
-  createData('08:15 PM', getRandomWord(), 'this is a message'),
-  createData('09:30 PM', getRandomWord(), 'this is a message'),
-  createData('10:45 PM', getRandomWord(), 'this is a message'),
-  createData('11:30 PM', getRandomWord(), 'this is a message'),
-  createData('01:15 AM', getRandomWord(), 'this is a message'),
-  createData('03:00 AM', getRandomWord(), 'this is a message'),
-  createData('04:45 AM', getRandomWord(), 'this is a message'),
-  createData('06:30 AM', getRandomWord(), 'this is a message'),
-];
+  const [filters, setFilters] = useState<LogFilters>({
+    stdout: true,
+    stderr: true,
+    allowedContainers: new Set(),
+  });
 
-//
-export const ProcessLogs: React.FC = () => {
+  useEffect(() => {
+    (async () => {
+      try {
+        const allContainers = await fetchAllContainers(ddClient);
+        const allContainerLogs = await fetchAllContainerLogs(ddClient, allContainers);
+        setContainers(allContainers);
+        setLogs(allContainerLogs);
+        setFilters({ ...filters, allowedContainers: new Set(allContainers.map(({ Id }) => Id)) });
+      } catch (err) {
+        console.error(err);
+      }
+    })();
+  }, []);
+
+  // Apply the filters
+  const filteredLogs = logs.filter(({ containerName, containerId, time, stream, log }) => {
+    if (!filters.stdout && stream === 'stdout') return false; // Filter out stdout
+    if (!filters.stderr && stream === 'stderr') return false; // Filter out stderr
+    if (!filters.allowedContainers.has(containerId)) return false; // Filter out containers
+    return true;
+  });
+
   return (
     <>
-      <Box sx={{ flexGrow: 1 }}>
-        <FormControl sx={{ m: 1, width: '25ch' }} variant="outlined">
-          <InputLabel>Search...</InputLabel>
+      <SideBar
+        drawerOpen={drawerOpen}
+        setDrawerOpen={setDrawerOpen}
+        containers={containers}
+        filters={filters}
+        setFilters={setFilters}
+      />
+      <Box sx={{ minHeight: 0, display: 'flex', flexDirection: 'column' }}>
+        <Stack direction="row" spacing={2}>
           <OutlinedInput
-            id="search-outline"
-            endAdornment={
-              <InputAdornment position="end">
-                <IconButton>{<SearchIcon />}</IconButton>
+            placeholder="Search"
+            size="small"
+            sx={{ width: '50%' }}
+            startAdornment={
+              <InputAdornment position="start">
+                <Search fontSize="small" />
               </InputAdornment>
             }
+            endAdornment={
+              <InputAdornment position="end">
+                <Clear
+                  fontSize="small"
+                  // Use visibility instead of conditional rendering (`searchText && <InputAdornment>`)
+                  // so that the width of the <OutlinedInput> does not change.
+                  sx={{ cursor: 'pointer', visibility: searchText ? 'visible' : 'hidden' }}
+                  onClick={() => setSearchText('')}
+                />
+              </InputAdornment>
+            }
+            value={searchText}
+            onChange={(e) => setSearchText(e.target.value)}
           />
-        </FormControl>
-        <SideBar />
-        <Paper sx={{ width: '100%', overflow: 'hidden' }}>
-          <TableContainer sx={{ maxHeight: '100%' }}>
-            <Table stickyHeader aria-label="sticky table">
-              <TableHead>
-                <TableRow>
-                  {columns.map((column) => (
-                    <TableCell
-                      key={column.id}
-                      align={column.align}
-                      style={{ minWidth: column.minWidth }}
-                    >
-                      {column.label}
-                    </TableCell>
-                  ))}
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {rows.map((row) => {
-                  return (
-                    <TableRow
-                      hover
-                      role="checkbox"
-                      tabIndex={-1}
-                      key={row.container}
-                    >
-                      <TableCell align="left">{row.time}</TableCell>
-                      <TableCell align="left">{row.container}</TableCell>
-                      <TableCell align="left">{row.logMessages}</TableCell>
-                    </TableRow>
-                  );
-                })}
-              </TableBody>
-            </Table>
-          </TableContainer>
-        </Paper>
+          <IconButton
+            onClick={(e) => {
+              console.log('click');
+              e.stopPropagation();
+              setDrawerOpen(true);
+            }}
+          >
+            <FilterList />
+          </IconButton>
+        </Stack>
+
+        <TableContainer
+          component={Paper}
+          sx={{
+            marginTop: 2,
+            flexGrow: 1,
+            background: 'none',
+            border: 'none',
+          }}
+        >
+          <Table size="small" stickyHeader>
+            <TableHead>
+              <TableRow>
+                {HEADERS.map((header) => (
+                  <TableCell>
+                    <Typography sx={{ whiteSpace: 'nowrap', fontWeight: 'bold' }}>
+                      {header}
+                    </Typography>
+                  </TableCell>
+                ))}
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {filteredLogs.map((row) => (
+                <Row {...row} />
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
       </Box>
     </>
   );
-};
+}
 
-export default ProcessLogs;
+function Row({ containerName, containerId, time, stream, log }: DockerLog) {
+  const [open, setOpen] = useState<boolean>(false);
+
+  return (
+    <>
+      <TableRow hover sx={{ '& td': { border: 'none', paddingTop: 0, paddingBottom: 0 } }}>
+        <TableCell sx={{ p: 0 }}>
+          <IconButton size="small" sx={{ background: 'none' }} onClick={() => setOpen(!open)}>
+            {open ? <KeyboardArrowUp /> : <KeyboardArrowDown />}
+          </IconButton>
+        </TableCell>
+        <TableCell>
+          <Typography sx={{ whiteSpace: 'nowrap' }}>{time.split('.')[0]}</Typography>
+        </TableCell>
+        <TableCell>
+          <Box
+            sx={{
+              height: '100%',
+              display: 'flex',
+              alignItems: 'center',
+              gap: 1,
+              maxWidth: '150px',
+            }}
+          >
+            {/* TODO: access the custom theme colors instead of hardcoding the color */}
+            <ContainerIcon htmlColor="#228375" />
+            <Typography
+              sx={{
+                whiteSpace: 'nowrap',
+                textOverflow: 'ellipsis',
+                overflow: 'hidden',
+                fontFamily: 'monospace',
+              }}
+            >
+              {containerName}
+            </Typography>
+          </Box>
+        </TableCell>
+        <TableCell
+          sx={{
+            // The combination of width: 100% and maxWidth: 0 makes the cell grow to fit
+            // the horizontal space. The table will not overflow in the x direction.
+            width: '100%',
+            maxWidth: 0,
+          }}
+        >
+          <Typography
+            sx={{
+              // Logs will be cut off with an ellipsis instead of wrapping or overflowing.
+              whiteSpace: 'nowrap',
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              fontFamily: 'monospace',
+            }}
+          >
+            {log}
+          </Typography>
+        </TableCell>
+      </TableRow>
+      <TableRow>
+        <TableCell sx={{ p: 0 }} />
+        <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={HEADERS.length - 1}>
+          <Collapse in={open} timeout="auto" unmountOnExit>
+            <Box
+              sx={{
+                display: 'flex',
+                border: 'lightgray',
+                backgroundColor: 'black',
+                borderRadius: '5px',
+                paddingTop: 0.5,
+                paddingBottom: 0.5,
+                paddingLeft: 1,
+                paddingRight: 1,
+                marginTop: 1,
+                marginBottom: 1,
+              }}
+            >
+              <Typography sx={{ fontFamily: 'monospace', whiteSpace: 'pre' }}>
+                {log || ' '}
+              </Typography>
+            </Box>
+          </Collapse>
+        </TableCell>
+      </TableRow>
+    </>
+  );
+}
