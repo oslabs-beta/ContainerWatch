@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import {
   List,
   Box,
@@ -15,8 +16,6 @@ import {
 } from '@mui/material';
 import { DockerContainer, LogFilters } from '../../types';
 
-import * as React from 'react';
-
 type SideBarProps = {
   containers: DockerContainer[];
   filters: LogFilters;
@@ -32,8 +31,8 @@ export default function SideBar({
   drawerOpen,
   setDrawerOpen,
 }: SideBarProps) {
-  const [hoursAgo, setHoursAgo] = React.useState('');
-  const [upUntil, setUpUntil] = React.useState('');
+  const [hoursAgo, setHoursAgo] = useState('');
+  const [upUntil, setUpUntil] = useState('');
 
   const hoursFrom = (e: SelectChangeEvent) => {
     setHoursAgo(e.target.value as string);
