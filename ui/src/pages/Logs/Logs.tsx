@@ -66,7 +66,6 @@ export default function Logs() {
     }
   };
   
-
   // Apply the filters
   const filteredLogs = logs.filter(({ containerName, containerId, time, stream, log }) => {
     if (!filters.stdout && stream === 'stdout') return false; // Filter out stdout
@@ -111,7 +110,6 @@ export default function Logs() {
           />
           <IconButton
             onClick={(e) => {
-              console.log('click');
               e.stopPropagation();
               setDrawerOpen(true);
             }}
@@ -119,7 +117,6 @@ export default function Logs() {
             <FilterList />
           </IconButton>
           <IconButton onClick={(e) => { 
-            console.log('refreshed'); 
             refreshAll();
           }}
           >
