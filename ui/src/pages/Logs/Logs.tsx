@@ -1,6 +1,13 @@
 import { useEffect, useState } from 'react';
 import { createDockerDesktopClient } from '@docker/extension-api-client';
-import { Search, Clear, FilterList, KeyboardArrowUp, KeyboardArrowDown, Refresh } from '@mui/icons-material';
+import {
+  Search,
+  Clear,
+  FilterList,
+  KeyboardArrowUp,
+  KeyboardArrowDown,
+  Refresh,
+} from '@mui/icons-material';
 import {
   Box,
   Stack,
@@ -54,7 +61,7 @@ export default function Logs() {
   }, []);
 
   // Refreshes logs page fetching all new containers
-  const refreshAll = async() => {
+  const refreshAll = async () => {
     try {
       const allContainers = await fetchAllContainers(ddClient);
       const allContainerLogs = await fetchAllContainerLogs(ddClient, allContainers);
@@ -65,7 +72,7 @@ export default function Logs() {
       console.error(err);
     }
   };
-  
+
   // Apply the filters
   const filteredLogs = logs.filter(({ containerName, containerId, time, stream, log }) => {
     if (!filters.stdout && stream === 'stdout') return false; // Filter out stdout
@@ -116,12 +123,9 @@ export default function Logs() {
           >
             <FilterList />
           </IconButton>
-          <IconButton onClick={(e) => { 
-            refreshAll();
-          }}
-          >
+          <IconButton onClick={refreshAll}>
             <Refresh />
-            </IconButton>
+          </IconButton>
         </Stack>
 
         <TableContainer
