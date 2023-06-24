@@ -12,18 +12,20 @@ export default async function fetchAllContainerLogs(
           .exec('logs', ['--timestamps', container.Id])
           .then((execResult) => {
             // Create an array of error logs
+            // Remove the leading forward slash on the container name
             const stderrLogs = parseLogsString(
               execResult.stderr,
               'stderr',
-              container.Names[0],
+              container.Names[0].replace(/^\//, ''),
               container.Id
             );
 
             // Create an array of standard logs
+            // Remove the leading forward slash on the container name
             const stdoutLogs = parseLogsString(
               execResult.stdout,
               'stdout',
-              container.Names[0],
+              container.Names[0].replace(/^\//, ''),
               container.Id
             );
 
@@ -34,7 +36,7 @@ export default async function fetchAllContainerLogs(
       });
     });
 
-    // Fulfill all the promises and flatten the result
+    // Fulfill all the promises
     const promiseResults = await Promise.allSettled(logsPromises);
 
     let allLogs: DockerLog[] = [];

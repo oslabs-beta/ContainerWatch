@@ -145,7 +145,7 @@ export default function SideBar({
           <Box sx={{ display: 'flex', flexDirection: 'column', ml: 3 }}>
             {containers.map(({ Names, Id }) => (
               <FormControlLabel
-                label={Names}
+                label={Names[0].replace(/^\//, '')}
                 control={
                   <Checkbox
                     checked={filters.allowedContainers.has(Id)}
