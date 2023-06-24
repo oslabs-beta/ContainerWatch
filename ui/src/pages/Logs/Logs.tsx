@@ -26,6 +26,7 @@ import {
   useTheme,
 } from '@mui/material';
 import ContainerIcon from '../../components/ContainerIcon/ContainerIcon';
+import PriorityHighRoundedIcon from '@mui/icons-material/PriorityHighRounded';
 import SideBar from '../../components/Sidebar/Sidebar';
 import fetchAllContainers from '../../actions/fetchAllContainers';
 import fetchAllContainerLogs from '../../actions/fetchAllContainerLogs';
@@ -207,17 +208,32 @@ function Row({ containerName, containerId, time, stream, log }: DockerLog) {
             maxWidth: 0,
           }}
         >
-          <Typography
-            sx={{
-              // Logs will be cut off with an ellipsis instead of wrapping or overflowing.
-              whiteSpace: 'nowrap',
-              textOverflow: 'ellipsis',
-              overflow: 'hidden',
-              fontFamily: 'monospace',
-            }}
-          >
-            {log}
-          </Typography>
+          {stream === 'stdout' ? (
+            <Typography
+              sx={{
+                // Logs will be cut off with an ellipsis instead of wrapping or overflowing.
+                whiteSpace: 'nowrap',
+                textOverflow: 'ellipsis',
+                overflow: 'hidden',
+                fontFamily: 'monospace',
+              }}
+            >
+              {log}
+            </Typography>
+          ) : (
+            <Typography
+              sx={{
+                // Logs will be cut off with an ellipsis instead of wrapping or overflowing.
+                whiteSpace: 'nowrap',
+                textOverflow: 'ellipsis',
+                overflow: 'hidden',
+                fontFamily: 'monospace',
+              }}
+            >
+              <PriorityHighRoundedIcon htmlColor="red" sx={{ fontSize: 14 }} />
+              {log}
+            </Typography>
+          )}
         </TableCell>
       </TableRow>
       <TableRow>
