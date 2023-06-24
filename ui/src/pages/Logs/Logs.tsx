@@ -161,13 +161,30 @@ function Row({ containerName, containerId, time, stream, log }: DockerLog) {
           </IconButton>
         </TableCell>
         <TableCell>
-          <Typography sx={{ whiteSpace: 'nowrap' }}>{time}</Typography>
+          <Typography sx={{ whiteSpace: 'nowrap' }}>{time.split('.')[0]}</Typography>
         </TableCell>
         <TableCell>
-          <Box sx={{ height: '100%', display: 'flex', alignItems: 'center', gap: 1 }}>
+          <Box
+            sx={{
+              height: '100%',
+              display: 'flex',
+              alignItems: 'center',
+              gap: 1,
+              maxWidth: '150px',
+            }}
+          >
             {/* TODO: access the custom theme colors instead of hardcoding the color */}
             <ContainerIcon htmlColor="#228375" />
-            <Typography>{containerName}</Typography>
+            <Typography
+              sx={{
+                whiteSpace: 'nowrap',
+                textOverflow: 'ellipsis',
+                overflow: 'hidden',
+                fontFamily: 'monospace',
+              }}
+            >
+              {containerName}
+            </Typography>
           </Box>
         </TableCell>
         <TableCell
