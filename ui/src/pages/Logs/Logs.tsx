@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { createDockerDesktopClient } from '@docker/extension-api-client';
-import { Search, Clear, FilterList, KeyboardArrowUp, KeyboardArrowDown } from '@mui/icons-material';
+import { Search, Clear, FilterList, KeyboardArrowUp, KeyboardArrowDown, Refresh } from '@mui/icons-material';
 import {
   Box,
   Stack,
@@ -42,6 +42,7 @@ export default function Logs() {
   const [containers, setContainers] = useState<DockerContainer[]>([]);
   const [logs, setLogs] = useState<DockerLog[]>([]);
   const [searchText, setSearchText] = useState('');
+  const [refresh, setRefresh] = useState(true);
 
   const [filters, setFilters] = useState<LogFilters>({
     stdout: true,
@@ -61,7 +62,7 @@ export default function Logs() {
         console.error(err);
       }
     })();
-  }, []);
+  }, [refresh]);
 
   // Apply the filters
   const filteredLogs = logs.filter(({ containerName, containerId, time, stream, log }) => {
@@ -113,6 +114,14 @@ export default function Logs() {
             }}
           >
             <FilterList />
+          </IconButton>
+          <IconButton
+            onClick={(e) => {
+              console.log('refreshed containers');
+              setRefresh(!refresh)
+            }}
+          >
+            <Refresh />
           </IconButton>
         </Stack>
 
