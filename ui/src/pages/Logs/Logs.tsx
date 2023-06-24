@@ -1,6 +1,13 @@
 import { useEffect, useState } from 'react';
 import { createDockerDesktopClient } from '@docker/extension-api-client';
-import { Search, Clear, FilterList, KeyboardArrowUp, KeyboardArrowDown } from '@mui/icons-material';
+import {
+  Search,
+  Clear,
+  FilterList,
+  KeyboardArrowUp,
+  KeyboardArrowDown,
+  Refresh,
+} from '@mui/icons-material';
 import {
   Box,
   Stack,
@@ -50,18 +57,21 @@ export default function Logs() {
   });
 
   useEffect(() => {
-    (async () => {
-      try {
-        const allContainers = await fetchAllContainers(ddClient);
-        const allContainerLogs = await fetchAllContainerLogs(ddClient, allContainers);
-        setContainers(allContainers);
-        setLogs(allContainerLogs);
-        setFilters({ ...filters, allowedContainers: new Set(allContainers.map(({ Id }) => Id)) });
-      } catch (err) {
-        console.error(err);
-      }
-    })();
+    refreshAll();
   }, []);
+
+  // Refreshes logs page fetching all new containers
+  const refreshAll = async () => {
+    try {
+      const allContainers = await fetchAllContainers(ddClient);
+      const allContainerLogs = await fetchAllContainerLogs(ddClient, allContainers);
+      setContainers(allContainers);
+      setLogs(allContainerLogs);
+      setFilters({ ...filters, allowedContainers: new Set(allContainers.map(({ Id }) => Id)) });
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
   // Apply the filters
   const filteredLogs = logs.filter(({ containerName, containerId, time, stream, log }) => {
@@ -107,12 +117,14 @@ export default function Logs() {
           />
           <IconButton
             onClick={(e) => {
-              console.log('click');
               e.stopPropagation();
               setDrawerOpen(true);
             }}
           >
             <FilterList />
+          </IconButton>
+          <IconButton onClick={refreshAll}>
+            <Refresh />
           </IconButton>
         </Stack>
 
