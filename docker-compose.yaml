@@ -5,6 +5,9 @@ services:
     image: ${DESKTOP_PLUGIN_IMAGE}
     volumes:
       - /var/run/docker.sock.raw:/var/run/docker.sock
+      # Create a named volume which is mapped to the /grafana folder in the extension container
+      # (The /grafana folder is added to the extension container in the Dockerfile)
+      - shared-grafana-volume:/grafana
 
   prometheus:
     # Pulling a custom image that has been pushed to the hub that has been configured to scrape
@@ -28,20 +31,18 @@ services:
       - 8080:8080
     volumes:
       - /:/rootfs:ro
-      # Docker engine runs on the docker.sock unix socket, it seems we must explicitly bind mount (/var/run/ -> var/run/docker.sock)
-      # https://github.com/google/cadvisor/issues/1565#issuecomment-718812180
       - /var/run/docker.sock:/var/run/docker.sock:rw
       - /sys:/sys:ro
       - /var/lib/docker/:/var/lib/docker:ro
 
   grafana:
-    image: dockerpulse/grafana:latest
+    image: grafana/grafana:latest
     container_name: grafana
     ports:
       - 2999:3000
     volumes:
-      #temporary bind-mount for MVP
-      - ../../../../../../../Desktop/OSP/DockerPulse/imageConfigs/grafana/datasources:/etc/grafana/provisioning/datasources
+      # Share the named volume with the grafana container by mapping it to /etc/grafana
+      - shared-grafana-volume:/etc/grafana
     environment:
       GF_PATHS_CONFIG: /etc/grafana/grafana.ini
     depends_on:
@@ -49,3 +50,4 @@ services:
 
 volumes:
   prometheusdata:
+  shared-grafana-volume:
