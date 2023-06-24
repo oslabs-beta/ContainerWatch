@@ -1,0 +1,20 @@
+{
+  "name": "dockerpulse",
+  "version": "1.0.0",
+  "description": "A Docker Desktop extension for container stats and logs.",
+  "main": "",
+  "scripts": {
+    "start": "echo \"To install the extension, run `make install-extension`. Docker Desktop must be open.\" && exit 1",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/oslabs-beta/DockerPulse.git"
+  },
+  "author": "DockerPulse",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/oslabs-beta/DockerPulse/issues"
+  },
+  "homepage": "https://github.com/oslabs-beta/DockerPulse#readme"
+}
