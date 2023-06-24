@@ -32,5 +32,19 @@ services:
       - /sys:/sys:ro
       - /var/lib/docker/:/var/lib/docker:ro
 
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    ports:
+      - 2999:3000
+    volumes:
+      #temporary bind-mount for MVP
+      - ../../../../../../../Desktop/OSP/DockerPulse/imageConfigs/grafana/datasources:/etc/grafana/provisioning/datasources
+      - ../../../../../../../Desktop/OSP/DockerPulse/imageConfigs/grafana/grafana.ini:/etc/grafana/grafana.ini
+    environment:
+      GF_PATHS_CONFIG: /etc/grafana/grafana.ini
+    depends_on:
+      - prometheus
+
 volumes:
   prometheusdata:
