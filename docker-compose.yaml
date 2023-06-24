@@ -28,6 +28,8 @@ services:
       - 8080:8080
     volumes:
       - /:/rootfs:ro
+      # Docker engine runs on the docker.sock unix socket, it seems we must explicitly bind mount (/var/run/ -> var/run/docker.sock)
+      # https://github.com/google/cadvisor/issues/1565#issuecomment-718812180
       - /var/run/docker.sock:/var/run/docker.sock:rw
       - /sys:/sys:ro
       - /var/lib/docker/:/var/lib/docker:ro
