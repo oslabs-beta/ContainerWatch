@@ -4,7 +4,6 @@
   "description": "A Docker Desktop extension for container stats and logs.",
   "main": "",
   "scripts": {
-    "start": "echo \"To install the extension, run `make install-extension`. Docker Desktop must be open.\" && exit 1",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
