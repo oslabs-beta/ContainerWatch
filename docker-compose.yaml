@@ -18,6 +18,8 @@ services:
     volumes:
       # Creating a named volume for the prometheus data
       - prometheusdata:/prometheus
+    depends_on:
+      - cadvisor
 
   cadvisor:
     image: gcr.io/cadvisor/cadvisor:v0.46.0
