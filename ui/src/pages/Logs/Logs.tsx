@@ -26,7 +26,7 @@ import {
   useTheme,
 } from '@mui/material';
 import ContainerIcon from '../../components/ContainerIcon/ContainerIcon';
-import PriorityHighRoundedIcon from '@mui/icons-material/PriorityHighRounded';
+import ErrorRoundedIcon from '@mui/icons-material/ErrorRounded';
 import SideBar from '../../components/Sidebar/Sidebar';
 import fetchAllContainers from '../../actions/fetchAllContainers';
 import fetchAllContainerLogs from '../../actions/fetchAllContainerLogs';
@@ -164,6 +164,12 @@ export default function Logs() {
 
 function Row({ containerName, containerId, time, stream, log }: DockerLog) {
   const [open, setOpen] = useState<boolean>(false);
+  const logsDisplayStyle = {
+    whiteSpace: 'nowrap',
+    textOverflow: 'ellipsis',
+    overflow: 'hidden',
+    fontFamily: 'monospace',
+  };
 
   return (
     <>
@@ -204,36 +210,26 @@ function Row({ containerName, containerId, time, stream, log }: DockerLog) {
           sx={{
             // The combination of width: 100% and maxWidth: 0 makes the cell grow to fit
             // the horizontal space. The table will not overflow in the x direction.
+
             width: '100%',
             maxWidth: 0,
           }}
         >
-          {stream === 'stdout' ? (
-            <Typography
-              sx={{
-                // Logs will be cut off with an ellipsis instead of wrapping or overflowing.
-                whiteSpace: 'nowrap',
-                textOverflow: 'ellipsis',
-                overflow: 'hidden',
-                fontFamily: 'monospace',
-              }}
-            >
-              {log}
-            </Typography>
-          ) : (
-            <Typography
-              sx={{
-                // Logs will be cut off with an ellipsis instead of wrapping or overflowing.
-                whiteSpace: 'nowrap',
-                textOverflow: 'ellipsis',
-                overflow: 'hidden',
-                fontFamily: 'monospace',
-              }}
-            >
-              <PriorityHighRoundedIcon htmlColor="red" sx={{ fontSize: 14 }} />
-              {log}
-            </Typography>
-          )}
+          <Typography
+            sx={
+              // Logs will be cut off with an ellipsis instead of wrapping or overflowing.
+              logsDisplayStyle
+            }
+          >
+            {stream === 'stdout' ? (
+              log
+            ) : (
+              <>
+                <ErrorRoundedIcon htmlColor="red" sx={{ fontSize: 14 }} />
+                {log}
+              </>
+            )}
+          </Typography>
         </TableCell>
       </TableRow>
       <TableRow>
