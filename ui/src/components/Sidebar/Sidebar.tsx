@@ -1,18 +1,16 @@
 import { useState } from 'react';
+import { Launch } from '@mui/icons-material';
 import {
   List,
   Box,
-  Button,
+  Stack,
   Checkbox,
-  FormControl,
+  OutlinedInput,
   FormControlLabel,
   Drawer,
   Divider,
-  InputLabel,
-  MenuItem,
   Typography,
-  Select,
-  SelectChangeEvent,
+  Link,
 } from '@mui/material';
 import { DockerContainer, LogFilters } from '../../types';
 
@@ -31,26 +29,8 @@ export default function SideBar({
   drawerOpen,
   setDrawerOpen,
 }: SideBarProps) {
-  const [hoursAgo, setHoursAgo] = useState('');
-  const [upUntil, setUpUntil] = useState('');
-
-  const hoursFrom = (e: SelectChangeEvent) => {
-    setHoursAgo(e.target.value as string);
-  };
-
-  const hoursTo = (e: SelectChangeEvent) => {
-    setUpUntil(e.target.value as string);
-  };
-
-  const generateHours = (): JSX.Element[] => {
-    const hours: JSX.Element[] = [];
-    for (let i = 1; i <= 72; i++) {
-      hours.push(<MenuItem value={i}>{i}</MenuItem>);
-    }
-    return hours;
-  };
-
-  const hours: JSX.Element[] = generateHours();
+  const [fromTimestamp, setFromTimestamp] = useState('');
+  const [untilTimestamp, setUntilTimestamp] = useState('');
 
   const checkAllContainers = (event: React.ChangeEvent<HTMLInputElement>) => {
     const allContainerIds = containers.map(({ Id }) => Id);
@@ -75,14 +55,23 @@ export default function SideBar({
 
   return (
     <Drawer anchor="right" open={drawerOpen} onClose={() => setDrawerOpen(false)}>
-      <Box role="presentation" sx={{ width: '250px' }}>
-        <Typography variant="h6">Filters</Typography>
-        <Divider />
+      <Box
+        sx={{
+          p: 2,
+          width: '250px',
+          overflow: 'hidden',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 1.5,
+        }}
+      >
+        <Typography variant="h3">Filters</Typography>
         <List>
           <FormControlLabel
             label="Log type"
             control={
               <Checkbox
+                size="small"
                 checked={filters.stdout && filters.stderr}
                 indeterminate={filters.stdout !== filters.stderr}
                 onChange={(event) => {
@@ -100,6 +89,7 @@ export default function SideBar({
               label="stdout"
               control={
                 <Checkbox
+                  size="small"
                   checked={filters.stdout}
                   onChange={(event) =>
                     setFilters({
@@ -114,6 +104,7 @@ export default function SideBar({
               label="stderr"
               control={
                 <Checkbox
+                  size="small"
                   checked={filters.stderr}
                   onChange={(event) =>
                     setFilters({
@@ -132,6 +123,7 @@ export default function SideBar({
             label="Containers"
             control={
               <Checkbox
+                size="small"
                 checked={filters.allowedContainers.size === containers.length}
                 indeterminate={
                   filters.allowedContainers.size !== 0 &&
@@ -144,9 +136,21 @@ export default function SideBar({
           <Box sx={{ display: 'flex', flexDirection: 'column', ml: 3 }}>
             {containers.map(({ Names, Id }) => (
               <FormControlLabel
-                label={Names[0].replace(/^\//, '')}
+                label={
+                  <Typography
+                    sx={{
+                      whiteSpace: 'nowrap',
+                      textOverflow: 'ellipsis',
+                      overflow: 'hidden',
+                      fontFamily: 'monospace',
+                    }}
+                  >
+                    {Names[0].replace(/^\//, '')}
+                  </Typography>
+                }
                 control={
                   <Checkbox
+                    size="small"
                     checked={filters.allowedContainers.has(Id)}
                     onChange={(event) => checkContainer(event, Id)}
                   />
@@ -156,31 +160,33 @@ export default function SideBar({
           </Box>
         </List>
         <Divider />
-        <Typography variant="subtitle1">Time Filter</Typography>
-        <FormControl fullWidth>
-          <InputLabel id="hoursago">Hours Ago</InputLabel>
-          <Select
-            labelId="hoursAgoLabel"
-            id="hoursAgoId"
-            value={hoursAgo}
-            label="HoursAgo"
-            onChange={hoursFrom}
-          >
-            {hours}
-          </Select>
-        </FormControl>
-        <FormControl fullWidth>
-          <InputLabel id="hoursto">Hours To</InputLabel>
-          <Select
-            labelId="hoursToLabel"
-            id="hoursToId"
-            value={upUntil}
-            label="HoursTo"
-            onChange={hoursTo}
-          >
-            {hours}
-          </Select>
-        </FormControl>
+        <Stack direction="column" spacing={1}>
+          <Typography>Time range</Typography>
+          <Typography sx={{ fontSize: '12px' }}>
+            {'Timestamp must be a unix timestamp or a '}
+            <Link
+              underline="none"
+              target="_blank"
+              rel="noreferrer"
+              href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date#date_time_string_format"
+            >
+              {'date time string '}
+              <Launch sx={{ fontSize: '12px' }} />
+            </Link>
+          </Typography>
+          <OutlinedInput
+            placeholder="From"
+            size="small"
+            value={fromTimestamp}
+            onChange={(e) => setFromTimestamp(e.target.value)}
+          />
+          <OutlinedInput
+            placeholder="Until"
+            size="small"
+            value={untilTimestamp}
+            onChange={(e) => setUntilTimestamp(e.target.value)}
+          />
+        </Stack>
       </Box>
     </Drawer>
   );
