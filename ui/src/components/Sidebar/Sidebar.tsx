@@ -5,7 +5,7 @@ import {
   Box,
   Stack,
   Checkbox,
-  OutlinedInput,
+  TextField,
   FormControlLabel,
   Drawer,
   Divider,
@@ -59,7 +59,7 @@ export default function SideBar({
         sx={{
           p: 2,
           width: '250px',
-          overflow: 'hidden',
+          overflowX: 'hidden',
           display: 'flex',
           flexDirection: 'column',
           gap: 1.5,
@@ -163,29 +163,36 @@ export default function SideBar({
         <Stack direction="column" spacing={1}>
           <Typography>Time range</Typography>
           <Typography sx={{ fontSize: '12px' }}>
-            {'Timestamp must be a unix timestamp or a '}
+            {'Timestamp must a '}
             <Link
               underline="none"
               target="_blank"
               rel="noreferrer"
               href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date#date_time_string_format"
             >
-              {'date time string '}
+              {'date time string.'}
               <Launch sx={{ fontSize: '12px' }} />
             </Link>
+            {'Example: 2023-06-21T13:43:55'}
           </Typography>
-          <OutlinedInput
-            placeholder="From"
-            size="small"
-            value={fromTimestamp}
-            onChange={(e) => setFromTimestamp(e.target.value)}
-          />
-          <OutlinedInput
-            placeholder="Until"
-            size="small"
-            value={untilTimestamp}
-            onChange={(e) => setUntilTimestamp(e.target.value)}
-          />
+          <Stack direction="column" spacing={2}>
+            <TextField
+              label="From"
+              variant="outlined"
+              size="small"
+              value={fromTimestamp}
+              onChange={(e) => setFromTimestamp(e.target.value)}
+              error={Number.isNaN(Date.parse(fromTimestamp || '0'))}
+            />
+            <TextField
+              label="Until"
+              variant="outlined"
+              size="small"
+              value={untilTimestamp}
+              onChange={(e) => setUntilTimestamp(e.target.value)}
+              error={Number.isNaN(Date.parse(untilTimestamp || '0'))}
+            />
+          </Stack>
         </Stack>
       </Box>
     </Drawer>
