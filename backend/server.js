@@ -1,7 +1,7 @@
 import express from 'express';
 import fs from 'fs';
 import http from 'http';
-import dashboardCreator from './actions/buildDashboard';
+import dashboardCreator from './actions/buildDashboard.js';
 
 const SOCKETFILE = '/run/guest-services/backend.sock'; // Unix socket
 const app = express();
@@ -69,8 +69,8 @@ THIS IS JUST TO TEST FOR MODULARIZING GRAPHS!!
 const arr = ['prometheus', 'cadvisor', 'grafana'];
 
 for (let i = 0; i < arr.length; i++) {
-  const dash = dashboardCreator(arr);
-
+  const dash = await dashboardCreator(arr[i]);
+  console.log('new dashboard!!', dash);
   await fetch('http://host.docker.internal:2999/api/dashboards/db', {
     method: 'POST',
     Accept: 'application/json',

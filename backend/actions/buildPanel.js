@@ -1,6 +1,6 @@
+// export default function panelCreator(containerName: string, id: number, promDatasource: any) {
 
-
-export default function panelCreator(containerName: string, id: number, promDatasource: any) {
+export default function panelCreator(containerName, id, promDatasource) {
   if(id === 3) id = 4;
 
   const targets = [

@@ -1,6 +1,8 @@
-import panelCreator from './buildPanel';
+import panelCreator from './buildPanel.js';
 
-export default async function dashboardCreator(containerName: string): Promise<Object> {
+// export default async function dashboardCreator(containerName: string): Promise<Object> {
+
+export default async function dashboardCreator(containerName) {
   // fetch datasource information from grafana API.
   // this datasource is PRECONFIGURED on launch using grafana config
   const datasourceResponse = await fetch('http://host.docker.internal:2999/api/datasources');
