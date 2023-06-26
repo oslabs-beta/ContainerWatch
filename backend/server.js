@@ -56,8 +56,23 @@ THIS IS JUST TO TEST FOR MODULARIZING GRAPHS!!
 const dashboard = {
   dashboard: {
     id: null,
-    uid: 'dockerpulse',
-    title: 'dockerpulse dashboard',
+    title: 'prometheuscpu',
+    tags: ['templated'],
+    timezone: 'browser',
+    schemaVersion: 16,
+    version: 0,
+    refresh: '15s',
+    panels: [],
+  },
+  folderId: 0,
+  message: 'DockerPulse is the BEST',
+  overwrite: false,
+};
+
+const dashboard2 = {
+  dashboard: {
+    id: null,
+    title: 'prometheusram',
     tags: ['templated'],
     timezone: 'browser',
     schemaVersion: 16,
@@ -83,7 +98,9 @@ const promDatasource = {
 
 console.log(promDatasource);
 
-const panelBuilder = (containerName, uid) => {
+const panelBuilder = (containerName, id) => {
+  if(id === 3) id = 4;
+
   const targets = [
     {
       datasource: promDatasource,
@@ -167,24 +184,23 @@ const panelBuilder = (containerName, uid) => {
         sort: 'none',
       },
     },
+    id: id,
     targets: targets,
     title: `FROM FRONTEND ${containerName}`,
     type: 'timeseries',
-    uid: uid,
   };
 
   return dashboardPanel;
 };
 
 const containerNames = ['prometheus', 'cadvisor', 'grafana'];
-const containerUIDs = ['123', '456', '789'];
 
 for (let i = 0; i < containerNames.length; i++) {
-  const panel = panelBuilder(containerNames[i], containerUIDs[i]);
+  const panel = panelBuilder(containerNames[i], i+1);
   dashboard.dashboard.panels.push(panel);
+  dashboard2.dashboard.panels.push(panel);
 }
 
-console.log(JSON.stringify(dashboard));
 await fetch('http://host.docker.internal:2999/api/dashboards/db', {
   method: 'POST',
   Accept: 'application/json',
@@ -192,6 +208,15 @@ await fetch('http://host.docker.internal:2999/api/dashboards/db', {
     'Content-Type': 'application/json',
   },
   body: JSON.stringify(dashboard),
+});
+
+await fetch('http://host.docker.internal:2999/api/dashboards/db', {
+  method: 'POST',
+  Accept: 'application/json',
+  headers: {
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify(dashboard2),
 });
 
 /*
