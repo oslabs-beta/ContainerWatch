@@ -3,6 +3,7 @@
 services:
   myExtension:
     image: ${DESKTOP_PLUGIN_IMAGE}
+    container_name: dockerpulse
     volumes:
       - /var/run/docker.sock.raw:/var/run/docker.sock
       # Create a named volume which is mapped to the /grafana folder in the extension container
