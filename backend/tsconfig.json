@@ -7,5 +7,5 @@
     "strict": true,
     "skipLibCheck": true
   },
-  "include": ["backend"]
+  "include": ["actions", "server.ts"]
 }
