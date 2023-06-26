@@ -1,6 +1,7 @@
 import express from 'express';
 import fs from 'fs';
 import http from 'http';
+import dashboardCreator from './actions/buildDashboard';
 
 const SOCKETFILE = '/run/guest-services/backend.sock'; // Unix socket
 const app = express();
@@ -59,24 +60,26 @@ queryFor = sum(rate(query=${containerID}))
 
 */
 
-
-
-
 /* 
 THIS IS JUST TO TEST FOR MODULARIZING GRAPHS!!
 */
 
-
 //CREATE PANELS PROGRAMMATICALLY
 
-await fetch('http://host.docker.internal:2999/api/dashboards/db', {
-  method: 'POST',
-  Accept: 'application/json',
-  headers: {
-    'Content-Type': 'application/json',
-  },
-  body: JSON.stringify(dashboard),
-});
+const arr = ['prometheus', 'cadvisor', 'grafana'];
+
+for (let i = 0; i < arr.length; i++) {
+  const dash = dashboardCreator(arr);
+
+  await fetch('http://host.docker.internal:2999/api/dashboards/db', {
+    method: 'POST',
+    Accept: 'application/json',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(dash),
+  });
+}
 
 eventsRequest.end();
 
