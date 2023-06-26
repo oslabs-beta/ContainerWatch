@@ -109,7 +109,7 @@ function Row(props: any) {
           <Collapse in={open} timeout="auto" unmountOnExit>
             {/*********** The source in this iframe DOES NOT WORK. for MVP purposes ONLY ************/}
             <iframe
-              src={`http://localhost:2999/d-solo/e3e5f4c2-896d-4cb0-9c51-550397faddd8/test-copy?orgId=1&refresh=15s&panelId=${panelID}`}
+              src={`http://localhost:2999/d/dockerpulse/dockerpulse-dashboard?orgId=1&refresh=15s&uid=123`}
               width="100%"
               height="200"
               frameBorder="0"
