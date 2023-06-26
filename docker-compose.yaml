@@ -9,16 +9,23 @@ version: '3.8'
 services:
   myExtension:
     image: ${DESKTOP_PLUGIN_IMAGE}
+    container_name: dockerpulse
     volumes:
       - /var/run/docker.sock.raw:/var/run/docker.sock
       # Create a named volume which is mapped to the /grafana folder in the extension container
-      # (The /grafana folder is added to the extension container in the Dockerfile)
+      # (The /grafana folder is added to the extension container in the extension's Dockerfile)
       - shared-grafana-volume:/grafana
+      # Create a named volume which is mapped to the /prometheus folder in the extension container
+      # (The /prometheus folder is added to the extension container in the extension's Dockerfile)
+      - shared-prometheus-volume:/prometheus
+      # Creating volumes to transfer data from the project repository to different containers is a great PRODUCTION level solution, HOWEVER volumes must be deleted before updates to prometheus and grafana configs can take place
+      # TODO: docker-compose yaml for DEVELOPMENT (BIND MOUNT) and PRODUCTION
+
 
   prometheus:
     # Pulling a custom image that has been pushed to the hub that has been configured to scrape
     # from cadvisor so there is no need to create a bind mount that configures the prometheus.yml file
-    image: dockerpulse/prometheus:latest
+    image: prom/prometheus:latest
     container_name: prometheus
     ports:
       - 9090:9090
@@ -27,6 +34,7 @@ services:
     volumes:
       # Creating a named volume for the prometheus data
       - prometheusdata:/prometheus
+      - shared-prometheus-volume:/etc/prometheus
     depends_on:
       - cadvisor
 
@@ -59,3 +67,4 @@ services:
 volumes:
   prometheusdata:
   shared-grafana-volume:
+  shared-prometheus-volume:

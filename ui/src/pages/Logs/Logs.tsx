@@ -1,6 +1,14 @@
 import { useEffect, useState } from 'react';
 import { createDockerDesktopClient } from '@docker/extension-api-client';
-import { Search, Clear, FilterList, KeyboardArrowUp, KeyboardArrowDown } from '@mui/icons-material';
+import {
+  Search,
+  Clear,
+  FilterList,
+  KeyboardArrowUp,
+  KeyboardArrowDown,
+  Refresh,
+  ErrorRounded,
+} from '@mui/icons-material';
 import {
   Box,
   Stack,
@@ -50,18 +58,21 @@ export default function Logs() {
   });
 
   useEffect(() => {
-    (async () => {
-      try {
-        const allContainers = await fetchAllContainers(ddClient);
-        const allContainerLogs = await fetchAllContainerLogs(ddClient, allContainers);
-        setContainers(allContainers);
-        setLogs(allContainerLogs);
-        setFilters({ ...filters, allowedContainers: new Set(allContainers.map(({ Id }) => Id)) });
-      } catch (err) {
-        console.error(err);
-      }
-    })();
+    refreshAll();
   }, []);
+
+  // Refreshes logs page fetching all new containers
+  const refreshAll = async () => {
+    try {
+      const allContainers = await fetchAllContainers(ddClient);
+      const allContainerLogs = await fetchAllContainerLogs(ddClient, allContainers);
+      setContainers(allContainers);
+      setLogs(allContainerLogs);
+      setFilters({ ...filters, allowedContainers: new Set(allContainers.map(({ Id }) => Id)) });
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
   // Apply the filters
   const filteredLogs = logs.filter(({ containerName, containerId, time, stream, log }) => {
@@ -107,12 +118,14 @@ export default function Logs() {
           />
           <IconButton
             onClick={(e) => {
-              console.log('click');
               e.stopPropagation();
               setDrawerOpen(true);
             }}
           >
             <FilterList />
+          </IconButton>
+          <IconButton onClick={refreshAll}>
+            <Refresh />
           </IconButton>
         </Stack>
 
@@ -148,7 +161,12 @@ export default function Logs() {
     </>
   );
 }
-
+const logsDisplayStyle = {
+  whiteSpace: 'nowrap',
+  textOverflow: 'ellipsis',
+  overflow: 'hidden',
+  fontFamily: 'monospace',
+};
 function Row({ containerName, containerId, time, stream, log }: DockerLog) {
   const [open, setOpen] = useState<boolean>(false);
 
@@ -174,7 +192,7 @@ function Row({ containerName, containerId, time, stream, log }: DockerLog) {
             }}
           >
             {/* TODO: access the custom theme colors instead of hardcoding the color */}
-            <ContainerIcon htmlColor="#228375" />
+            <ContainerIcon htmlColor="#228375" sx={{ fontSize: 14 }} />
             <Typography
               sx={{
                 whiteSpace: 'nowrap',
@@ -195,16 +213,18 @@ function Row({ containerName, containerId, time, stream, log }: DockerLog) {
             maxWidth: 0,
           }}
         >
-          <Typography
-            sx={{
-              // Logs will be cut off with an ellipsis instead of wrapping or overflowing.
-              whiteSpace: 'nowrap',
-              textOverflow: 'ellipsis',
-              overflow: 'hidden',
-              fontFamily: 'monospace',
-            }}
-          >
-            {log}
+          <Typography sx={logsDisplayStyle}>
+            {stream === 'stdout' ? (
+              log
+            ) : (
+              <>
+                <ErrorRounded
+                  htmlColor="red"
+                  sx={{ verticalAlign: 'middle', fontSize: 14, marginRight: 1 }}
+                />
+                {log}
+              </>
+            )}
           </Typography>
         </TableCell>
       </TableRow>
