@@ -17,6 +17,7 @@ import {
   CircularProgress,
 } from '@mui/material';
 import { useStats, DockerStats } from '../../hooks/useStats';
+import StatsGraph from '../../components/StatsGraph/StatsGraph';
 
 const HEADERS: Array<string> = [
   '',
@@ -107,14 +108,7 @@ function Row(props: any) {
       <TableRow>
         <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={HEADERS.length}>
           <Collapse in={open} timeout="auto" unmountOnExit>
-            {/*********** The source in this iframe DOES NOT WORK. for MVP purposes ONLY ************/}
-            <iframe
-              src={`http://localhost:2999/d/dockerpulse/dockerpulse-dashboard?orgId=1&refresh=15s&viewPanel=1`}
-              width="100%"
-              height="200"
-              frameBorder="0"
-            />
-            {/***********************************************************************/}
+            <StatsGraph panelID={3} containerID="test" />
           </Collapse>
         </TableCell>
       </TableRow>

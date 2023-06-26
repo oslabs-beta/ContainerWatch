@@ -1,13 +1,11 @@
 // export default function panelCreator(containerName: string, id: number, promDatasource: any) {
 
 export default function panelCreator(containerName, id, promDatasource) {
-  if(id === 3) id = 4;
-
   const targets = [
     {
       datasource: promDatasource,
       editorMode: 'builder',
-      expr: `sum(rate(container_cpu_usage_seconds_total{name=\"${containerName}\"}[$__interval])) * 100`,
+      expr: `sum(rate(container_cpu_usage_seconds_total{name="${containerName}"}[$__interval])) * 100`,
       instant: false,
       range: true,
       refId: 'A',
@@ -93,4 +91,4 @@ export default function panelCreator(containerName, id, promDatasource) {
   };
 
   return dashboardPanel;
-};
+}

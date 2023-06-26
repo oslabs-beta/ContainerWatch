@@ -1,4 +1,4 @@
-import panelCreator from './buildPanel.js';
+import panelCreator from './buildPanel';
 
 // export default async function dashboardCreator(containerName: string): Promise<Object> {
 

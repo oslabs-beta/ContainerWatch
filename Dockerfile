@@ -52,4 +52,7 @@ COPY imageConfigs/prometheus prometheus
 
 # ============ Start the Extension ============ 
 WORKDIR /backend
+
+RUN ["tsc"]
+
 CMD ["npm", "start"]

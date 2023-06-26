@@ -1,7 +1,7 @@
 import express from 'express';
 import fs from 'fs';
 import http from 'http';
-import dashboardCreator from './actions/buildDashboard.js';
+import dashboardCreator from './actions/buildDashboard';
 
 const SOCKETFILE = '/run/guest-services/backend.sock'; // Unix socket
 const app = express();
@@ -21,8 +21,6 @@ app.get('/hello', (req, res) => {
   console.log('ouch', Date.now());
   res.send('hello world from the server');
 });
-
-
 
 const eventsRequest = http.request(
   {
