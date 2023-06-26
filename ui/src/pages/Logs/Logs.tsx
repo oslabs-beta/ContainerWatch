@@ -7,6 +7,7 @@ import {
   KeyboardArrowUp,
   KeyboardArrowDown,
   Refresh,
+  ErrorRounded,
 } from '@mui/icons-material';
 import {
   Box,
@@ -160,7 +161,12 @@ export default function Logs() {
     </>
   );
 }
-
+const logsDisplayStyle = {
+  whiteSpace: 'nowrap',
+  textOverflow: 'ellipsis',
+  overflow: 'hidden',
+  fontFamily: 'monospace',
+};
 function Row({ containerName, containerId, time, stream, log }: DockerLog) {
   const [open, setOpen] = useState<boolean>(false);
 
@@ -186,7 +192,7 @@ function Row({ containerName, containerId, time, stream, log }: DockerLog) {
             }}
           >
             {/* TODO: access the custom theme colors instead of hardcoding the color */}
-            <ContainerIcon htmlColor="#228375" />
+            <ContainerIcon htmlColor="#228375" sx={{ fontSize: 14 }} />
             <Typography
               sx={{
                 whiteSpace: 'nowrap',
@@ -207,16 +213,18 @@ function Row({ containerName, containerId, time, stream, log }: DockerLog) {
             maxWidth: 0,
           }}
         >
-          <Typography
-            sx={{
-              // Logs will be cut off with an ellipsis instead of wrapping or overflowing.
-              whiteSpace: 'nowrap',
-              textOverflow: 'ellipsis',
-              overflow: 'hidden',
-              fontFamily: 'monospace',
-            }}
-          >
-            {log}
+          <Typography sx={logsDisplayStyle}>
+            {stream === 'stdout' ? (
+              log
+            ) : (
+              <>
+                <ErrorRounded
+                  htmlColor="red"
+                  sx={{ verticalAlign: 'middle', fontSize: 14, marginRight: 1 }}
+                />
+                {log}
+              </>
+            )}
           </Typography>
         </TableCell>
       </TableRow>
