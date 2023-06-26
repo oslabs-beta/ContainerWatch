@@ -46,6 +46,8 @@ services:
     container_name: grafana
     ports:
       - 2999:3000
+    # command:
+    #   - --config=/etc/grafana/grafana.ini
     volumes:
       # Share the named volume with the grafana container by mapping it to /etc/grafana
       - shared-grafana-volume:/etc/grafana
