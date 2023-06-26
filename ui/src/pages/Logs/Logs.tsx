@@ -7,6 +7,7 @@ import {
   KeyboardArrowUp,
   KeyboardArrowDown,
   Refresh,
+  ErrorRounded,
 } from '@mui/icons-material';
 import {
   Box,
@@ -26,7 +27,6 @@ import {
   useTheme,
 } from '@mui/material';
 import ContainerIcon from '../../components/ContainerIcon/ContainerIcon';
-import ErrorRoundedIcon from '@mui/icons-material/ErrorRounded';
 import SideBar from '../../components/Sidebar/Sidebar';
 import fetchAllContainers from '../../actions/fetchAllContainers';
 import fetchAllContainerLogs from '../../actions/fetchAllContainerLogs';
@@ -161,15 +161,14 @@ export default function Logs() {
     </>
   );
 }
-
+const logsDisplayStyle = {
+  whiteSpace: 'nowrap',
+  textOverflow: 'ellipsis',
+  overflow: 'hidden',
+  fontFamily: 'monospace',
+};
 function Row({ containerName, containerId, time, stream, log }: DockerLog) {
   const [open, setOpen] = useState<boolean>(false);
-  const logsDisplayStyle = {
-    whiteSpace: 'nowrap',
-    textOverflow: 'ellipsis',
-    overflow: 'hidden',
-    fontFamily: 'monospace',
-  };
 
   return (
     <>
@@ -210,22 +209,19 @@ function Row({ containerName, containerId, time, stream, log }: DockerLog) {
           sx={{
             // The combination of width: 100% and maxWidth: 0 makes the cell grow to fit
             // the horizontal space. The table will not overflow in the x direction.
-
             width: '100%',
             maxWidth: 0,
           }}
         >
-          <Typography
-            sx={
-              // Logs will be cut off with an ellipsis instead of wrapping or overflowing.
-              logsDisplayStyle
-            }
-          >
+          <Typography sx={logsDisplayStyle}>
             {stream === 'stdout' ? (
               log
             ) : (
               <>
-                <ErrorRoundedIcon htmlColor="red" sx={{ fontSize: 14 }} />
+                <ErrorRounded
+                  htmlColor="red"
+                  sx={{ verticalAlign: 'middle', fontSize: 14, marginRight: 1 }}
+                />
                 {log}
               </>
             )}
