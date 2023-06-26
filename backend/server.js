@@ -22,6 +22,8 @@ app.get('/hello', (req, res) => {
   res.send('hello world from the server');
 });
 
+
+
 const eventsRequest = http.request(
   {
     socketPath: '/var/run/docker.sock',
@@ -49,6 +51,28 @@ const eventsRequest = http.request(
   }
 );
 
+const onLoadRequest = http.request(
+  {
+    socketPath: '/var/run/docker.sock',
+    path: encodeURI('/containers/json?all=1&filters={"status": ["running"]}'),
+  },
+  (res) => {
+    console.log('made the on load request....');
+
+    res.on('data', (chunk) => {
+      console.log('---------------------gimme da data pls-----------------------');
+      const parseData = JSON.parse(chunk.toString());
+      console.log(parseData);
+    });
+
+    res.on('end', () => {
+      console.log('onLoad req ended');
+    })
+  }
+);
+
+
+
 /*
 
 queryForCPU = sum(rate(query=${containerID}))
@@ -66,21 +90,22 @@ THIS IS JUST TO TEST FOR MODULARIZING GRAPHS!!
 
 //CREATE PANELS PROGRAMMATICALLY
 
-const arr = ['prometheus', 'cadvisor', 'grafana'];
+// const arr = ['prometheus', 'cadvisor', 'grafana'];
 
-for (let i = 0; i < arr.length; i++) {
-  const dash = await dashboardCreator(arr[i]);
-  console.log('new dashboard!!', dash);
-  await fetch('http://host.docker.internal:2999/api/dashboards/db', {
-    method: 'POST',
-    Accept: 'application/json',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(dash),
-  });
-}
+// for (let i = 0; i < arr.length; i++) {
+//   const dash = await dashboardCreator(arr[i]);
+//   console.log('new dashboard!!', dash);
+//   await fetch('http://host.docker.internal:2999/api/dashboards/db', {
+//     method: 'POST',
+//     Accept: 'application/json',
+//     headers: {
+//       'Content-Type': 'application/json',
+//     },
+//     body: JSON.stringify(dash),
+//   });
+// }
 
 eventsRequest.end();
+onLoadRequest.end();
 
 app.listen(SOCKETFILE, () => console.log(`🚀 Server listening on ${SOCKETFILE}`));
