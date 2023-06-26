@@ -21,33 +21,33 @@ app.get('/hello', (req, res) => {
   res.send('hello world from the server');
 });
 
-// This section is to show how the Docker Engine API is used
-// Ref: https://docs.docker.com/engine/api/v1.43/#tag/Container/operation/ContainerStats
-// const ID = 'bc4ed69f39b9';
+const eventsRequest = http.request(
+  {
+    socketPath: '/var/run/docker.sock',
+    path: encodeURI('/events?type=container&filters={"event": ["start", "destroy"]}'),
+  },
+  (res) => {
+    console.log('made the events request....');
 
-// const statsRequest = http.request(
-//   {
-//     socketPath: '/var/run/docker.sock',
-//     path: `/containers/${ID}/stats`, // stream=true -> keep the connection open
-//   },
-//   (res) => {
-//     console.log('made the stats request....');
+    // A chunk of data has been received.
+    res.on('data', (chunk) => {
+      console.log('---------------------NEW EVENT-----------------------');
+      const event = JSON.parse(chunk.toString());
+      console.log(event);
+      if (event.action === 'start') {
+        console.log('STARTED CONTAINER:', event.Actor.ID);
+      } else if (event.action === 'destroy') {
+        console.log('DESTROYED CONTAINER:', event.Actor.ID);
+      }
+    });
 
-//     // A chunk of data has been received.
-//     res.on('data', (chunk) => {
-//       console.log('---------------------stats-----------------------');
-//       const stats = JSON.parse(chunk.toString());
-//       console.log(stats);
-//     });
+    // The whole response has been received.
+    res.on('end', () => {
+      console.log('request ended');
+    });
+  }
+);
 
-//     // The whole response has been received.
-//     res.on('end', () => {
-//       console.log('request ended');
-//     });
-//   }
-// );
-
-// statsRequest.end();
 
 /* 
 THIS IS JUST TO TEST FOR MODULARIZING GRAPHS!!
@@ -322,5 +322,8 @@ await fetch('http://host.docker.internal:2999/api/dashboards/db', {
   }
 ]
 */
+
+
+eventsRequest.end();
 
 app.listen(SOCKETFILE, () => console.log(`🚀 Server listening on ${SOCKETFILE}`));
