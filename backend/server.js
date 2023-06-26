@@ -21,23 +21,24 @@ app.get('/hello', (req, res) => {
   res.send('hello world from the server');
 });
 
-// This section is to show how the Docker Engine API is used
-// Ref: https://docs.docker.com/engine/api/v1.43/#tag/Container/operation/ContainerStats
-const ID = 'bc4ed69f39b9';
-
-const statsRequest = http.request(
+const eventsRequest = http.request(
   {
     socketPath: '/var/run/docker.sock',
-    path: `/containers/${ID}/stats`, // stream=true -> keep the connection open
+    path: encodeURI('/events?type=container&filters={"event": ["start", "destroy"]}'),
   },
   (res) => {
-    console.log('made the stats request....');
+    console.log('made the events request....');
 
     // A chunk of data has been received.
     res.on('data', (chunk) => {
-      console.log('---------------------stats-----------------------');
-      const stats = JSON.parse(chunk.toString());
-      console.log(stats);
+      console.log('---------------------NEW EVENT-----------------------');
+      const event = JSON.parse(chunk.toString());
+      console.log(event);
+      if (event.action === 'start') {
+        console.log('STARTED CONTAINER:', event.Actor.ID);
+      } else if (event.action === 'destroy') {
+        console.log('DESTROYED CONTAINER:', event.Actor.ID);
+      }
     });
 
     // The whole response has been received.
@@ -47,6 +48,6 @@ const statsRequest = http.request(
   }
 );
 
-statsRequest.end();
+eventsRequest.end();
 
 app.listen(SOCKETFILE, () => console.log(`🚀 Server listening on ${SOCKETFILE}`));
