@@ -10,6 +10,18 @@ import {
   ErrorRounded,
 } from '@mui/icons-material';
 import {
+  purple,
+  red,
+  blue,
+  teal,
+  green,
+  cyan,
+  orange,
+  yellow,
+  brown,
+  blueGrey,
+} from '@mui/material/colors';
+import {
   Box,
   Stack,
   Typography,
@@ -27,7 +39,7 @@ import {
   useTheme,
 } from '@mui/material';
 import ContainerIcon from '../../components/ContainerIcon/ContainerIcon';
-import SideBar from '../../components/SideBar/SideBar';
+import SideBar from '../../components/Sidebar/Sidebar';
 import fetchAllContainers from '../../actions/fetchAllContainers';
 import fetchAllContainerLogs from '../../actions/fetchAllContainerLogs';
 import { DockerLog, DockerContainer, LogFilters } from '../../types';
@@ -167,8 +179,32 @@ const logsDisplayStyle = {
   overflow: 'hidden',
   fontFamily: 'monospace',
 };
+
+let colorCounter = 0;
+let currentContainer: string;
+const colorArray: string[] = [
+  purple[300],
+  red[300],
+  blue[300],
+  teal[300],
+  green[300],
+  cyan[300],
+  orange[300],
+  yellow[300],
+  brown[300],
+  blueGrey[300],
+];
+let containerColor: string;
+
 function Row({ containerName, containerId, time, stream, log }: DockerLog) {
   const [open, setOpen] = useState<boolean>(false);
+  //colorArray = [blue, red, green]
+  if (currentContainer !== containerName) {
+    currentContainer = containerName;
+    containerColor = colorArray[colorCounter];
+    colorCounter = colorCounter === 9 ? 0 : colorCounter + 1;
+    console.log(colorCounter);
+  }
 
   return (
     <>
@@ -192,7 +228,7 @@ function Row({ containerName, containerId, time, stream, log }: DockerLog) {
             }}
           >
             {/* TODO: access the custom theme colors instead of hardcoding the color */}
-            <ContainerIcon htmlColor="#228375" sx={{ fontSize: 14 }} />
+            <ContainerIcon htmlColor={containerColor} sx={{ fontSize: 14 }} />
             <Typography
               sx={{
                 whiteSpace: 'nowrap',
