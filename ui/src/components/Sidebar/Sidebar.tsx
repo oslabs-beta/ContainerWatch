@@ -20,6 +20,8 @@ type SideBarProps = {
   setFilters: React.Dispatch<React.SetStateAction<LogFilters>>;
   drawerOpen: boolean;
   setDrawerOpen: Function;
+  setValidFromTimestamp: Function;
+  setValidUntilTimestamp: Function;
 };
 
 export default function SideBar({
@@ -28,7 +30,10 @@ export default function SideBar({
   setFilters,
   drawerOpen,
   setDrawerOpen,
+  setValidFromTimestamp,
+  setValidUntilTimestamp,
 }: SideBarProps) {
+  // These represent user input of time regardless of validity
   const [fromTimestamp, setFromTimestamp] = useState('');
   const [untilTimestamp, setUntilTimestamp] = useState('');
 
@@ -51,6 +56,22 @@ export default function SideBar({
       ...filters,
       allowedContainers: newAllowedContainers,
     });
+  };
+
+  const checkFromValidity = (value: string) => {
+    if (!Number.isNaN(Date.parse(value))) {
+      setValidFromTimestamp(value);
+    } else {
+      setValidFromTimestamp('');
+    }
+  };
+
+  const checkUntilValidity = (value: string) => {
+    if (!Number.isNaN(Date.parse(value))) {
+      setValidUntilTimestamp(value);
+    } else {
+      setValidUntilTimestamp('');
+    }
   };
 
   return (
@@ -181,7 +202,10 @@ export default function SideBar({
               variant="outlined"
               size="small"
               value={fromTimestamp}
-              onChange={(e) => setFromTimestamp(e.target.value)}
+              onChange={(e) => {
+                setFromTimestamp(e.target.value);
+                checkFromValidity(e.target.value);
+              }}
               error={Number.isNaN(Date.parse(fromTimestamp || '0'))}
             />
             <TextField
@@ -189,7 +213,10 @@ export default function SideBar({
               variant="outlined"
               size="small"
               value={untilTimestamp}
-              onChange={(e) => setUntilTimestamp(e.target.value)}
+              onChange={(e) => {
+                setUntilTimestamp(e.target.value);
+                checkUntilValidity(e.target.value);
+              }}
               error={Number.isNaN(Date.parse(untilTimestamp || '0'))}
             />
           </Stack>
