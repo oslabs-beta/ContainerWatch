@@ -20,6 +20,4 @@ export type LogFilters = {
   stdout: boolean;
   stderr: boolean;
   allowedContainers: Set<string>;
-  fromTime: string;
-  untilTime: string;
 };
