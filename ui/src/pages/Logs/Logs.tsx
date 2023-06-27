@@ -52,7 +52,6 @@ export default function Logs() {
   const [searchText, setSearchText] = useState('');
   const [validFromTimestamp, setValidFromTimestamp] = useState('');
   const [validUntilTimestamp, setValidUntilTimestamp] = useState('');
-
   const [filters, setFilters] = useState<LogFilters>({
     stdout: true,
     stderr: true,
