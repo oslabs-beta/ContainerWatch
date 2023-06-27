@@ -126,7 +126,6 @@ export default function Logs() {
             }
             onChange={(e) => setSearchText(e.target.value)}
             value={searchText}
-            // onChange={(e) => onChangeSearch(e.target.value)}
           />
           <IconButton
             onClick={(e) => {
