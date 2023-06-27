@@ -58,7 +58,7 @@ export default function SideBar({
     });
   };
 
-  const checkValidity = (value: string) => {
+  const isTimestampValid = (value: string) => {
     return !Number.isNaN(Date.parse(value));
   };
 
@@ -192,9 +192,9 @@ export default function SideBar({
               value={fromTimestamp}
               onChange={(e) => {
                 setFromTimestamp(e.target.value);
-                setValidFromTimestamp(checkValidity(e.target.value) ? e.target.value : '');
+                setValidFromTimestamp(isTimestampValid(e.target.value) ? e.target.value : '');
               }}
-              error={Number.isNaN(Date.parse(fromTimestamp || '0'))}
+              error={!isTimestampValid(fromTimestamp || '0')}
             />
             <TextField
               label="Until"
@@ -203,9 +203,9 @@ export default function SideBar({
               value={untilTimestamp}
               onChange={(e) => {
                 setUntilTimestamp(e.target.value);
-                setValidUntilTimestamp(checkValidity(e.target.value) ? e.target.value : '');
+                setValidUntilTimestamp(isTimestampValid(e.target.value) ? e.target.value : '');
               }}
-              error={Number.isNaN(Date.parse(untilTimestamp || '0'))}
+              error={!isTimestampValid(untilTimestamp || '0')}
             />
           </Stack>
         </Stack>
