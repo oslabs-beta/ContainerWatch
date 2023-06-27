@@ -20,8 +20,8 @@ type SideBarProps = {
   setFilters: React.Dispatch<React.SetStateAction<LogFilters>>;
   drawerOpen: boolean;
   setDrawerOpen: Function;
-  setValidFromTimestamp: Function;
-  setValidUntilTimestamp: Function;
+  setValidFromTimestamp: React.Dispatch<React.SetStateAction<string>>;
+  setValidUntilTimestamp: React.Dispatch<React.SetStateAction<string>>;
 };
 
 export default function SideBar({
@@ -58,20 +58,8 @@ export default function SideBar({
     });
   };
 
-  const checkFromValidity = (value: string) => {
-    if (!Number.isNaN(Date.parse(value))) {
-      setValidFromTimestamp(value);
-    } else {
-      setValidFromTimestamp('');
-    }
-  };
-
-  const checkUntilValidity = (value: string) => {
-    if (!Number.isNaN(Date.parse(value))) {
-      setValidUntilTimestamp(value);
-    } else {
-      setValidUntilTimestamp('');
-    }
+  const checkValidity = (value: string) => {
+    return !Number.isNaN(Date.parse(value));
   };
 
   return (
@@ -204,7 +192,7 @@ export default function SideBar({
               value={fromTimestamp}
               onChange={(e) => {
                 setFromTimestamp(e.target.value);
-                checkFromValidity(e.target.value);
+                setValidFromTimestamp(checkValidity(e.target.value) ? e.target.value : '');
               }}
               error={Number.isNaN(Date.parse(fromTimestamp || '0'))}
             />
@@ -215,7 +203,7 @@ export default function SideBar({
               value={untilTimestamp}
               onChange={(e) => {
                 setUntilTimestamp(e.target.value);
-                checkUntilValidity(e.target.value);
+                setValidUntilTimestamp(checkValidity(e.target.value) ? e.target.value : '');
               }}
               error={Number.isNaN(Date.parse(untilTimestamp || '0'))}
             />
