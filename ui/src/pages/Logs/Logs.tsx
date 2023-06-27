@@ -31,6 +31,7 @@ import SideBar from '../../components/SideBar/SideBar';
 import fetchAllContainers from '../../actions/fetchAllContainers';
 import fetchAllContainerLogs from '../../actions/fetchAllContainerLogs';
 import { DockerLog, DockerContainer, LogFilters } from '../../types';
+import { validateHeaderValue } from 'http';
 
 const HEADERS = ['', 'Timestamp', 'Container', 'Message'];
 
@@ -81,6 +82,13 @@ export default function Logs() {
     if (!filters.allowedContainers.has(containerId)) return false; // Filter out containers
     return true;
   });
+
+  // Search bar filter
+  const searchedLogs = function (value: string) {
+    return logs.filter(({ containerName, containerId, time, stream, log }) => {
+      if (log.includes(value)) return true;
+    });
+  };
 
   return (
     <>
