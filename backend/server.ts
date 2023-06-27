@@ -22,6 +22,51 @@ app.get('/hello', (req, res) => {
   res.send('hello world from the server');
 });
 
+export interface DockerContainersList {
+  Id: string;
+  Names: string[];
+  Image: string;
+  ImageID: string;
+  Command: string;
+  Ports: Object[];
+  Labels: Object;
+  State: string;
+  Status: string;
+  HostConfig: Object;
+  NetworkSettings: Object;
+  Mounts: Object[];
+}
+
+const arrOfContainerIDs: string[] = [];
+const arrOfContainerNames: string[][] = [];
+
+const onLoadRequest = http.request(
+  {
+    socketPath: '/var/run/docker.sock',
+    path: encodeURI('/containers/json?all=1&filters={"status": ["running"]}'),
+  },
+  (res) => {
+    console.log('made the on load request....');
+
+    res.on('data', (chunk) => {
+      console.log('---------------------gimme da data pls-----------------------');
+      const parseData: DockerContainersList[] = JSON.parse(chunk.toString());
+      console.log(parseData);
+
+      parseData.forEach((el: DockerContainersList) => {
+        arrOfContainerIDs.push(el.Id);
+        arrOfContainerNames.push(el.Names);
+      });
+    });
+
+    res.on('end', () => {
+      console.log('List of all running container ids:', arrOfContainerIDs);
+      console.log('List of all running container names:', arrOfContainerNames);
+      console.log('onLoad req ended');
+    });
+  }
+);
+
 const eventsRequest = http.request(
   {
     socketPath: '/var/run/docker.sock',
@@ -45,26 +90,6 @@ const eventsRequest = http.request(
     // The whole response has been received.
     res.on('end', () => {
       console.log('request ended');
-    });
-  }
-);
-
-const onLoadRequest = http.request(
-  {
-    socketPath: '/var/run/docker.sock',
-    path: encodeURI('/containers/json?all=1&filters={"status": ["running"]}'),
-  },
-  (res) => {
-    console.log('made the on load request....');
-
-    res.on('data', (chunk) => {
-      console.log('---------------------gimme da data pls-----------------------');
-      const parseData = JSON.parse(chunk.toString());
-      console.log(parseData);
-    });
-
-    res.on('end', () => {
-      console.log('onLoad req ended');
     });
   }
 );
