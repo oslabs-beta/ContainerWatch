@@ -27,7 +27,7 @@ import {
   useTheme,
 } from '@mui/material';
 import ContainerIcon from '../../components/ContainerIcon/ContainerIcon';
-import SideBar from '../../components/Sidebar/Sidebar';
+import SideBar from '../../components/SideBar/Sidebar';
 import fetchAllContainers from '../../actions/fetchAllContainers';
 import fetchAllContainerLogs from '../../actions/fetchAllContainerLogs';
 import { DockerLog, DockerContainer, LogFilters } from '../../types';
@@ -53,7 +53,6 @@ export default function Logs() {
   const [searchText, setSearchText] = useState('');
   const [validFromTimestamp, setValidFromTimestamp] = useState('');
   const [validUntilTimestamp, setValidUntilTimestamp] = useState('');
-  const [filteredLogs, setFilteredLogs] = useState<DockerLog[]>([]);
 
   const [filters, setFilters] = useState<LogFilters>({
     stdout: true,
@@ -63,7 +62,6 @@ export default function Logs() {
 
   useEffect(() => {
     refreshAll();
-    filterLogs();
   }, []);
 
   // Refreshes logs page fetching all new containers
@@ -80,43 +78,18 @@ export default function Logs() {
   };
 
   // Apply the filters
-  // const filteredLogs = logs.filter(({ containerName, containerId, time, stream, log }) => {
-  //     if (!filters.stdout && stream === 'stdout') return false; // Filter out stdout
-  //     if (!filters.stderr && stream === 'stderr') return false; // Filter out stderr
-  //     if (!filters.allowedContainers.has(containerId)) return false; // Filter out containers
-  //     return true;
-  //   });
-
-  const filterLogs = () => {
-    if (searchText === '') {
-      setFilteredLogs(
-        logs.filter(({ containerName, containerId, time, stream, log }) => {
-          if (!filters.stdout && stream === 'stdout') return false; // Filter out stdout
-          if (!filters.stderr && stream === 'stderr') return false; // Filter out stderr
-          if (!filters.allowedContainers.has(containerId)) return false; // Filter out containers
-          const convertTime = time.slice(0, time.indexOf('.') + 4);
-          const numTime = Date.parse(convertTime);
-          const numFromTime = Date.parse(validFromTimestamp);
-          const numUntilTime = Date.parse(validUntilTimestamp);
-          if (numTime > numUntilTime || numTime < numFromTime) return false;
-          return true;
-        })
-      );
-      console.log(filteredLogs);
-    } else {
-      setFilteredLogs(
-        logs.filter(({ containerName, containerId, time, stream, log }) => {
-          if (log.includes(searchText)) return true;
-          return false;
-        })
-      );
-    }
-  };
-
-  const onChangeSearch = (input: string) => {
-    setSearchText(input);
-    filterLogs();
-  };
+  const filteredLogs = logs.filter(({ containerName, containerId, time, stream, log }) => {
+    if (!filters.stdout && stream === 'stdout') return false; // Filter out stdout
+    if (!filters.stderr && stream === 'stderr') return false; // Filter out stderr
+    if (!filters.allowedContainers.has(containerId)) return false; // Filter out containers
+    const convertTime = time.slice(0, time.indexOf('.') + 4);
+    const numTime = Date.parse(convertTime);
+    const numFromTime = Date.parse(validFromTimestamp);
+    const numUntilTime = Date.parse(validUntilTimestamp);
+    if (!log.includes(searchText)) return false;
+    if (numTime > numUntilTime || numTime < numFromTime) return false;
+    return true;
+  });
 
   return (
     <>
@@ -151,8 +124,9 @@ export default function Logs() {
                 />
               </InputAdornment>
             }
+            onChange={(e) => setSearchText(e.target.value)}
             value={searchText}
-            onChange={(e) => onChangeSearch(e.target.value)}
+            // onChange={(e) => onChangeSearch(e.target.value)}
           />
           <IconButton
             onClick={(e) => {
