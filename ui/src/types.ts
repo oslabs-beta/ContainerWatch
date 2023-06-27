@@ -1,7 +1,6 @@
 import { DockerDesktopClient } from '@docker/extension-api-client-types/dist/v1';
 
-export type DDClient = DockerDesktopClient
-
+export type DDClient = DockerDesktopClient;
 
 export type DockerLog = {
   containerName: string;
@@ -21,5 +20,6 @@ export type LogFilters = {
   stdout: boolean;
   stderr: boolean;
   allowedContainers: Set<string>;
-}
-
+  fromTime: string;
+  untilTime: string;
+};

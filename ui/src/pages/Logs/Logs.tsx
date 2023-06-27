@@ -57,8 +57,6 @@ export default function Logs() {
     stdout: true,
     stderr: true,
     allowedContainers: new Set(),
-    fromTime: '',
-    untilTime: '',
   });
 
   useEffect(() => {
