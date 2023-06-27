@@ -65,11 +65,9 @@ const onLoadRequest = http.request(
 
     res.on('end', () => {
       console.log('onLoad req ended');
-    })
+    });
   }
 );
-
-
 
 /*
 
