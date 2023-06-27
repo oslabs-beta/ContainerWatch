@@ -86,7 +86,7 @@ export default function Logs() {
     const numTime = Date.parse(convertTime);
     const numFromTime = Date.parse(validFromTimestamp);
     const numUntilTime = Date.parse(validUntilTimestamp);
-    if (!log.includes(searchText)) return false;
+    if (!log.toUpperCase().includes(searchText.toUpperCase())) return false;
     if (numTime > numUntilTime || numTime < numFromTime) return false;
     return true;
   });
