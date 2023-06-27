@@ -28,3 +28,6 @@ export type GrafanaPanelTarget = {
   refId: string;
 }
 
+export type GrafanaPanel = {
+  
+}
