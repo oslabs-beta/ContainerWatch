@@ -115,9 +115,3 @@ function Row(props: any) {
     </>
   );
 }
-
-/*
-
-src={`http://localhost:2999/d/dockerpulse/${containerName}${metric}?orgId=1&refresh=15s&viewPanel=1`}
-
-*/
