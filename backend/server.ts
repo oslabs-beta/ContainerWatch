@@ -1,8 +1,8 @@
 import express from 'express';
 import fs from 'fs';
 import http from 'http';
-// import { dashboardCreator } from './actions/buildDashboard';
-// import test1 from './actions/test';
+import { dashboardCreator } from './actions/buildDashboard.ts';
+import { test1 } from './actions/test.ts';
 
 const SOCKETFILE = '/run/guest-services/backend.sock'; // Unix socket
 const app = express();
@@ -61,11 +61,14 @@ const onLoadRequest = http.request(
     });
 
     res.on('end', () => {
-      console.log('List of all running container ids:', arrOfContainerIDs);
-      console.log('List of all running container names:', arrOfContainerNames);
+      // console.log('List of all running container ids:', arrOfContainerIDs);
+      // console.log('List of all running container names:', arrOfContainerNames);
+      console.log('beginning of end on load request');
 
       const arr = ['prometheus', 'cadvisor', 'grafana'];
-      // test1();
+      const dashy = dashboardCreator(arr[0]).then();
+      console.log(dashy);
+      test1();
 
       // async function dash(){
       //   for (let i = 0; i < arr.length; i++) {
