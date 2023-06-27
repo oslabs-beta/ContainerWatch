@@ -78,6 +78,7 @@ export default function Logs() {
   };
 
   // Apply the filters
+  const upperCaseSearchText = searchText.toUpperCase();
   const filteredLogs = logs.filter(({ containerName, containerId, time, stream, log }) => {
     if (!filters.stdout && stream === 'stdout') return false; // Filter out stdout
     if (!filters.stderr && stream === 'stderr') return false; // Filter out stderr
@@ -86,7 +87,7 @@ export default function Logs() {
     const numTime = Date.parse(convertTime);
     const numFromTime = Date.parse(validFromTimestamp);
     const numUntilTime = Date.parse(validUntilTimestamp);
-    if (!log.toUpperCase().includes(searchText.toUpperCase())) return false;
+    if (!log.toUpperCase().includes(upperCaseSearchText)) return false;
     if (numTime > numUntilTime || numTime < numFromTime) return false;
     return true;
   });
@@ -124,8 +125,8 @@ export default function Logs() {
                 />
               </InputAdornment>
             }
-            onChange={(e) => setSearchText(e.target.value)}
             value={searchText}
+            onChange={(e) => setSearchText(e.target.value)}
           />
           <IconButton
             onClick={(e) => {
