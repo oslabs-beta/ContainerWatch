@@ -27,7 +27,7 @@ import {
   useTheme,
 } from '@mui/material';
 import ContainerIcon from '../../components/ContainerIcon/ContainerIcon';
-import SideBar from '../../components/Sidebar/Sidebar';
+import FilterDrawer from '../../components/FilterDrawer/FilterDrawer';
 import fetchAllContainers from '../../actions/fetchAllContainers';
 import fetchAllContainerLogs from '../../actions/fetchAllContainerLogs';
 import { DockerLog, DockerContainer, LogFilters } from '../../types';
@@ -52,7 +52,6 @@ export default function Logs() {
   const [searchText, setSearchText] = useState('');
   const [validFromTimestamp, setValidFromTimestamp] = useState('');
   const [validUntilTimestamp, setValidUntilTimestamp] = useState('');
-
   const [filters, setFilters] = useState<LogFilters>({
     stdout: true,
     stderr: true,
@@ -91,7 +90,7 @@ export default function Logs() {
 
   return (
     <>
-      <SideBar
+      <FilterDrawer
         drawerOpen={drawerOpen}
         setDrawerOpen={setDrawerOpen}
         containers={containers}
