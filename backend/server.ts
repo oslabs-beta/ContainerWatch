@@ -41,7 +41,6 @@ export interface DockerContainersList {
 const arrOfContainerIDs: string[] = [];
 const arrOfContainerNames: string[][] = [];
 
-
 // const monitorGrafana = http.request(
 //   {
 //     socketPath: '/var/run/docker.sock',
@@ -62,21 +61,31 @@ const arrOfContainerNames: string[][] = [];
 //   }
 // );
 
-
 async function delayedRun() {
   console.log('List of all running container ids:', arrOfContainerIDs);
-  // console.log('List of all running container names:', arrOfContainerNames);
-  console.log('beginning of end on load request');
+  console.log('List of all running container names:', arrOfContainerNames);
 
-  const arr = ['prometheus', 'cadvisor', 'grafana'];
-
+  const containerNames: any[] = [];
   const datasource = await getGrafanaDatasource();
-  const dashy = await createGrafanaDashboardObject(arr[0], datasource);
 
-  console.log(dashy);
+  arrOfContainerNames.forEach((nameArray) => {
+    let name = nameArray.pop();
+    containerNames.push(name?.slice(1));
+  });
+
+  console.log(containerNames);
+  for (let i = 0; i < arrOfContainerIDs.length; i++) {
+    const dashy = await createGrafanaDashboardObject(arrOfContainerIDs[i], containerNames[i], datasource);
+
+    await fetch('http://host.docker.internal:2999/api/dashboards/db', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(dashy),
+    });
+  }
 }
-
-
 
 const onLoadRequest = http.request(
   {
@@ -87,9 +96,9 @@ const onLoadRequest = http.request(
     console.log('made the on load request....');
 
     res.on('data', (chunk) => {
-      console.log('---------------------gimme da data pls-----------------------');
+      console.log('------------------CONTAINERS RUNNING ON LOAD--------------------');
+      console.log('--------------------Please wait 15 seconds----------------------');
       const parseData: DockerContainersList[] = JSON.parse(chunk.toString());
-      // console.log(parseData);
 
       parseData.forEach((el: DockerContainersList) => {
         arrOfContainerIDs.push(el.Id);
@@ -102,7 +111,6 @@ const onLoadRequest = http.request(
       // delay building initial dashboard by 15s to allow grafana more time
       // to finish spinning up
       setTimeout(delayedRun, 15000);
-      console.log('onLoad req ended');
     });
   }
 );
@@ -149,8 +157,6 @@ queryFor = sum(rate(query=${containerID}))
 THIS IS JUST TO TEST FOR MODULARIZING GRAPHS!!
 */
 
-//CREATE PANELS PROGRAMMATICALLY
-// monitorGrafana.end();
 eventsRequest.end();
 onLoadRequest.end();
 
