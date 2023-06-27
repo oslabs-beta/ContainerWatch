@@ -14,21 +14,26 @@ import {
 } from '@mui/material';
 import { DockerContainer, LogFilters } from '../../types';
 
-type SideBarProps = {
+type FilterDrawerProps = {
   containers: DockerContainer[];
   filters: LogFilters;
   setFilters: React.Dispatch<React.SetStateAction<LogFilters>>;
   drawerOpen: boolean;
   setDrawerOpen: Function;
+  setValidFromTimestamp: React.Dispatch<React.SetStateAction<string>>;
+  setValidUntilTimestamp: React.Dispatch<React.SetStateAction<string>>;
 };
 
-export default function SideBar({
+export default function FilterDrawer({
   containers,
   filters,
   setFilters,
   drawerOpen,
   setDrawerOpen,
-}: SideBarProps) {
+  setValidFromTimestamp,
+  setValidUntilTimestamp,
+}: FilterDrawerProps) {
+  // These represent user input of time regardless of validity
   const [fromTimestamp, setFromTimestamp] = useState('');
   const [untilTimestamp, setUntilTimestamp] = useState('');
 
@@ -51,6 +56,10 @@ export default function SideBar({
       ...filters,
       allowedContainers: newAllowedContainers,
     });
+  };
+
+  const isTimestampValid = (value: string) => {
+    return !Number.isNaN(Date.parse(value));
   };
 
   return (
@@ -181,16 +190,22 @@ export default function SideBar({
               variant="outlined"
               size="small"
               value={fromTimestamp}
-              onChange={(e) => setFromTimestamp(e.target.value)}
-              error={Number.isNaN(Date.parse(fromTimestamp || '0'))}
+              onChange={(e) => {
+                setFromTimestamp(e.target.value);
+                setValidFromTimestamp(isTimestampValid(e.target.value) ? e.target.value : '');
+              }}
+              error={!isTimestampValid(fromTimestamp || '0')}
             />
             <TextField
               label="Until"
               variant="outlined"
               size="small"
               value={untilTimestamp}
-              onChange={(e) => setUntilTimestamp(e.target.value)}
-              error={Number.isNaN(Date.parse(untilTimestamp || '0'))}
+              onChange={(e) => {
+                setUntilTimestamp(e.target.value);
+                setValidUntilTimestamp(isTimestampValid(e.target.value) ? e.target.value : '');
+              }}
+              error={!isTimestampValid(untilTimestamp || '0')}
             />
           </Stack>
         </Stack>
