@@ -7,7 +7,7 @@ import { GrafanaDashboard } from '../types';
   
 // }
 
-export async function dashboardCreator(containerName:any): Promise<GrafanaDashboard> {
+export default async function createGrafanaDashboardObject(containerName:any): Promise<GrafanaDashboard> {
   // fetch datasource information from grafana API.
   // this datasource is PRECONFIGURED on launch using grafana config
   const datasourceResponse = await fetch('http://host.docker.internal:2999/api/datasources');
@@ -20,7 +20,7 @@ export async function dashboardCreator(containerName:any): Promise<GrafanaDashbo
   };
 
   console.log('successfully retrieved datasource information:', promDatasource);
-
+  // console.log(panelCreator('hello', 1, 'hello'));
   const dashboard = {
     dashboard: {
       id: null,

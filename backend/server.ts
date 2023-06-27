@@ -1,7 +1,7 @@
 import express from 'express';
 import fs from 'fs';
 import http from 'http';
-import { dashboardCreator } from './actions/buildDashboard.ts';
+import { dashboardCreator } from './actions/createGrafanaDashboardObject.ts';
 import { test1 } from './actions/test.ts';
 
 const SOCKETFILE = '/run/guest-services/backend.sock'; // Unix socket
