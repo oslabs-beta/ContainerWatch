@@ -14,7 +14,7 @@ import {
 } from '@mui/material';
 import { DockerContainer, LogFilters } from '../../types';
 
-type SideBarProps = {
+type FilterDrawerProps = {
   containers: DockerContainer[];
   filters: LogFilters;
   setFilters: React.Dispatch<React.SetStateAction<LogFilters>>;
@@ -24,7 +24,7 @@ type SideBarProps = {
   setValidUntilTimestamp: React.Dispatch<React.SetStateAction<string>>;
 };
 
-export default function SideBar({
+export default function FilterDrawer({
   containers,
   filters,
   setFilters,
@@ -32,7 +32,7 @@ export default function SideBar({
   setDrawerOpen,
   setValidFromTimestamp,
   setValidUntilTimestamp,
-}: SideBarProps) {
+}: FilterDrawerProps) {
   // These represent user input of time regardless of validity
   const [fromTimestamp, setFromTimestamp] = useState('');
   const [untilTimestamp, setUntilTimestamp] = useState('');
