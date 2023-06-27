@@ -6,7 +6,7 @@ COPY backend/package.json /backend/package.json
 COPY backend/package-lock.json /backend/package-lock.json
 RUN --mount=type=cache,target=/usr/src/backend/.npm \
     npm set cache /usr/src/backend/.npm && \
-    npm ci
+    npm ci 
 # Copy files
 COPY backend /backend
 
@@ -52,7 +52,5 @@ COPY imageConfigs/prometheus prometheus
 
 # ============ Start the Extension ============ 
 WORKDIR /backend
-
-RUN ["tsc"]
 
 CMD ["npm", "start"]

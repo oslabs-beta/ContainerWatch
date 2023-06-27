@@ -1,7 +1,7 @@
 import express from 'express';
 import fs from 'fs';
 import http from 'http';
-import dashboardCreator from './actions/buildDashboard';
+// import dashboardCreator from './actions/buildDashboard';
 
 const SOCKETFILE = '/run/guest-services/backend.sock'; // Unix socket
 const app = express();
