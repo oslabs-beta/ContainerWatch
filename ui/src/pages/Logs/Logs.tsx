@@ -280,7 +280,7 @@ function Row({ containerName, containerId, time, stream, log }: DockerLog) {
               sx={{
                 display: 'flex',
                 border: 'lightgray',
-                backgroundColor: 'black',
+                backgroundColor: blueGrey[600],
                 borderRadius: '5px',
                 paddingTop: 0.5,
                 paddingBottom: 0.5,
