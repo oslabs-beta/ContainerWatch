@@ -61,6 +61,7 @@ export default function Logs() {
 
   useEffect(() => {
     refreshAll();
+    filterLogs();
   }, []);
 
   // Refreshes logs page fetching all new containers
@@ -78,15 +79,14 @@ export default function Logs() {
 
   // Apply the filters
   // const filteredLogs = logs.filter(({ containerName, containerId, time, stream, log }) => {
-  //   if (!filters.stdout && stream === 'stdout') return false; // Filter out stdout
-  //   if (!filters.stderr && stream === 'stderr') return false; // Filter out stderr
-  //   if (!filters.allowedContainers.has(containerId)) return false; // Filter out containers
-  //   return true;
-  // });
+  //     if (!filters.stdout && stream === 'stdout') return false; // Filter out stdout
+  //     if (!filters.stderr && stream === 'stderr') return false; // Filter out stderr
+  //     if (!filters.allowedContainers.has(containerId)) return false; // Filter out containers
+  //     return true;
+  //   });
 
-  const filterLogs = (value?: string) => {
-    if (value === undefined) {
-      console.log('wsap');
+  const filterLogs = () => {
+    if (searchText === '') {
       setFilteredLogs(
         logs.filter(({ containerName, containerId, time, stream, log }) => {
           if (!filters.stdout && stream === 'stdout') return false; // Filter out stdout
@@ -95,10 +95,11 @@ export default function Logs() {
           return true;
         })
       );
+      console.log(filteredLogs);
     } else {
       setFilteredLogs(
         logs.filter(({ containerName, containerId, time, stream, log }) => {
-          if (log.includes(value)) return true;
+          if (log.includes(searchText)) return true;
           return false;
         })
       );
@@ -107,16 +108,8 @@ export default function Logs() {
 
   const onChangeSearch = (input: string) => {
     setSearchText(input);
-    filterLogs(input);
+    filterLogs();
   };
-
-  // Search bar filter
-  // const searchedLogs = (value: string) => {
-  //   return logs.filter(({ containerName, containerId, time, stream, log }) => {
-  //     if (log.includes(value)) return true;
-  //     return false;
-  //   });
-  // };
 
   return (
     <>
@@ -190,9 +183,6 @@ export default function Logs() {
               {filteredLogs.map((row) => (
                 <Row {...row} />
               ))}
-              {/* {searchedLogs(searchText).map((row) => (
-                <Row {...row} />
-              ))} */}
             </TableBody>
           </Table>
         </TableContainer>
