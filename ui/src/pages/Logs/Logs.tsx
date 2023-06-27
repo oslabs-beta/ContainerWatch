@@ -51,6 +51,7 @@ export default function Logs() {
   const [containers, setContainers] = useState<DockerContainer[]>([]);
   const [logs, setLogs] = useState<DockerLog[]>([]);
   const [searchText, setSearchText] = useState('');
+  const [filteredLogs, setFilteredLogs] = useState<DockerLog[]>([]);
 
   const [filters, setFilters] = useState<LogFilters>({
     stdout: true,
@@ -76,20 +77,46 @@ export default function Logs() {
   };
 
   // Apply the filters
-  const filteredLogs = logs.filter(({ containerName, containerId, time, stream, log }) => {
-    if (!filters.stdout && stream === 'stdout') return false; // Filter out stdout
-    if (!filters.stderr && stream === 'stderr') return false; // Filter out stderr
-    if (!filters.allowedContainers.has(containerId)) return false; // Filter out containers
-    return true;
-  });
+  // const filteredLogs = logs.filter(({ containerName, containerId, time, stream, log }) => {
+  //   if (!filters.stdout && stream === 'stdout') return false; // Filter out stdout
+  //   if (!filters.stderr && stream === 'stderr') return false; // Filter out stderr
+  //   if (!filters.allowedContainers.has(containerId)) return false; // Filter out containers
+  //   return true;
+  // });
+
+  const filterLogs = (value?: string) => {
+    if (value === undefined) {
+      console.log('wsap');
+      setFilteredLogs(
+        logs.filter(({ containerName, containerId, time, stream, log }) => {
+          if (!filters.stdout && stream === 'stdout') return false; // Filter out stdout
+          if (!filters.stderr && stream === 'stderr') return false; // Filter out stderr
+          if (!filters.allowedContainers.has(containerId)) return false; // Filter out containers
+          return true;
+        })
+      );
+    } else {
+      setFilteredLogs(
+        logs.filter(({ containerName, containerId, time, stream, log }) => {
+          if (log.includes(value)) return true;
+          return false;
+        })
+      );
+    }
+  };
+
+  const onChangeSearch = (input: string) => {
+    setSearchText(input);
+    filterLogs(input);
+  };
 
   // Search bar filter
-  const searchedLogs = (value: string) => {
-    return logs.filter(({ containerName, containerId, time, stream, log }) => {
-      if (log.includes(value)) return true;
-      return false;
-    });
-  };
+  // const searchedLogs = (value: string) => {
+  //   return logs.filter(({ containerName, containerId, time, stream, log }) => {
+  //     if (log.includes(value)) return true;
+  //     return false;
+  //   });
+  // };
 
   return (
     <>
@@ -123,7 +150,7 @@ export default function Logs() {
               </InputAdornment>
             }
             value={searchText}
-            onChange={(e) => setSearchText(e.target.value)}
+            onChange={(e) => onChangeSearch(e.target.value)}
           />
           <IconButton
             onClick={(e) => {
@@ -160,12 +187,12 @@ export default function Logs() {
               </TableRow>
             </TableHead>
             <TableBody>
-              {/* {filteredLogs.map((row) => (
-                <Row {...row} />
-              ))} */}
-              {searchedLogs(searchText).map((row) => (
+              {filteredLogs.map((row) => (
                 <Row {...row} />
               ))}
+              {/* {searchedLogs(searchText).map((row) => (
+                <Row {...row} />
+              ))} */}
             </TableBody>
           </Table>
         </TableContainer>
