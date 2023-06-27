@@ -84,9 +84,10 @@ export default function Logs() {
   });
 
   // Search bar filter
-  const searchedLogs = function (value: string) {
+  const searchedLogs = (value: string) => {
     return logs.filter(({ containerName, containerId, time, stream, log }) => {
       if (log.includes(value)) return true;
+      return false;
     });
   };
 
@@ -159,7 +160,10 @@ export default function Logs() {
               </TableRow>
             </TableHead>
             <TableBody>
-              {filteredLogs.map((row) => (
+              {/* {filteredLogs.map((row) => (
+                <Row {...row} />
+              ))} */}
+              {searchedLogs(searchText).map((row) => (
                 <Row {...row} />
               ))}
             </TableBody>
