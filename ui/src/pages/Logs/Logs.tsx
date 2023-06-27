@@ -189,8 +189,6 @@ const logsDisplayStyle = {
   fontFamily: 'monospace',
 };
 
-let colorCounter = 0;
-let currentContainer: string;
 const colorArray: string[] = [
   purple[300],
   red[300],
@@ -203,16 +201,19 @@ const colorArray: string[] = [
   brown[300],
   blueGrey[300],
 ];
+// Keeps track of what color to assign to each unique container
+let colorCounter = 0;
+// Containers object holds key value pairs of {containerName: containerColor}
+const containers: Record<string, string> = {};
 let containerColor: string;
 
 function Row({ containerName, containerId, time, stream, log }: DockerLog) {
   const [open, setOpen] = useState<boolean>(false);
-  //colorArray = [blue, red, green]
-  if (currentContainer !== containerName) {
-    currentContainer = containerName;
+  // Assigning color to container only if its a new container
+  if (!containers.hasOwnProperty(containerName)) {
     containerColor = colorArray[colorCounter];
+    containers[containerName] = containerColor;
     colorCounter = colorCounter === 9 ? 0 : colorCounter + 1;
-    console.log(colorCounter);
   }
 
   return (
@@ -236,8 +237,7 @@ function Row({ containerName, containerId, time, stream, log }: DockerLog) {
               maxWidth: '150px',
             }}
           >
-            {/* TODO: access the custom theme colors instead of hardcoding the color */}
-            <ContainerIcon htmlColor={containerColor} sx={{ fontSize: 14 }} />
+            <ContainerIcon htmlColor={containers[containerName]} sx={{ fontSize: 14 }} />
             <Typography
               sx={{
                 whiteSpace: 'nowrap',
