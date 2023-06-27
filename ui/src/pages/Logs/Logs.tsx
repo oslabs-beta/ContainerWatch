@@ -27,15 +27,10 @@ import {
   useTheme,
 } from '@mui/material';
 import ContainerIcon from '../../components/ContainerIcon/ContainerIcon';
-
-
-
 import FilterDrawer from '../../components/FilterDrawer/FilterDrawer';
-
 import fetchAllContainers from '../../actions/fetchAllContainers';
 import fetchAllContainerLogs from '../../actions/fetchAllContainerLogs';
 import { DockerLog, DockerContainer, LogFilters } from '../../types';
-import { validateHeaderValue } from 'http';
 
 const HEADERS = ['', 'Timestamp', 'Container', 'Message'];
 
