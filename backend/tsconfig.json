@@ -8,5 +8,5 @@
     "skipLibCheck": true,
     "outDir": "./dist",
   },
-  "include": ["actions", "server.ts"]
+  "include": ["./**/*"]
 }

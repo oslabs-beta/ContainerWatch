@@ -1,7 +1,8 @@
 import express from 'express';
 import fs from 'fs';
 import http from 'http';
-import dashboardCreator from './actions/buildDashboard';
+// import { dashboardCreator } from './actions/buildDashboard';
+// import test1 from './actions/test';
 
 const SOCKETFILE = '/run/guest-services/backend.sock'; // Unix socket
 const app = express();
@@ -64,23 +65,24 @@ const onLoadRequest = http.request(
       console.log('List of all running container names:', arrOfContainerNames);
 
       const arr = ['prometheus', 'cadvisor', 'grafana'];
+      // test1();
 
-      async function dash(){
-        for (let i = 0; i < arr.length; i++) {
-          const dashb = await dashboardCreator(arr[i]);
-          console.log('new dashboard!!', dashb);
-          await fetch('http://host.docker.internal:2999/api/dashboards/db', {
-            method: 'POST',
-            // Accept: 'application/json',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(dashb),
-          });
-        }
-      }
-      
-      dash();
+      // async function dash(){
+      //   for (let i = 0; i < arr.length; i++) {
+      //     const dashb = await dashboardCreator(arr[i]);
+      //     console.log('new dashboard!!', dashb);
+      //     await fetch('http://host.docker.internal:2999/api/dashboards/db', {
+      //       method: 'POST',
+      //       // Accept: 'application/json',
+      //       headers: {
+      //         'Content-Type': 'application/json',
+      //       },
+      //       body: JSON.stringify(dashb),
+      //     });
+      //   }
+      // }
+
+      // dash();
 
       console.log('onLoad req ended');
     });
