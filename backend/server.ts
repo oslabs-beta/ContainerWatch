@@ -1,8 +1,8 @@
 import express from 'express';
 import fs from 'fs';
 import http from 'http';
-import { dashboardCreator } from './actions/createGrafanaDashboardObject.ts';
-import { test1 } from './actions/test.ts';
+import createGrafanaDashboardObject from './actions/createGrafanaDashboardObject.ts';
+import getGrafanaDatasource from './actions/getGrafanaDatasource.ts';
 
 const SOCKETFILE = '/run/guest-services/backend.sock'; // Unix socket
 const app = express();
@@ -41,6 +41,43 @@ export interface DockerContainersList {
 const arrOfContainerIDs: string[] = [];
 const arrOfContainerNames: string[][] = [];
 
+
+// const monitorGrafana = http.request(
+//   {
+//     socketPath: '/var/run/docker.sock',
+//     path: encodeURI('/events?filters={"event": ["health_status"]}'),
+//   },
+//   (res) => {
+//     console.log('made the on load request....');
+
+//     res.on('data', (chunk) => {
+//       console.log('---------------------monitorGrafana-----------------------');
+//       const parseData2: DockerContainersList[] = JSON.parse(chunk.toString());
+//       console.log(parseData2);
+//     });
+
+//     res.on('end', () => {
+//       console.log('graf monitor end');
+//     })
+//   }
+// );
+
+
+async function delayedRun() {
+  console.log('List of all running container ids:', arrOfContainerIDs);
+  // console.log('List of all running container names:', arrOfContainerNames);
+  console.log('beginning of end on load request');
+
+  const arr = ['prometheus', 'cadvisor', 'grafana'];
+
+  const datasource = await getGrafanaDatasource();
+  const dashy = await createGrafanaDashboardObject(arr[0], datasource);
+
+  console.log(dashy);
+}
+
+
+
 const onLoadRequest = http.request(
   {
     socketPath: '/var/run/docker.sock',
@@ -52,7 +89,7 @@ const onLoadRequest = http.request(
     res.on('data', (chunk) => {
       console.log('---------------------gimme da data pls-----------------------');
       const parseData: DockerContainersList[] = JSON.parse(chunk.toString());
-      console.log(parseData);
+      // console.log(parseData);
 
       parseData.forEach((el: DockerContainersList) => {
         arrOfContainerIDs.push(el.Id);
@@ -60,33 +97,11 @@ const onLoadRequest = http.request(
       });
     });
 
-    res.on('end', () => {
-      // console.log('List of all running container ids:', arrOfContainerIDs);
-      // console.log('List of all running container names:', arrOfContainerNames);
-      console.log('beginning of end on load request');
-
-      const arr = ['prometheus', 'cadvisor', 'grafana'];
-      const dashy = dashboardCreator(arr[0]).then();
-      console.log(dashy);
-      test1();
-
-      // async function dash(){
-      //   for (let i = 0; i < arr.length; i++) {
-      //     const dashb = await dashboardCreator(arr[i]);
-      //     console.log('new dashboard!!', dashb);
-      //     await fetch('http://host.docker.internal:2999/api/dashboards/db', {
-      //       method: 'POST',
-      //       // Accept: 'application/json',
-      //       headers: {
-      //         'Content-Type': 'application/json',
-      //       },
-      //       body: JSON.stringify(dashb),
-      //     });
-      //   }
-      // }
-
-      // dash();
-
+    res.on('end', async () => {
+      // extremely hacky solution, would love to see a better implementation
+      // delay building initial dashboard by 15s to allow grafana more time
+      // to finish spinning up
+      setTimeout(delayedRun, 15000);
       console.log('onLoad req ended');
     });
   }
@@ -135,7 +150,7 @@ THIS IS JUST TO TEST FOR MODULARIZING GRAPHS!!
 */
 
 //CREATE PANELS PROGRAMMATICALLY
-
+// monitorGrafana.end();
 eventsRequest.end();
 onLoadRequest.end();
 

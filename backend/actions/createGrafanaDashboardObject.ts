@@ -1,5 +1,5 @@
 // import panelCreator from './buildPanel';
-import { GrafanaDashboard } from '../types';
+import { GrafanaDashboard, GrafanaDatasource } from '../types';
 
 // export default async function dashboardCreator(containerName: string): Promise<Object> {
 
@@ -7,20 +7,10 @@ import { GrafanaDashboard } from '../types';
   
 // }
 
-export default async function createGrafanaDashboardObject(containerName:any): Promise<GrafanaDashboard> {
-  // fetch datasource information from grafana API.
-  // this datasource is PRECONFIGURED on launch using grafana config
-  const datasourceResponse = await fetch('http://host.docker.internal:2999/api/datasources');
-  const datasourceData = await datasourceResponse.json();
+export default async function createGrafanaDashboardObject(containerName:any, datasource: GrafanaDatasource): Promise<GrafanaDashboard> {
 
-  // create a datasource object to be used within panels
-  const promDatasource = {
-    type: datasourceData[0].type,
-    uid: datasourceData[0].uid,
-  };
+  console.log('in createGrafanadDashboardObject', datasource);
 
-  console.log('successfully retrieved datasource information:', promDatasource);
-  // console.log(panelCreator('hello', 1, 'hello'));
   const dashboard = {
     dashboard: {
       id: null,

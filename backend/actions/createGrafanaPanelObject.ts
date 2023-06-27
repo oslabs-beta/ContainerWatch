@@ -1,6 +1,6 @@
-// export default function panelCreator(containerName: string, id: number, promDatasource: any) {
+import { GrafanaDatasource } from '../types';
 
-export default function panelCreator(containerName, id, promDatasource) {
+export default function createGrafanaPanelObject(containerName: string, id: number, promDatasource: GrafanaDatasource) {
   const dashboardPanel = 'helloworld';
   // const targets = [
   //   {

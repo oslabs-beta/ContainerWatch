@@ -14,7 +14,8 @@ services:
       - shared-prometheus-volume:/prometheus
       # Creating volumes to transfer data from the project repository to different containers is a great PRODUCTION level solution, HOWEVER volumes must be deleted before updates to prometheus and grafana configs can take place
       # TODO: docker-compose yaml for DEVELOPMENT (BIND MOUNT) and PRODUCTION
-
+    depends_on:
+      - grafana
 
   prometheus:
     # Pulling a custom image that has been pushed to the hub that has been configured to scrape
