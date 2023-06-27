@@ -62,6 +62,8 @@ export default function Logs() {
   const [containers, setContainers] = useState<DockerContainer[]>([]);
   const [logs, setLogs] = useState<DockerLog[]>([]);
   const [searchText, setSearchText] = useState('');
+  const [validFromTimestamp, setValidFromTimestamp] = useState('');
+  const [validUntilTimestamp, setValidUntilTimestamp] = useState('');
 
   const [filters, setFilters] = useState<LogFilters>({
     stdout: true,
@@ -91,6 +93,11 @@ export default function Logs() {
     if (!filters.stdout && stream === 'stdout') return false; // Filter out stdout
     if (!filters.stderr && stream === 'stderr') return false; // Filter out stderr
     if (!filters.allowedContainers.has(containerId)) return false; // Filter out containers
+    const convertTime = time.slice(0, time.indexOf('.') + 4);
+    const numTime = Date.parse(convertTime);
+    const numFromTime = Date.parse(validFromTimestamp);
+    const numUntilTime = Date.parse(validUntilTimestamp);
+    if (numTime > numUntilTime || numTime < numFromTime) return false;
     return true;
   });
 
@@ -102,6 +109,8 @@ export default function Logs() {
         containers={containers}
         filters={filters}
         setFilters={setFilters}
+        setValidFromTimestamp={setValidFromTimestamp}
+        setValidUntilTimestamp={setValidUntilTimestamp}
       />
       <Box sx={{ minHeight: 0, display: 'flex', flexDirection: 'column' }}>
         <Stack direction="row" spacing={2}>
