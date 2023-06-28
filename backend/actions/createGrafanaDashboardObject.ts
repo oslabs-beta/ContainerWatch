@@ -1,4 +1,4 @@
-// import panelCreator from './buildPanel';
+import createGrafanaPanelObject from './createGrafanaPanelObject.ts';
 import { GrafanaDashboard, GrafanaDatasource } from '../types';
 
 // export default async function dashboardCreator(containerName: string): Promise<Object> {
@@ -7,11 +7,11 @@ import { GrafanaDashboard, GrafanaDatasource } from '../types';
   
 // }
 
-export default async function createGrafanaDashboardObject(containerName:any, datasource: GrafanaDatasource): Promise<GrafanaDashboard> {
+export default async function createGrafanaDashboardObject(containerID: string, containerName: string, datasource: GrafanaDatasource): Promise<GrafanaDashboard> {
 
   console.log('in createGrafanadDashboardObject', datasource);
 
-  const dashboard = {
+  const dashboard: GrafanaDashboard = {
     dashboard: {
       id: null,
       title: containerName,
@@ -27,7 +27,7 @@ export default async function createGrafanaDashboardObject(containerName:any, da
     overwrite: true,
   };
 
-  // dashboard.dashboard.panels.push(panelCreator(containerName, 1, promDatasource));
+  dashboard.dashboard.panels.push(createGrafanaPanelObject(containerName, 1, datasource));
 
   return dashboard;
 }
