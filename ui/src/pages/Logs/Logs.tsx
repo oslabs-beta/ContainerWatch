@@ -222,9 +222,9 @@ function Row({ containerName, containerId, time, stream, log }: DockerLog) {
 
   // Assigning color to containerLabel only if its a new container
   if (!containerLabelColors.hasOwnProperty(containerName)) {
-    containerLabelColor = colorArray[colorCounter];
+    containerLabelColor = colorArray[colorCounter % colorArray.length];
+    colorCounter++;
     containerLabelColors[containerName] = containerLabelColor;
-    colorCounter = colorCounter >= colorArray.length ? 0 : colorCounter + 1;
   }
   // Assigning color to containerIcon based on running staus
   runningContainers[containerId] === 'running'
