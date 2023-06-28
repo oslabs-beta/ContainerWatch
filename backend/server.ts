@@ -1,8 +1,8 @@
 import express from 'express';
 import fs from 'fs';
 import http from 'http';
-import createGrafanaDashboardObject from './actions/createGrafanaDashboardObject.ts';
-import getGrafanaDatasource from './actions/getGrafanaDatasource.ts';
+import createGrafanaDashboardObject from './actions/createGrafanaDashboardObject';
+import getGrafanaDatasource from './actions/getGrafanaDatasource';
 
 const SOCKETFILE = '/run/guest-services/backend.sock'; // Unix socket
 const app = express();
