@@ -224,7 +224,7 @@ function Row({ containerName, containerId, time, stream, log }: DockerLog) {
   if (!containerTracker.hasOwnProperty(containerName)) {
     containerColor = colorArray[colorCounter];
     containerTracker[containerName] = containerColor;
-    colorCounter = colorCounter === 9 ? 0 : colorCounter + 1;
+    colorCounter = colorCounter >= colorArray.length ? 0 : colorCounter + 1;
   }
   // Assigning color to containerIcon based on running staus
   runningContainers[containerId] === 'running'
