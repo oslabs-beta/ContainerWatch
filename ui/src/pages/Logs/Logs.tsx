@@ -8,9 +8,9 @@ import {
   KeyboardArrowDown,
   Refresh,
   ErrorRounded,
+  Palette,
 } from '@mui/icons-material';
 import {
-  purple,
   red,
   blue,
   teal,
@@ -52,7 +52,17 @@ const useDockerDesktopClient = () => {
   return client;
 };
 
-const runningContainers: Record<string, string> = {};
+const colorArray: string[] = [
+  red[500],
+  blue[500],
+  teal[500],
+  green[500],
+  cyan[500],
+  orange[500],
+  yellow[500],
+  brown[500],
+  blueGrey[500],
+];
 
 export default function Logs() {
   // Access the custom theme (provided by DockerMuiThemeProvider)
@@ -66,6 +76,8 @@ export default function Logs() {
   const [searchText, setSearchText] = useState('');
   const [validFromTimestamp, setValidFromTimestamp] = useState('');
   const [validUntilTimestamp, setValidUntilTimestamp] = useState('');
+  const [containerLabelColor, setContainerLabelColor] = useState<Record<string, string>>({});
+  const [containerIconColor, setContainerIconColor] = useState<Record<string, string>>({});
   const [filters, setFilters] = useState<LogFilters>({
     stdout: true,
     stderr: true,
@@ -84,6 +96,22 @@ export default function Logs() {
       setContainers(allContainers);
       setLogs(allContainerLogs);
       setFilters({ ...filters, allowedContainers: new Set(allContainers.map(({ Id }) => Id)) });
+      const updatedContainerLabelColor = allContainers.reduce(
+        (prevContainerLabelColor, container, index) => ({
+          ...prevContainerLabelColor,
+          [container.Id]: colorArray[index % colorArray.length],
+        }),
+        {}
+      );
+      setContainerLabelColor(updatedContainerLabelColor);
+      const updatedContainerIconColor = allContainers.reduce(
+        (prevContainerIconColor, container) => ({
+          ...prevContainerIconColor,
+          [container.Id]: container.State,
+        }),
+        {}
+      );
+      setContainerIconColor(updatedContainerIconColor);
     } catch (err) {
       console.error(err);
     }
@@ -102,13 +130,6 @@ export default function Logs() {
     return true;
   });
 
-  // Populate runningContainers {} with container Id's and state. This is used for assinging container icon color based on running status
-  containers.reduce((runningContainers, currentContainer) => {
-    const { Id, State } = currentContainer;
-    runningContainers[Id] = State;
-    return runningContainers;
-  }, runningContainers);
-
   return (
     <>
       <FilterDrawer
@@ -119,6 +140,7 @@ export default function Logs() {
         setFilters={setFilters}
         setValidFromTimestamp={setValidFromTimestamp}
         setValidUntilTimestamp={setValidUntilTimestamp}
+        containerLabelColor={containerLabelColor}
       />
       <Box sx={{ minHeight: 0, display: 'flex', flexDirection: 'column' }}>
         <Stack direction="row" spacing={2}>
@@ -181,7 +203,13 @@ export default function Logs() {
             </TableHead>
             <TableBody>
               {filteredLogs.map((row) => (
-                <Row {...row} />
+                <Row
+                  {...row}
+                  containerLabelColor={containerLabelColor}
+                  setContainerLabelColor={setContainerLabelColor}
+                  containerIconColor={containerIconColor}
+                  setContainerIconColor={setContainerIconColor}
+                />
               ))}
             </TableBody>
           </Table>
@@ -197,38 +225,23 @@ const logsDisplayStyle = {
   fontFamily: 'monospace',
 };
 
-const colorArray: string[] = [
-  purple[100],
-  red[100],
-  blue[100],
-  teal[100],
-  green[100],
-  cyan[100],
-  orange[100],
-  yellow[100],
-  brown[100],
-  blueGrey[100],
-];
-// Keeps track of what color to assign to each unique container
-let colorCounter = 0;
-// Containers object holds key value pairs of {containerName: containerColor}
-const containerLabelColors: Record<string, string> = {};
-let containerLabelColor: string;
-let containerIconColor: string;
+// let containerIconColor: string;
 
-function Row({ containerName, containerId, time, stream, log }: DockerLog) {
+function Row({
+  containerName,
+  containerId,
+  time,
+  stream,
+  log,
+  containerLabelColor,
+  containerIconColor,
+}: DockerLog) {
   const [open, setOpen] = useState<boolean>(false);
 
-  // Assigning color to containerLabel only if its a new container
-  if (!containerLabelColors.hasOwnProperty(containerName)) {
-    containerLabelColor = colorArray[colorCounter % colorArray.length];
-    colorCounter++;
-    containerLabelColors[containerName] = containerLabelColor;
-  }
-  // Assigning color to containerIcon based on running staus
-  runningContainers[containerId] === 'running'
-    ? (containerIconColor = 'teal')
-    : (containerIconColor = 'grey');
+  const labelColor: string = containerLabelColor[containerId];
+  let iconColor: string;
+
+  containerIconColor[containerId] === 'running' ? (iconColor = 'teal') : (iconColor = 'grey');
 
   return (
     <>
@@ -251,14 +264,14 @@ function Row({ containerName, containerId, time, stream, log }: DockerLog) {
               maxWidth: '150px',
             }}
           >
-            <ContainerIcon htmlColor={containerIconColor} sx={{ fontSize: 14 }} />
+            <ContainerIcon htmlColor={iconColor} sx={{ fontSize: 14 }} />
             <Typography
               sx={{
                 whiteSpace: 'nowrap',
                 textOverflow: 'ellipsis',
                 overflow: 'hidden',
                 fontFamily: 'monospace',
-                backgroundColor: containerLabelColors[containerName],
+                backgroundColor: labelColor,
                 borderRadius: '5px',
                 padding: 0.5,
               }}
