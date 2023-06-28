@@ -1,4 +1,4 @@
-import { GrafanaDatasource } from '../../../types';
+import { GrafanaDatasource } from '../../types';
 
 export default async function getGrafanaDatasource(): Promise<GrafanaDatasource> {
   // fetch datasource information from grafana API.
