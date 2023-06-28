@@ -62,6 +62,13 @@ export default function Logs() {
     refreshAll();
   }, []);
 
+  let timeoutID: any;
+  // Debounce function
+  const debounce = (value: string) => {
+    clearTimeout(timeoutID);
+    timeoutID = setTimeout(() => setSearchText(value), 4000);
+  };
+
   // Refreshes logs page fetching all new containers
   const refreshAll = async () => {
     try {
@@ -74,6 +81,7 @@ export default function Logs() {
       console.error(err);
     }
   };
+  console.log('firing: ' + Date.now());
 
   // Apply the filters
   const upperCaseSearchText = searchText.toUpperCase();
@@ -123,8 +131,8 @@ export default function Logs() {
                 />
               </InputAdornment>
             }
-            value={searchText}
-            onChange={(e) => setSearchText(e.target.value)}
+            // value={searchText}
+            onChange={(e) => debounce(e.target.value)}
           />
           <IconButton
             onClick={(e) => {
