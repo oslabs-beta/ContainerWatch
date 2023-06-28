@@ -5,4 +5,4 @@ scrape_configs:
   - job_name: docker_container_metrics
     scrape_interval: 5s
     static_configs:
-      - targets: ['docker.host.internal:3333']
+      - targets: ['host.docker.internal:3333']
