@@ -23,6 +23,7 @@ app.get('/hello', (req, res) => {
   res.send('hello world from the server');
 });
 
+// Interface that mimics container list response given by Docker
 export interface DockerContainersList {
   Id: string;
   Names: string[];
@@ -38,33 +39,15 @@ export interface DockerContainersList {
   Mounts: Object[];
 }
 
+// Arrays that affiliate IDs and Container Names
 const arrOfContainerIDs: string[] = [];
 const arrOfContainerNames: string[][] = [];
 
-// const monitorGrafana = http.request(
-//   {
-//     socketPath: '/var/run/docker.sock',
-//     path: encodeURI('/events?filters={"event": ["health_status"]}'),
-//   },
-//   (res) => {
-//     console.log('made the on load request....');
-
-//     res.on('data', (chunk) => {
-//       console.log('---------------------monitorGrafana-----------------------');
-//       const parseData2: DockerContainersList[] = JSON.parse(chunk.toString());
-//       console.log(parseData2);
-//     });
-
-//     res.on('end', () => {
-//       console.log('graf monitor end');
-//     })
-//   }
-// );
-
+// Function that bundles together functionality that will run after
+// a set amount of time. The Grafana container currently takes a bit longer
+// to finish loading compared to the DockerPulse container. This function
+// makes DockerPulse wait before sending a fetch request to Grafana.
 async function delayedRun() {
-  console.log('List of all running container ids:', arrOfContainerIDs);
-  console.log('List of all running container names:', arrOfContainerNames);
-
   const containerNames: any[] = [];
   const datasource = await getGrafanaDatasource();
 
@@ -75,7 +58,11 @@ async function delayedRun() {
 
   console.log(containerNames);
   for (let i = 0; i < arrOfContainerIDs.length; i++) {
-    const dashy = await createGrafanaDashboardObject(arrOfContainerIDs[i], containerNames[i], datasource);
+    const dashy = await createGrafanaDashboardObject(
+      arrOfContainerIDs[i],
+      containerNames[i],
+      datasource
+    );
 
     await fetch('http://host.docker.internal:2999/api/dashboards/db', {
       method: 'POST',
@@ -141,21 +128,6 @@ const eventsRequest = http.request(
     });
   }
 );
-
-/*
-
-queryForCPU = sum(rate(query=${containerID}))
-queryForRAM = sum(rate(query=${containerID}))
-queryForNETIO = sum(rate(query=${containerID}))
-queryFor = sum(rate(query=${containerID}))
-
-
-
-*/
-
-/* 
-THIS IS JUST TO TEST FOR MODULARIZING GRAPHS!!
-*/
 
 eventsRequest.end();
 onLoadRequest.end();
