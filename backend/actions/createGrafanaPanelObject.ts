@@ -11,7 +11,7 @@ export default function createGrafanaPanelObject(
   id: number,
   promDatasource: GrafanaDatasource
 ): GrafanaPanel {
-
+  // create targets key for grafana panel
   const targets: GrafanaPanelTargetsKey = [
     {
       datasource: promDatasource,
@@ -23,6 +23,7 @@ export default function createGrafanaPanelObject(
     },
   ];
 
+  // create fieldConfig key for grafana panel
   const fieldConfigObject: GrafanaPanelFieldConfigKey = {
     defaults: {
       color: {
@@ -76,6 +77,7 @@ export default function createGrafanaPanelObject(
     overrides: [],
   };
 
+  // create options key for grafana panel
   const optionsObject: GrafanaPanelOptionsKey = {
     legend: {
       calcs: [],
@@ -89,7 +91,8 @@ export default function createGrafanaPanelObject(
     },
   };
 
-  const dashboardPanel: GrafanaPanel = {
+  // create grafana panel using previously built objects
+  const grafanaPanel: GrafanaPanel = {
     datasource: promDatasource,
     fieldConfig: fieldConfigObject,
     gridPos: {
@@ -105,5 +108,6 @@ export default function createGrafanaPanelObject(
     type: 'timeseries',
   };
 
-  return dashboardPanel;
+  // return the compiled grafana panel object
+  return grafanaPanel;
 }
