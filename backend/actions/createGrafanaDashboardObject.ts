@@ -1,4 +1,4 @@
-import createGrafanaPanelObject from './createGrafanaPanelObject.ts';
+import createGrafanaPanelObject from './createGrafanaPanelObject';
 import { GrafanaDashboard, GrafanaDatasource } from '../types';
 
 export default async function createGrafanaDashboardObject(
