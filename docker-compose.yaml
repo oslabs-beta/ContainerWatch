@@ -16,6 +16,9 @@ services:
       # TODO: docker-compose yaml for DEVELOPMENT (BIND MOUNT) and PRODUCTION
     depends_on:
       - grafana
+    ports:
+      # Expose port 3333 to the host so that you can see metrics on localhost:3333/metrics
+      - 3333:3333
 
   prometheus:
     # Pulling a custom image that has been pushed to the hub that has been configured to scrape
@@ -30,19 +33,6 @@ services:
       # Creating a named volume for the prometheus data
       - prometheusdata:/prometheus
       - shared-prometheus-volume:/etc/prometheus
-    depends_on:
-      - cadvisor
-
-  cadvisor:
-    image: gcr.io/cadvisor/cadvisor:v0.46.0
-    container_name: cadvisor
-    ports:
-      - 8080:8080
-    volumes:
-      - /:/rootfs:ro
-      - /var/run/docker.sock:/var/run/docker.sock:rw
-      - /sys:/sys:ro
-      - /var/lib/docker/:/var/lib/docker:ro
 
   grafana:
     image: grafana/grafana:latest
