@@ -103,12 +103,11 @@ export default function Logs() {
   });
 
   // Populate runningContainers {} with container Id's and state. This is used for assinging container icon color based on running status
-  for (let i = 0; i < containers.length; i++) {
-    const currentContainer = containers[i];
-    const containerId = currentContainer.Id;
-    const state = currentContainer.State;
-    runningContainers[containerId] = state;
-  }
+  containers.reduce((runningContainers, currentContainer) => {
+    const { Id, State } = currentContainer;
+    runningContainers[Id] = State;
+    return runningContainers;
+  }, runningContainers);
 
   return (
     <>
