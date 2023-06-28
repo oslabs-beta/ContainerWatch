@@ -1,4 +1,4 @@
-import { useEffect, useState, createContext, useContext } from 'react';
+import { useEffect, useState } from 'react';
 import { createDockerDesktopClient } from '@docker/extension-api-client';
 import {
   Search,
@@ -43,7 +43,6 @@ import FilterDrawer from '../../components/FilterDrawer/FilterDrawer';
 import fetchAllContainers from '../../actions/fetchAllContainers';
 import fetchAllContainerLogs from '../../actions/fetchAllContainerLogs';
 import { DockerLog, DockerContainer, LogFilters } from '../../types';
-import { Docker } from '@docker/extension-api-client-types/dist/v1';
 
 const HEADERS = ['', 'Timestamp', 'Container', 'Message'];
 
@@ -221,7 +220,7 @@ let containerIconColor: string;
 function Row({ containerName, containerId, time, stream, log }: DockerLog) {
   const [open, setOpen] = useState<boolean>(false);
 
-  // Assigning color to container only if its a new container
+  // Assigning color to containerLabel only if its a new container
   if (!containerTracker.hasOwnProperty(containerName)) {
     containerColor = colorArray[colorCounter];
     containerTracker[containerName] = containerColor;
