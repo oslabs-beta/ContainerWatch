@@ -11,17 +11,6 @@ import {
   Palette,
 } from '@mui/icons-material';
 import {
-  red,
-  blue,
-  teal,
-  green,
-  cyan,
-  orange,
-  yellow,
-  brown,
-  blueGrey,
-} from '@mui/material/colors';
-import {
   Box,
   Stack,
   Typography,
@@ -43,6 +32,7 @@ import FilterDrawer from '../../components/FilterDrawer/FilterDrawer';
 import fetchAllContainers from '../../actions/fetchAllContainers';
 import fetchAllContainerLogs from '../../actions/fetchAllContainerLogs';
 import { DockerLog, DockerContainer, LogFilters } from '../../types';
+import { createTheme } from '@mui/material/styles';
 
 const HEADERS = ['', 'Timestamp', 'Container', 'Message'];
 
@@ -52,16 +42,35 @@ const useDockerDesktopClient = () => {
   return client;
 };
 
+// Detecting whether user is in dark or light mode
+const prefersDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
+const theme = createTheme({
+  palette: {
+    mode: prefersDarkMode ? 'dark' : 'light',
+    background: {
+      default: prefersDarkMode ? '#121212' : '#fff',
+    },
+    primary: {
+      main: prefersDarkMode ? '#1769aa' : '#4dabf5',
+      light: prefersDarkMode ? '#482880' : '#8561c5',
+      dark: prefersDarkMode ? '#00695f' : '#33ab9f',
+    },
+    secondary: {
+      main: prefersDarkMode ? '#a31545' : '#ed4b82',
+      light: prefersDarkMode ? '#b26a00' : '#ffac33',
+      dark: prefersDarkMode ? '#357a38' : '#6fbf73',
+    },
+  },
+});
+
+// Colors available for container labels
 const colorArray: string[] = [
-  red[500],
-  blue[500],
-  teal[500],
-  green[500],
-  cyan[500],
-  orange[500],
-  yellow[500],
-  brown[500],
-  blueGrey[500],
+  theme.palette.primary.main,
+  theme.palette.primary.light,
+  theme.palette.primary.dark,
+  theme.palette.secondary.main,
+  theme.palette.secondary.light,
+  theme.palette.secondary.dark,
 ];
 
 export default function Logs() {
@@ -311,7 +320,7 @@ function Row({
               sx={{
                 display: 'flex',
                 border: 'lightgray',
-                backgroundColor: 'black',
+                backgroundColor: theme.palette.background.default,
                 borderRadius: '5px',
                 paddingTop: 0.5,
                 paddingBottom: 0.5,
