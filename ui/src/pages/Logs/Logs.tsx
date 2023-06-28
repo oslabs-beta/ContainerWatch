@@ -213,17 +213,17 @@ const colorArray: string[] = [
 // Keeps track of what color to assign to each unique container
 let colorCounter = 0;
 // Containers object holds key value pairs of {containerName: containerColor}
-const containerTracker: Record<string, string> = {};
-let containerColor: string;
+const containerLabelColors: Record<string, string> = {};
+let containerLabelColor: string;
 let containerIconColor: string;
 
 function Row({ containerName, containerId, time, stream, log }: DockerLog) {
   const [open, setOpen] = useState<boolean>(false);
 
   // Assigning color to containerLabel only if its a new container
-  if (!containerTracker.hasOwnProperty(containerName)) {
-    containerColor = colorArray[colorCounter];
-    containerTracker[containerName] = containerColor;
+  if (!containerLabelColors.hasOwnProperty(containerName)) {
+    containerLabelColor = colorArray[colorCounter];
+    containerLabelColors[containerName] = containerLabelColor;
     colorCounter = colorCounter >= colorArray.length ? 0 : colorCounter + 1;
   }
   // Assigning color to containerIcon based on running staus
@@ -259,7 +259,7 @@ function Row({ containerName, containerId, time, stream, log }: DockerLog) {
                 textOverflow: 'ellipsis',
                 overflow: 'hidden',
                 fontFamily: 'monospace',
-                backgroundColor: containerTracker[containerName],
+                backgroundColor: containerLabelColors[containerName],
                 borderRadius: '5px',
                 padding: 0.5,
               }}
