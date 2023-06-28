@@ -6,11 +6,8 @@ import { cpuGauge, memoryGauge } from './src/promClient';
 import createGrafanaDashboardObject from './src/actions/grafana/createGrafanaDashboardObject';
 import getGrafanaDatasource from './src/actions/grafana/getGrafanaDatasource';
 import calculateDockerStats from './src/actions/docker/calculateDockerStats';
-import { DockerContainer } from './types';
-
-const DOCKER_DAEMON_SOCKET_PATH = '/var/run/docker.sock';
-const SOCKETFILE = '/run/guest-services/backend.sock';
-const METRICS_PORT = 3333;
+import { DockerContainer } from './src/types';
+import { DOCKER_DAEMON_SOCKET_PATH, SOCKETFILE, METRICS_PORT } from './src/constants';
 
 // After a server is done with the unix domain socket, it is not automatically destroyed.
 // You must instead unlink the socket in order to reuse that address/path.
