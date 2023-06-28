@@ -74,9 +74,6 @@ const colorArray: string[] = [
 ];
 
 export default function Logs() {
-  // Access the custom theme (provided by DockerMuiThemeProvider)
-  const theme = useTheme();
-
   const ddClient = useDockerDesktopClient();
 
   const [drawerOpen, setDrawerOpen] = useState(false);
