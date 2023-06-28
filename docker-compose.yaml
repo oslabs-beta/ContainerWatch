@@ -8,12 +8,10 @@ services:
       - /var/run/docker.sock.raw:/var/run/docker.sock
       # Create a named volume which is mapped to the /grafana folder in the extension container
       # (The /grafana folder is added to the extension container in the extension's Dockerfile)
-      - shared-grafana-volume:/grafana
+      - shared-grafana-configs:/grafana:ro
       # Create a named volume which is mapped to the /prometheus folder in the extension container
       # (The /prometheus folder is added to the extension container in the extension's Dockerfile)
-      - shared-prometheus-volume:/prometheus
-      # Creating volumes to transfer data from the project repository to different containers is a great PRODUCTION level solution, HOWEVER volumes must be deleted before updates to prometheus and grafana configs can take place
-      # TODO: docker-compose yaml for DEVELOPMENT (BIND MOUNT) and PRODUCTION
+      - shared-prometheus-configs:/prometheus:ro
     depends_on:
       - grafana
     ports:
@@ -30,9 +28,10 @@ services:
     command:
       - --config.file=/etc/prometheus/prometheus.yml
     volumes:
-      # Creating a named volume for the prometheus data
+      # Create a named volume for the prometheus data
       - prometheusdata:/prometheus
-      - shared-prometheus-volume:/etc/prometheus
+      # Share the named volume with the prometheus container
+      - shared-prometheus-configs:/etc/prometheus
 
   grafana:
     image: grafana/grafana:latest
@@ -40,8 +39,8 @@ services:
     ports:
       - 2999:3000
     volumes:
-      # Share the named volume with the grafana container by mapping it to /etc/grafana
-      - shared-grafana-volume:/etc/grafana
+      # Share the named volume with the grafana container
+      - shared-grafana-configs:/etc/grafana
     environment:
       GF_PATHS_CONFIG: /etc/grafana/grafana.ini
     depends_on:
@@ -49,5 +48,5 @@ services:
 
 volumes:
   prometheusdata:
-  shared-grafana-volume:
-  shared-prometheus-volume:
+  shared-grafana-configs:
+  shared-prometheus-configs:
