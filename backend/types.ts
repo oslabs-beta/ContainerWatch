@@ -7,7 +7,7 @@ export type GrafanaDashboard = {
     schemaVersion: number;
     version: number;
     refresh: string;
-    panels: any[]; // will replace with panel type
+    panels: GrafanaPanel[]; 
   };
   folderId: number;
   message: string;
