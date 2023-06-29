@@ -14,6 +14,9 @@ export default function RefreshMessage({
       setElapsedTimeInMinutes((prevElapsedTime) => prevElapsedTime + 1);
     }, 60000);
 
+    // Manually trigger to prevent delays or speed ups due to render time of useEffect
+    setElapsedTimeInMinutes((prevElapsedTime) => prevElapsedTime + 1);
+
     return () => {
       clearInterval(intervalId);
     };
