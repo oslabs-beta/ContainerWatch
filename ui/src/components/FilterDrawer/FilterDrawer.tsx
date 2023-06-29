@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { Launch } from '@mui/icons-material';
 import { debounce } from 'lodash';
 import {
@@ -14,7 +14,6 @@ import {
   Link,
 } from '@mui/material';
 import { DockerContainer, LogFilters } from '../../types';
-import { string } from 'prop-types';
 
 type FilterDrawerProps = {
   containers: DockerContainer[];
@@ -40,9 +39,6 @@ export default function FilterDrawer({
   // These represent user input of time regardless of validity
   const fromTimestampInput = useRef<HTMLInputElement>(null);
   const untilTimestampInput = useRef<HTMLInputElement>(null);
-  // Not using these usestates but might use in the future if we decide to have controlled inputs
-  // const [fromTimestamp, setFromTimestamp] = useState('');
-  // const [untilTimestamp, setUntilTimestamp] = useState('');
 
   const isTimestampValid = (value: string) => {
     return !Number.isNaN(Date.parse(value));

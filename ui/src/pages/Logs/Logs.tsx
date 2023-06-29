@@ -17,7 +17,7 @@ import {
   TableRow,
 } from '@mui/material';
 import FilterDrawer from '../../components/FilterDrawer/FilterDrawer';
-import Row from '../../components/Row/Row';
+import LogsRow from '../../components/LogsRow/LogsRow';
 import fetchAllContainers from '../../actions/fetchAllContainers';
 import fetchAllContainerLogs from '../../actions/fetchAllContainerLogs';
 import { DockerLog, DockerContainer, LogFilters } from '../../types';
@@ -211,7 +211,7 @@ export default function Logs() {
             </TableHead>
             <TableBody>
               {filteredLogs.map((logInfo) => (
-                <Row
+                <LogsRow
                   logInfo={logInfo}
                   containerLabelColor={containerLabelColor}
                   containerIconColor={containerIconColor}

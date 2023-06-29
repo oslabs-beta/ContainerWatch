@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { KeyboardArrowUp, KeyboardArrowDown, ErrorRounded } from '@mui/icons-material';
 import { Box, Typography, IconButton, TableCell, TableRow, Collapse } from '@mui/material';
-import ContainerIcon from '../../components/ContainerIcon/ContainerIcon';
+import ContainerIcon from '../ContainerIcon/ContainerIcon';
 import { DockerLog } from '../../types';
 import { HEADERS, theme } from '../../pages/Logs/Logs';
 
@@ -12,7 +12,7 @@ const logsDisplayStyle = {
   fontFamily: 'monospace',
 };
 
-export default function Row({
+export default function LogsRow({
   logInfo: logInfo,
   containerLabelColor,
   containerIconColor,
