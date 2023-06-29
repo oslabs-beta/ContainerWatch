@@ -27,6 +27,7 @@ import {
 } from '@mui/material';
 import ContainerIcon from '../../components/ContainerIcon/ContainerIcon';
 import FilterDrawer from '../../components/FilterDrawer/FilterDrawer';
+import RefreshMessage from '../../components/RefreshMessage/RefreshMessage';
 import fetchAllContainers from '../../actions/fetchAllContainers';
 import fetchAllContainerLogs from '../../actions/fetchAllContainerLogs';
 import { DockerLog, DockerContainer, LogFilters } from '../../types';
@@ -82,6 +83,7 @@ export default function Logs() {
   const [validUntilTimestamp, setValidUntilTimestamp] = useState('');
   const [containerLabelColor, setContainerLabelColor] = useState<Record<string, string>>({});
   const [containerIconColor, setContainerIconColor] = useState<Record<string, string>>({});
+  const [elapsedTimeInMinutes, setElapsedTimeInMinutes] = useState(0);
   const [filters, setFilters] = useState<LogFilters>({
     stdout: true,
     stderr: true,
@@ -116,6 +118,7 @@ export default function Logs() {
         {}
       );
       setContainerIconColor(updatedContainerIconColor);
+      setElapsedTimeInMinutes(0);
     } catch (err) {
       console.error(err);
     }
@@ -149,7 +152,7 @@ export default function Logs() {
         containerLabelColor={containerLabelColor}
       />
       <Box sx={{ minHeight: 0, display: 'flex', flexDirection: 'column' }}>
-        <Stack direction="row" spacing={2}>
+        <Stack direction="row" spacing={2} alignContent="center">
           <OutlinedInput
             placeholder="Search"
             size="small"
@@ -184,6 +187,10 @@ export default function Logs() {
           <IconButton onClick={refreshAll}>
             <Refresh />
           </IconButton>
+          <RefreshMessage
+            elapsedTimeInMinutes={elapsedTimeInMinutes}
+            setElapsedTimeInMinutes={setElapsedTimeInMinutes}
+          />
         </Stack>
 
         <TableContainer
