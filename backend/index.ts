@@ -48,7 +48,6 @@ metricsServer.listen(METRICS_PORT, () => {
     const containerIDs: string[] = [];
     const containerNames: string[] = [];
     (response.data as DockerContainer[]).forEach((el) => {
-      console.log(el);
       containerIDs.push(el.Id);
       containerNames.push(el.Names[0].replace(/^\//, ''));
     });
@@ -61,13 +60,15 @@ metricsServer.listen(METRICS_PORT, () => {
       const dashboard = await createGrafanaDashboardObject(id, containerNames[index], datasource);
 
       // Post request to Grafana API to create a dashboard using the returned dashboard object.
-      await fetch('http://host.docker.internal:2999/api/dashboards/db', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(dashboard),
-      });
+      await axios.post(
+        'http://host.docker.internal:2999/api/dashboards/db',
+        JSON.stringify(dashboard),
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
+      );
 
       // A simple console log to show when graphs are done being posted to Grafana.
       console.log(`📊 Grafana graphs 📊 for the ${containerNames[index]} container are ready!!`);
