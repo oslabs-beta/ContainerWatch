@@ -134,3 +134,8 @@ export type DockerContainer = {
   NetworkSettings: Object;
   Mounts: Object[];
 };
+
+export type QueryStringPanelID = {
+  panelID: number;
+  queryString: string;
+}
