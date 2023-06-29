@@ -11,7 +11,6 @@ export type GrafanaDashboard = {
     panels: GrafanaPanel[];
   };
   folderId: number;
-  message: string;
   overwrite: boolean;
 };
 

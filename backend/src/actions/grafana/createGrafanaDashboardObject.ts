@@ -17,11 +17,10 @@ export default async function createGrafanaDashboardObject(
       timezone: 'browser',
       schemaVersion: 16,
       version: 0,
-      refresh: '15s',
+      refresh: '5s',
       panels: [],
     },
     folderId: 0,
-    message: 'DockerPulse is the BEST',
     overwrite: true,
   };
 
