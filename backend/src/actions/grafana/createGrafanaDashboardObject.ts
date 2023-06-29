@@ -10,7 +10,7 @@ export default async function createGrafanaDashboardObject(
   const dashboard: GrafanaDashboard = {
     dashboard: {
       id: null,
-      uid: containerID.slice(1),
+      uid: containerID.slice(0,12),
       title: containerName,
       tags: ['templated'],
       timezone: 'browser',
@@ -25,7 +25,7 @@ export default async function createGrafanaDashboardObject(
   };
 
   // push grafana panels into panels key by invoking createGrafanaPanelObject
-  dashboard.dashboard.panels.push(createGrafanaPanelObject(containerName, 1, datasource));
+  dashboard.dashboard.panels.push(createGrafanaPanelObject(containerName, containerID, 1, datasource));
 
   return dashboard;
 }

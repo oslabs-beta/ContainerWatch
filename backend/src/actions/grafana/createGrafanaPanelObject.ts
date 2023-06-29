@@ -7,7 +7,8 @@ import {
 } from '../../types';
 
 export default function createGrafanaPanelObject(
-  containerName: string,
+  containerName: string | undefined,
+  containerID: string,
   id: number,
   promDatasource: GrafanaDatasource
 ): GrafanaPanel {
@@ -16,7 +17,7 @@ export default function createGrafanaPanelObject(
     {
       datasource: promDatasource,
       editorMode: 'builder',
-      expr: `sum(rate(container_cpu_usage_seconds_total{name="${containerName}"}[$__interval])) * 100`,
+      expr: `rate(cpu_usage_percent{id="${containerID}"}[$__interval])`,
       instant: false,
       range: true,
       refId: 'A',
