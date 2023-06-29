@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState } from 'react';
 import { createDockerDesktopClient } from '@docker/extension-api-client';
 import {
   Search,
@@ -27,7 +27,7 @@ import {
 } from '@mui/material';
 import ContainerIcon from '../../components/ContainerIcon/ContainerIcon';
 import FilterDrawer from '../../components/FilterDrawer/FilterDrawer';
-import RefreshMessage from '../../components/LastRefreshedMsg/LastRefreshedMsg';
+import RefreshMessage from '../../components/RefreshMessage/RefreshMessage';
 import fetchAllContainers from '../../actions/fetchAllContainers';
 import fetchAllContainerLogs from '../../actions/fetchAllContainerLogs';
 import { DockerLog, DockerContainer, LogFilters } from '../../types';
