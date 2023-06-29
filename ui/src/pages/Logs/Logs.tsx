@@ -27,7 +27,7 @@ import {
 } from '@mui/material';
 import ContainerIcon from '../../components/ContainerIcon/ContainerIcon';
 import FilterDrawer from '../../components/FilterDrawer/FilterDrawer';
-import RefreshMessage from '../../components/Refresh/Refresh';
+import RefreshMessage from '../../components/LastRefreshedMsg/LastRefreshedMsg';
 import fetchAllContainers from '../../actions/fetchAllContainers';
 import fetchAllContainerLogs from '../../actions/fetchAllContainerLogs';
 import { DockerLog, DockerContainer, LogFilters } from '../../types';
