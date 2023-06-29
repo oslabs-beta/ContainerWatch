@@ -48,12 +48,11 @@ export default function FilterDrawer({
 
   // Debounce functions
   const debouncedSetValidFromTimestamp = debounce((value) => {
-    // isTimestampValid(value) ? setValidFromTimestamp(value) : '';
-    setValidFromTimestamp(isTimestampValid(value) ? value : '');
+    if (isTimestampValid(value)) setValidFromTimestamp(value);
   }, 1000);
 
   const debouncedSetValidUntilTimestamp = debounce((value) => {
-    isTimestampValid(value) ? setValidUntilTimestamp(value) : '';
+    if (isTimestampValid(value)) setValidUntilTimestamp(value);
   }, 1000);
 
   // Clean up debounce functions
