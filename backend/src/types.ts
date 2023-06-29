@@ -1,7 +1,8 @@
 export type GrafanaDashboard = {
   dashboard: {
     id: null | number;
-    title: string;
+    uid: string;
+    title: string | undefined;
     tags: string[];
     timezone: string;
     schemaVersion: number;
@@ -10,7 +11,6 @@ export type GrafanaDashboard = {
     panels: GrafanaPanel[];
   };
   folderId: number;
-  message: string;
   overwrite: boolean;
 };
 
@@ -74,7 +74,20 @@ export type GrafanaPanelFieldConfigKey = {
       }[];
     };
   };
-  overrides: string[];
+  overrides: [
+    {
+      matcher: {
+        id: string;
+        options: string;
+      },
+      properties: [
+        {
+          id: string;
+          value: string;
+        }
+      ]
+    }
+  ];
 };
 
 export type GrafanaPanelOptionsKey = {
@@ -104,6 +117,7 @@ export type GrafanaPanel = {
   targets: GrafanaPanelTargetsKey;
   title: string;
   type: string;
+  interval: string;
 };
 
 export type DockerContainer = {
@@ -120,3 +134,8 @@ export type DockerContainer = {
   NetworkSettings: Object;
   Mounts: Object[];
 };
+
+export type QueryStringPanelID = {
+  panelID: number;
+  queryString: string;
+}
