@@ -37,10 +37,11 @@ export default function FilterDrawer({
   setValidUntilTimestamp,
 }: FilterDrawerProps) {
   // These represent user input of time regardless of validity
-  const [fromTimestamp, setFromTimestamp] = useState('');
-  const [untilTimestamp, setUntilTimestamp] = useState('');
   const fromTimestampInput = useRef<HTMLInputElement>(null);
   const untilTimestampInput = useRef<HTMLInputElement>(null);
+  // Not using these usestates but might use in the future if we decide to have controlled inputs
+  // const [fromTimestamp, setFromTimestamp] = useState('');
+  // const [untilTimestamp, setUntilTimestamp] = useState('');
 
   const isTimestampValid = (value: string) => {
     return !Number.isNaN(Date.parse(value));
@@ -55,7 +56,7 @@ export default function FilterDrawer({
     if (isTimestampValid(value)) setValidUntilTimestamp(value);
   }, 1000);
 
-  // Clean up debounce functions
+  // Clean up debounce functions if user fires debounce function before the second is up
   useEffect(() => {
     debouncedSetValidFromTimestamp.cancel();
   }, [debouncedSetValidFromTimestamp]);
