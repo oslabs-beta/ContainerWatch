@@ -11,7 +11,7 @@ export default async function createGrafanaDashboardObject(
   const dashboard: GrafanaDashboard = {
     dashboard: {
       id: null,
-      uid: containerID.slice(0,12),
+      uid: containerID.slice(0, 12),
       title: containerName,
       tags: ['templated'],
       timezone: 'browser',
@@ -27,13 +27,18 @@ export default async function createGrafanaDashboardObject(
 
   // create an object by running imported createPromQLQueries function passing in ID
   const promQLQueries = createPromQLQueries(containerID);
-  Object.keys(promQLQueries).forEach(panelID => {
+  Object.keys(promQLQueries).forEach((panelID) => {
     // push panels into dashboard object FOR EACH entry in promQLQueries object
-    dashboard.dashboard.panels.push(createGrafanaPanelObject(containerName, containerID, parseInt(panelID), promQLQueries[panelID], datasource));
-  })
-
-  // push grafana panels into panels key by invoking createGrafanaPanelObject
-  
+    dashboard.dashboard.panels.push(
+      createGrafanaPanelObject(
+        containerName,
+        containerID,
+        parseInt(panelID),
+        promQLQueries[panelID],
+        datasource
+      )
+    );
+  });
 
   return dashboard;
 }
