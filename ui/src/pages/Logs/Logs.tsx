@@ -66,7 +66,7 @@ export default function Logs() {
   // Debounce function
   const debounce = (value: string) => {
     clearTimeout(timeoutID);
-    timeoutID = setTimeout(() => setSearchText(value), 4000);
+    timeoutID = setTimeout(() => setSearchText(value), 400);
   };
 
   // Refreshes logs page fetching all new containers
@@ -81,6 +81,8 @@ export default function Logs() {
       console.error(err);
     }
   };
+
+  // TODO: Delete console log
   console.log('firing: ' + Date.now());
 
   // Apply the filters

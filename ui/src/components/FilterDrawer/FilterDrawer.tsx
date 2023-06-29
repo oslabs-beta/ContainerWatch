@@ -37,6 +37,14 @@ export default function FilterDrawer({
   const [fromTimestamp, setFromTimestamp] = useState('');
   const [untilTimestamp, setUntilTimestamp] = useState('');
 
+  let timeoutID: any;
+  // Debounce function
+  const debounce = (value: any) => {
+    console.log('hello');
+    clearTimeout(timeoutID);
+    timeoutID = setTimeout(() => setFilters(value), 2000);
+  };
+
   const checkAllContainers = (event: React.ChangeEvent<HTMLInputElement>) => {
     const allContainerIds = containers.map(({ Id }) => Id);
     setFilters({
@@ -189,10 +197,10 @@ export default function FilterDrawer({
               label="From"
               variant="outlined"
               size="small"
-              value={fromTimestamp}
+              // value={fromTimestamp}
               onChange={(e) => {
-                setFromTimestamp(e.target.value);
                 setValidFromTimestamp(isTimestampValid(e.target.value) ? e.target.value : '');
+                setFromTimestamp(e.target.value);
               }}
               error={!isTimestampValid(fromTimestamp || '0')}
             />
@@ -200,7 +208,7 @@ export default function FilterDrawer({
               label="Until"
               variant="outlined"
               size="small"
-              value={untilTimestamp}
+              // value={untilTimestamp}
               onChange={(e) => {
                 setUntilTimestamp(e.target.value);
                 setValidUntilTimestamp(isTimestampValid(e.target.value) ? e.target.value : '');
