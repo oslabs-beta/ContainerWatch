@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Launch } from '@mui/icons-material';
 import { debounce } from 'lodash';
 import {
@@ -39,53 +39,31 @@ export default function FilterDrawer({
   // These represent user input of time regardless of validity
   const [fromTimestamp, setFromTimestamp] = useState('');
   const [untilTimestamp, setUntilTimestamp] = useState('');
+  const fromTimestampInput = useRef<HTMLInputElement>(null);
+  const untilTimestampInput = useRef<HTMLInputElement>(null);
 
-  // let timeoutID: ReturnType<typeof setTimeout>;
-  // Debounce function
-  // const debounce = (value: any, check: boolean = true) => {
-  //   clearTimeout(timeoutID);
-  //   if (value !== '' && check === false) {
-  //     console.log('false');
-  //     timeoutID = setTimeout(() => setValidFromTimestamp(value), 1500);
-  //   } else if (value !== '' && check === true) {
-  //     console.log('true');
-  //     timeoutID = setTimeout(() => setValidUntilTimestamp(value), 1500);
-  //   }
-  // };
+  const isTimestampValid = (value: string) => {
+    return !Number.isNaN(Date.parse(value));
+  };
 
-  // TODO: Refactored debounce function using ternary operators
-  // const debounce = (value: any, check: boolean) => {
-  //   clearTimeout(timeoutID);
-  //   if (value !== '') {
-  //     console.log(check ? 'true' : 'false');
-  //     timeoutID = setTimeout(() => {
-  //       check === true ? setValidFromTimestamp(value) : setValidUntilTimestamp(value);
-  //     }, 4000);
-  //   }
-  // };
-
-  // TODO: Refactored debounce function using different if else structure
-  // const debounce = (value: any, check: boolean) => {
-  //   clearTimeout(timeoutID);
-  //   if (value !== '') {
-  //     timeoutID = setTimeout(() => {
-  //       if (check) {
-  //         setValidFromTimestamp(value);
-  //       } else {
-  //         setValidUntilTimestamp(value);
-  //       }
-  //     }, 4000);
-  //   }
-  // };
-
-  const debouncedFrom = debounce((value) => {
-    isTimestampValid(value) ? setValidFromTimestamp(value) : '';
+  // Debounce functions
+  const debouncedSetValidFromTimestamp = debounce((value) => {
+    // isTimestampValid(value) ? setValidFromTimestamp(value) : '';
+    setValidFromTimestamp(isTimestampValid(value) ? value : '');
   }, 1000);
 
-  const debouncedUntil = debounce((value) => {
+  const debouncedSetValidUntilTimestamp = debounce((value) => {
     isTimestampValid(value) ? setValidUntilTimestamp(value) : '';
-    // setValidUntilTimestamp(value);
   }, 1000);
+
+  // Clean up debounce functions
+  useEffect(() => {
+    debouncedSetValidFromTimestamp.cancel();
+  }, [debouncedSetValidFromTimestamp]);
+
+  useEffect(() => {
+    debouncedSetValidUntilTimestamp.cancel();
+  }, [debouncedSetValidUntilTimestamp]);
 
   const checkAllContainers = (event: React.ChangeEvent<HTMLInputElement>) => {
     const allContainerIds = containers.map(({ Id }) => Id);
@@ -106,10 +84,6 @@ export default function FilterDrawer({
       ...filters,
       allowedContainers: newAllowedContainers,
     });
-  };
-
-  const isTimestampValid = (value: string) => {
-    return !Number.isNaN(Date.parse(value));
   };
 
   return (
@@ -236,30 +210,24 @@ export default function FilterDrawer({
           </Typography>
           <Stack direction="column" spacing={2}>
             <TextField
+              ref={fromTimestampInput}
               label="From"
               variant="outlined"
               size="small"
-              // value={fromTimestamp}
-              // onChange={(e) => {
-              //   debouncedFrom(isTimestampValid(e.target.value) ? e.target.value : '');
-              // }}
               onChange={(e) => {
-                debouncedFrom(e.target.value);
+                debouncedSetValidFromTimestamp(e.target.value);
               }}
-              error={!isTimestampValid(fromTimestamp || '0')}
+              error={!isTimestampValid(fromTimestampInput.current?.value || '0')}
             />
             <TextField
+              ref={untilTimestampInput}
               label="Until"
               variant="outlined"
               size="small"
-              // value={untilTimestamp}
-              // onChange={(e) => {
-              //   debouncedUntil(isTimestampValid(e.target.value) ? e.target.value : '');
-              // }}
               onChange={(e) => {
-                debouncedUntil(e.target.value);
+                debouncedSetValidUntilTimestamp(e.target.value);
               }}
-              error={!isTimestampValid(untilTimestamp || '0')}
+              error={!isTimestampValid(untilTimestampInput.current?.value || '0')}
             />
           </Stack>
         </Stack>

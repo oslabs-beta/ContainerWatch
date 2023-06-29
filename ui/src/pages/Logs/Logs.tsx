@@ -93,26 +93,17 @@ export default function Logs() {
     refreshAll();
   }, []);
 
-  useEffect(() => {
-    debounced.cancel();
-  }, [debounced]);
-
   // TODO: Delete console log
   console.log('firing: ' + Date.now());
-
-  // let timeoutID: ReturnType<typeof setTimeout>;
-  // Debounce function
-  // const debounce = (value: string) => {
-  //   clearTimeout(timeoutID);
-  //   timeoutID = setTimeout(() => setSearchText(value), 400);
-  // };
 
   // Lodash debounce implementation
   const debounced = debounce((value) => {
     setSearchText(value);
   }, 400);
-
-  // const debouncedRequest = useCallback((value: any) => debounced(value), []);
+  // Clean up debounce functions
+  useEffect(() => {
+    debounced.cancel();
+  }, [debounced]);
 
   // Refreshes logs page fetching all new containers
   const refreshAll = async () => {
@@ -192,8 +183,6 @@ export default function Logs() {
                 />
               </InputAdornment>
             }
-            // value={searchText}
-            // onChange={(e) => debounce(e.target.value)}
             onChange={(e) => {
               debounced(e.target.value);
             }}
