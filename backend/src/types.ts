@@ -7,7 +7,7 @@ export type GrafanaDashboard = {
     schemaVersion: number;
     version: number;
     refresh: string;
-    panels: GrafanaPanel[]; 
+    panels: GrafanaPanel[];
   };
   folderId: number;
   message: string;
@@ -104,4 +104,19 @@ export type GrafanaPanel = {
   targets: GrafanaPanelTargetsKey;
   title: string;
   type: string;
+};
+
+export type DockerContainer = {
+  Id: string;
+  Names: string[];
+  Image: string;
+  ImageID: string;
+  Command: string;
+  Ports: Object[];
+  Labels: Object;
+  State: string;
+  Status: string;
+  HostConfig: Object;
+  NetworkSettings: Object;
+  Mounts: Object[];
 };

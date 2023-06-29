@@ -4,7 +4,7 @@ import {
   GrafanaPanelFieldConfigKey,
   GrafanaPanel,
   GrafanaPanelOptionsKey,
-} from '../types';
+} from '../../types';
 
 export default function createGrafanaPanelObject(
   containerName: string,
