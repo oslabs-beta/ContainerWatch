@@ -37,7 +37,7 @@ export default function FilterDrawer({
   const [fromTimestamp, setFromTimestamp] = useState('');
   const [untilTimestamp, setUntilTimestamp] = useState('');
 
-  let timeoutID: any;
+  let timeoutID: ReturnType<typeof setTimeout>;
   // Debounce function
   const debounce = (value: any, check: boolean = true) => {
     if (value !== '' && check === false) {
@@ -50,6 +50,31 @@ export default function FilterDrawer({
       timeoutID = setTimeout(() => setValidUntilTimestamp(value), 4000);
     }
   };
+
+  // TODO: Refactored debounce function using ternary operators
+  // const debounce = (value: any, check: boolean) => {
+  //   clearTimeout(timeoutID);
+  //   if (value !== '') {
+  //     console.log(check ? 'true' : 'false');
+  //     timeoutID = setTimeout(() => {
+  //       check ? setValidFromTimestamp(value) : setValidUntilTimestamp(value);
+  //     }, 4000);
+  //   }
+  // };
+
+  // TODO: Refactored debounce function using different if else structure
+  // const debounce = (value: any, check: boolean) => {
+  //   clearTimeout(timeoutID);
+  //   if (value !== '') {
+  //     timeoutID = setTimeout(() => {
+  //       if (check) {
+  //         setValidFromTimestamp(value);
+  //       } else {
+  //         setValidUntilTimestamp(value);
+  //       }
+  //     }, 4000);
+  //   }
+  // };
 
   const checkAllContainers = (event: React.ChangeEvent<HTMLInputElement>) => {
     const allContainerIds = containers.map(({ Id }) => Id);
@@ -207,14 +232,14 @@ export default function FilterDrawer({
               onChange={(e) => {
                 // setValidFromTimestamp(isTimestampValid(e.target.value) ? e.target.value : '');
                 // debounce(isTimestampValid(e.target.value) ? e.target.value : '');
-                debounce(() => {
-                  if (isTimestampValid(e.target.value)) {
-                    return e.target.value;
-                  } else {
-                    return '';
-                  }
-                }, false);
-                // setFromTimestamp(e.target.value);
+                // debounce(() => {
+                //   if (isTimestampValid(e.target.value)) {
+                //     return e.target.value;
+                //   } else {
+                //     return '';
+                //   }
+                // }, false);
+                debounce(isTimestampValid(e.target.value) ? e.target.value : '', false);
               }}
               error={!isTimestampValid(fromTimestamp || '0')}
             />
@@ -229,13 +254,14 @@ export default function FilterDrawer({
                 // debounce(
                 //   setValidUntilTimestamp(isTimestampValid(e.target.value) ? e.target.value : '')
                 // );
-                debounce(() => {
-                  if (isTimestampValid(e.target.value)) {
-                    return e.target.value;
-                  } else {
-                    return '';
-                  }
-                });
+                // debounce(() => {
+                //   if (isTimestampValid(e.target.value)) {
+                //     return e.target.value;
+                //   } else {
+                //     return '';
+                //   }
+                // });
+                debounce(isTimestampValid(e.target.value) ? e.target.value : '', true);
               }}
               error={!isTimestampValid(untilTimestamp || '0')}
             />
