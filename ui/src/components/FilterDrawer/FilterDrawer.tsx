@@ -13,6 +13,7 @@ import {
   Link,
 } from '@mui/material';
 import { DockerContainer, LogFilters } from '../../types';
+import { string } from 'prop-types';
 
 type FilterDrawerProps = {
   containers: DockerContainer[];
@@ -40,14 +41,13 @@ export default function FilterDrawer({
   let timeoutID: ReturnType<typeof setTimeout>;
   // Debounce function
   const debounce = (value: any, check: boolean = true) => {
+    clearTimeout(timeoutID);
     if (value !== '' && check === false) {
       console.log('false');
-      clearTimeout(timeoutID);
-      timeoutID = setTimeout(() => setValidFromTimestamp(value), 4000);
+      timeoutID = setTimeout(() => setValidFromTimestamp(value), 1500);
     } else if (value !== '' && check === true) {
       console.log('true');
-      clearTimeout(timeoutID);
-      timeoutID = setTimeout(() => setValidUntilTimestamp(value), 4000);
+      timeoutID = setTimeout(() => setValidUntilTimestamp(value), 1500);
     }
   };
 
@@ -57,7 +57,7 @@ export default function FilterDrawer({
   //   if (value !== '') {
   //     console.log(check ? 'true' : 'false');
   //     timeoutID = setTimeout(() => {
-  //       check ? setValidFromTimestamp(value) : setValidUntilTimestamp(value);
+  //       check === true ? setValidFromTimestamp(value) : setValidUntilTimestamp(value);
   //     }, 4000);
   //   }
   // };
@@ -230,15 +230,6 @@ export default function FilterDrawer({
               size="small"
               // value={fromTimestamp}
               onChange={(e) => {
-                // setValidFromTimestamp(isTimestampValid(e.target.value) ? e.target.value : '');
-                // debounce(isTimestampValid(e.target.value) ? e.target.value : '');
-                // debounce(() => {
-                //   if (isTimestampValid(e.target.value)) {
-                //     return e.target.value;
-                //   } else {
-                //     return '';
-                //   }
-                // }, false);
                 debounce(isTimestampValid(e.target.value) ? e.target.value : '', false);
               }}
               error={!isTimestampValid(fromTimestamp || '0')}
@@ -249,18 +240,6 @@ export default function FilterDrawer({
               size="small"
               // value={untilTimestamp}
               onChange={(e) => {
-                // setUntilTimestamp(e.target.value);
-                // setValidUntilTimestamp(isTimestampValid(e.target.value) ? e.target.value : '');
-                // debounce(
-                //   setValidUntilTimestamp(isTimestampValid(e.target.value) ? e.target.value : '')
-                // );
-                // debounce(() => {
-                //   if (isTimestampValid(e.target.value)) {
-                //     return e.target.value;
-                //   } else {
-                //     return '';
-                //   }
-                // });
                 debounce(isTimestampValid(e.target.value) ? e.target.value : '', true);
               }}
               error={!isTimestampValid(untilTimestamp || '0')}
