@@ -29,7 +29,7 @@ export default async function createGrafanaDashboardObject(
   const promQLQueries = createPromQLQueries(containerID);
   Object.keys(promQLQueries).forEach(panelID => {
     // push panels into dashboard object FOR EACH entry in promQLQueries object
-    dashboard.dashboard.panels.push(createGrafanaPanelObject(containerName, containerID, parseInt(panelID), datasource));
+    dashboard.dashboard.panels.push(createGrafanaPanelObject(containerName, containerID, parseInt(panelID), promQLQueries[panelID], datasource));
   })
 
   // push grafana panels into panels key by invoking createGrafanaPanelObject

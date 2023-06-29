@@ -9,15 +9,35 @@ import {
 export default function createGrafanaPanelObject(
   containerName: string | undefined,
   containerID: string,
-  id: number,
+  panelId: number,
+  promQLQuery: string,
   promDatasource: GrafanaDatasource
 ): GrafanaPanel {
+  let metricsName = ''
+  // switch case to handle name of panel
+  // if you add more metrics, add more cases here!
+  switch(panelId){
+    case 1: {
+      metricsName = 'CPU%';
+      break;
+    }
+    case 2: {
+      metricsName = 'RAM%';
+      break;
+    }
+    default: {
+      // panelId is being assigned in the file: createPromQLQueries.ts
+      console.log('Please ensure you are properly assigning panelId');
+      break;
+    }
+  }
+  
   // create targets key for grafana panel
   const targets: GrafanaPanelTargetsKey = [
     {
       datasource: promDatasource,
       editorMode: 'builder',
-      expr: `rate(cpu_usage_percent{id="${containerID}"}[$__interval])`,
+      expr: promQLQuery,
       instant: false,
       range: true,
       refId: 'A',
@@ -103,9 +123,9 @@ export default function createGrafanaPanelObject(
       y: 0,
     },
     options: optionsObject,
-    id: id,
+    id: panelId,
     targets: targets,
-    title: `${containerName} CPU`,
+    title: `${containerName} ${metricsName}`,
     type: 'timeseries',
   };
 
