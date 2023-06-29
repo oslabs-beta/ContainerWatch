@@ -8,7 +8,6 @@ import {
   KeyboardArrowDown,
   Refresh,
   ErrorRounded,
-  Palette,
 } from '@mui/icons-material';
 import {
   Box,
@@ -25,7 +24,6 @@ import {
   TableHead,
   TableRow,
   Collapse,
-  useTheme,
 } from '@mui/material';
 import ContainerIcon from '../../components/ContainerIcon/ContainerIcon';
 import FilterDrawer from '../../components/FilterDrawer/FilterDrawer';
@@ -214,9 +212,7 @@ export default function Logs() {
                 <Row
                   {...row}
                   containerLabelColor={containerLabelColor}
-                  setContainerLabelColor={setContainerLabelColor}
                   containerIconColor={containerIconColor}
-                  setContainerIconColor={setContainerIconColor}
                 />
               ))}
             </TableBody>
@@ -233,8 +229,6 @@ const logsDisplayStyle = {
   fontFamily: 'monospace',
 };
 
-// let containerIconColor: string;
-
 function Row({
   containerName,
   containerId,
@@ -246,10 +240,8 @@ function Row({
 }: DockerLog) {
   const [open, setOpen] = useState<boolean>(false);
 
-  const labelColor: string = containerLabelColor[containerId];
-  let iconColor: string;
-
-  containerIconColor[containerId] === 'running' ? (iconColor = 'teal') : (iconColor = 'grey');
+  const labelColor = containerLabelColor[containerId];
+  let iconColor = containerIconColor[containerId] === 'running' ? 'teal' : 'grey';
 
   return (
     <>
