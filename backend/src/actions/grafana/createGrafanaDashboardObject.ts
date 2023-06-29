@@ -1,5 +1,6 @@
 import createGrafanaPanelObject from './createGrafanaPanelObject';
 import { GrafanaDashboard, GrafanaDatasource } from '../../types';
+import createPromQLQueries from './createPromQLQueries';
 
 export default async function createGrafanaDashboardObject(
   containerID: string,
@@ -24,8 +25,15 @@ export default async function createGrafanaDashboardObject(
     overwrite: true,
   };
 
+  // create an object by running imported createPromQLQueries function passing in ID
+  const promQLQueries = createPromQLQueries(containerID);
+  Object.keys(promQLQueries).forEach(panelID => {
+    // push panels into dashboard object FOR EACH entry in promQLQueries object
+    dashboard.dashboard.panels.push(createGrafanaPanelObject(containerName, containerID, parseInt(panelID), datasource));
+  })
+
   // push grafana panels into panels key by invoking createGrafanaPanelObject
-  dashboard.dashboard.panels.push(createGrafanaPanelObject(containerName, containerID, 1, datasource));
+  
 
   return dashboard;
 }
