@@ -75,7 +75,20 @@ export type GrafanaPanelFieldConfigKey = {
       }[];
     };
   };
-  overrides: string[];
+  overrides: [
+    {
+      matcher: {
+        id: string;
+        options: string;
+      },
+      properties: [
+        {
+          id: string;
+          value: string;
+        }
+      ]
+    }
+  ];
 };
 
 export type GrafanaPanelOptionsKey = {

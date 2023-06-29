@@ -13,10 +13,10 @@ export default function createGrafanaPanelObject(
   promQLQuery: string,
   promDatasource: GrafanaDatasource
 ): GrafanaPanel {
-  let metricsName = ''
+  let metricsName = '';
   // switch case to handle name of panel
   // if you add more metrics, add more cases here!
-  switch(panelId){
+  switch (panelId) {
     case 1: {
       metricsName = 'CPU%';
       break;
@@ -31,7 +31,7 @@ export default function createGrafanaPanelObject(
       break;
     }
   }
-  
+
   // create targets key for grafana panel
   const targets: GrafanaPanelTargetsKey = [
     {
@@ -95,7 +95,20 @@ export default function createGrafanaPanelObject(
         ],
       },
     },
-    overrides: [],
+    overrides: [
+      {
+        matcher: {
+          id: 'byName',
+          options: 'Value',
+        },
+        properties: [
+          {
+            id: 'displayName',
+            value: `${metricsName}`,
+          },
+        ],
+      },
+    ],
   };
 
   // create options key for grafana panel
