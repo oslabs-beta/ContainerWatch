@@ -24,13 +24,13 @@ import {
   TableHead,
   TableRow,
   Collapse,
-  useTheme,
 } from '@mui/material';
 import ContainerIcon from '../../components/ContainerIcon/ContainerIcon';
 import FilterDrawer from '../../components/FilterDrawer/FilterDrawer';
 import fetchAllContainers from '../../actions/fetchAllContainers';
 import fetchAllContainerLogs from '../../actions/fetchAllContainerLogs';
 import { DockerLog, DockerContainer, LogFilters } from '../../types';
+import { createTheme } from '@mui/material/styles';
 
 const HEADERS = ['', 'Timestamp', 'Container', 'Message'];
 
@@ -40,10 +40,38 @@ const useDockerDesktopClient = () => {
   return client;
 };
 
-export default function Logs() {
-  // Access the custom theme (provided by DockerMuiThemeProvider)
-  const theme = useTheme();
+// Detecting whether user is in dark or light mode
+const prefersDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
+const theme = createTheme({
+  palette: {
+    mode: prefersDarkMode ? 'dark' : 'light',
+    background: {
+      default: prefersDarkMode ? '#121212' : '#fff',
+    },
+    primary: {
+      main: prefersDarkMode ? '#1769aa' : '#4dabf5',
+      light: prefersDarkMode ? '#482880' : '#8561c5',
+      dark: prefersDarkMode ? '#00695f' : '#33ab9f',
+    },
+    secondary: {
+      main: prefersDarkMode ? '#a31545' : '#ed4b82',
+      light: prefersDarkMode ? '#b26a00' : '#ffac33',
+      dark: prefersDarkMode ? '#357a38' : '#6fbf73',
+    },
+  },
+});
 
+// Colors available for container labels
+const colorArray: string[] = [
+  theme.palette.primary.main,
+  theme.palette.primary.light,
+  theme.palette.primary.dark,
+  theme.palette.secondary.main,
+  theme.palette.secondary.light,
+  theme.palette.secondary.dark,
+];
+
+export default function Logs() {
   const ddClient = useDockerDesktopClient();
 
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -52,6 +80,8 @@ export default function Logs() {
   const [searchText, setSearchText] = useState('');
   const [validFromTimestamp, setValidFromTimestamp] = useState('');
   const [validUntilTimestamp, setValidUntilTimestamp] = useState('');
+  const [containerLabelColor, setContainerLabelColor] = useState<Record<string, string>>({});
+  const [containerIconColor, setContainerIconColor] = useState<Record<string, string>>({});
   const [filters, setFilters] = useState<LogFilters>({
     stdout: true,
     stderr: true,
@@ -70,6 +100,22 @@ export default function Logs() {
       setContainers(allContainers);
       setLogs(allContainerLogs);
       setFilters({ ...filters, allowedContainers: new Set(allContainers.map(({ Id }) => Id)) });
+      const updatedContainerLabelColor = allContainers.reduce(
+        (prevContainerLabelColor, container, index) => ({
+          ...prevContainerLabelColor,
+          [container.Id]: colorArray[index % colorArray.length],
+        }),
+        {}
+      );
+      setContainerLabelColor(updatedContainerLabelColor);
+      const updatedContainerIconColor = allContainers.reduce(
+        (prevContainerIconColor, container) => ({
+          ...prevContainerIconColor,
+          [container.Id]: container.State,
+        }),
+        {}
+      );
+      setContainerIconColor(updatedContainerIconColor);
     } catch (err) {
       console.error(err);
     }
@@ -100,6 +146,7 @@ export default function Logs() {
         setFilters={setFilters}
         setValidFromTimestamp={setValidFromTimestamp}
         setValidUntilTimestamp={setValidUntilTimestamp}
+        containerLabelColor={containerLabelColor}
       />
       <Box sx={{ minHeight: 0, display: 'flex', flexDirection: 'column' }}>
         <Stack direction="row" spacing={2}>
@@ -161,8 +208,12 @@ export default function Logs() {
               </TableRow>
             </TableHead>
             <TableBody>
-              {filteredLogs.map((row) => (
-                <Row {...row} />
+              {filteredLogs.map((logInfo) => (
+                <Row
+                  logInfo={logInfo}
+                  containerLabelColor={containerLabelColor}
+                  containerIconColor={containerIconColor}
+                />
               ))}
             </TableBody>
           </Table>
@@ -177,8 +228,21 @@ const logsDisplayStyle = {
   overflow: 'hidden',
   fontFamily: 'monospace',
 };
-function Row({ containerName, containerId, time, stream, log }: DockerLog) {
+
+function Row({
+  logInfo: logInfo,
+  containerLabelColor,
+  containerIconColor,
+}: {
+  logInfo: DockerLog;
+  containerLabelColor: Record<string, string>;
+  containerIconColor: Record<string, string>;
+}) {
+  const { containerId, containerName, time, stream, log } = logInfo;
   const [open, setOpen] = useState<boolean>(false);
+
+  const labelColor = containerLabelColor[containerId];
+  let iconColor = containerIconColor[containerId] === 'running' ? 'teal' : 'grey';
 
   return (
     <>
@@ -201,14 +265,16 @@ function Row({ containerName, containerId, time, stream, log }: DockerLog) {
               maxWidth: '150px',
             }}
           >
-            {/* TODO: access the custom theme colors instead of hardcoding the color */}
-            <ContainerIcon htmlColor="#228375" sx={{ fontSize: 14 }} />
+            <ContainerIcon htmlColor={iconColor} sx={{ fontSize: 14 }} />
             <Typography
               sx={{
                 whiteSpace: 'nowrap',
                 textOverflow: 'ellipsis',
                 overflow: 'hidden',
                 fontFamily: 'monospace',
+                backgroundColor: labelColor,
+                borderRadius: '5px',
+                padding: 0.5,
               }}
             >
               {containerName}
@@ -246,7 +312,7 @@ function Row({ containerName, containerId, time, stream, log }: DockerLog) {
               sx={{
                 display: 'flex',
                 border: 'lightgray',
-                backgroundColor: 'black',
+                backgroundColor: theme.palette.background.default,
                 borderRadius: '5px',
                 paddingTop: 0.5,
                 paddingBottom: 0.5,
