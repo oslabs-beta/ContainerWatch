@@ -58,7 +58,7 @@ metricsServer.listen(METRICS_PORT, () => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(dashboard);
+        body: JSON.stringify(dashboard)
       });
 
       console.log('response status:', dashboardReponse.status);
