@@ -2,7 +2,7 @@ import { Routes, Route } from 'react-router-dom';
 import { Box } from '@mui/material';
 import Stats from './pages/Stats/Stats';
 import Logs from './pages/Logs/Logs';
-import Settings from './pages/Settings';
+import Alerts from './pages/Alerts/Alerts';
 import NavBar from './components/NavBar/NavBar';
 
 export default function App() {
@@ -12,7 +12,7 @@ export default function App() {
       <Routes>
         <Route path="/" element={<Stats />} />
         <Route path="/logs" element={<Logs />} />
-        <Route path="/settings" element={<Settings />} />
+        <Route path="/settings" element={<Alerts />} />
         <Route path="*" element={<div>Page not found</div>} />
       </Routes>
     </Box>
