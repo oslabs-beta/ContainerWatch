@@ -17,7 +17,7 @@ export default async function createGrafanaDashboardObject(
       timezone: 'browser',
       schemaVersion: 16,
       version: 0,
-      refresh: '5s',
+      refresh: '15s',
       panels: [],
     },
     folderId: 0,
