@@ -140,6 +140,7 @@ export default function createGrafanaPanelObject(
     targets: targets,
     title: `${containerName} ${metricsName}`,
     type: 'timeseries',
+    interval: '10s',
   };
 
   // return the compiled grafana panel object

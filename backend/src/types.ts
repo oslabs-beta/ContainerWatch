@@ -117,6 +117,7 @@ export type GrafanaPanel = {
   targets: GrafanaPanelTargetsKey;
   title: string;
   type: string;
+  interval: string;
 };
 
 export type DockerContainer = {
