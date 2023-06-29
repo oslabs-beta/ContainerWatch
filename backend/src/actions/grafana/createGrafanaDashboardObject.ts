@@ -1,5 +1,5 @@
 import createGrafanaPanelObject from './createGrafanaPanelObject';
-import { GrafanaDashboard, GrafanaDatasource } from '../types';
+import { GrafanaDashboard, GrafanaDatasource } from '../../types';
 
 export default async function createGrafanaDashboardObject(
   containerID: string,
