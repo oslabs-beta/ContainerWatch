@@ -3,7 +3,7 @@ import { GrafanaDashboard, GrafanaDatasource } from '../../types';
 
 export default async function createGrafanaDashboardObject(
   containerID: string,
-  containerName: string,
+  containerName: string | undefined,
   datasource: GrafanaDatasource
 ): Promise<GrafanaDashboard> {
   // create dashboard object boilerplate
