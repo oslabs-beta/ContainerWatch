@@ -33,6 +33,7 @@ export default function FilterDrawer({
   setDrawerOpen,
   setValidFromTimestamp,
   setValidUntilTimestamp,
+  containerLabelColor,
 }: FilterDrawerProps) {
   // These represent user input of time regardless of validity
   const [fromTimestamp, setFromTimestamp] = useState('');
@@ -153,6 +154,9 @@ export default function FilterDrawer({
                       textOverflow: 'ellipsis',
                       overflow: 'hidden',
                       fontFamily: 'monospace',
+                      backgroundColor: containerLabelColor[Id],
+                      borderRadius: '5px',
+                      padding: 0.5,
                     }}
                   >
                     {Names[0].replace(/^\//, '')}
