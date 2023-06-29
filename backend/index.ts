@@ -42,7 +42,9 @@ metricsServer.listen(METRICS_PORT, () => {
       params: { all: true },
     });
     const containerIDs = (response.data as DockerContainer[]).map(({ Id }) => Id);
-    const containerNames = (response.data as DockerContainer[]).map(({ Names }) => Names.pop()?.slice(1));
+    const containerNames = (response.data as DockerContainer[]).map(({ Names }) =>
+      Names.pop()?.slice(1)
+    );
     // ###########################################################
     // # TODO: Create Grafana dashboards for each container here #
     // ###########################################################
@@ -53,16 +55,16 @@ metricsServer.listen(METRICS_PORT, () => {
     containerIDs.forEach(async (id, index) => {
       const dashboard = await createGrafanaDashboardObject(id, containerNames[index], datasource);
 
-      const dashboardReponse = await fetch ('http://host.docker.internal:2999/api/dashboards/db', {
+      const dashboardReponse = await fetch('http://host.docker.internal:2999/api/dashboards/db', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(dashboard)
+        body: JSON.stringify(dashboard),
       });
 
       console.log('response status:', dashboardReponse.status);
-    })
+    });
 
     // For each container, create and HTTP request to the Docker Engine to get the stats.
     // This is a streaming connection that will close when the container is deleted.
