@@ -2,11 +2,11 @@ import createGrafanaPanelObject from './createGrafanaPanelObject';
 import { GrafanaDashboard, GrafanaDatasource, QueryStringPanelID } from '../../types';
 import createPromQLQueries from './createPromQLQueries';
 
-export default async function createGrafanaDashboardObject(
+export default function createGrafanaDashboardObject(
   containerID: string,
   containerName: string | undefined,
   datasource: GrafanaDatasource
-): Promise<GrafanaDashboard> {
+): GrafanaDashboard {
   // create dashboard object boilerplate
   const dashboard: GrafanaDashboard = {
     dashboard: {
