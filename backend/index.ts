@@ -33,7 +33,7 @@ metricsServer.listen(METRICS_PORT, () => {
     // Wait 15 seconds to give the Grafana container extra time to spin up and be ready to respond
     // to requests. This implementation can be improved later.
     console.log('⏳ Waiting ... ');
-    await new Promise((r) => setTimeout(r, 1000 * 15));
+    await new Promise((r) => setTimeout(r, 1000 * 10));
     console.log('⌛ Done waiting.');
 
     // Get a list of all the Docker containers
@@ -41,15 +41,42 @@ metricsServer.listen(METRICS_PORT, () => {
       socketPath: DOCKER_DAEMON_SOCKET_PATH,
       params: { all: true },
     });
-    const containers = (response.data as DockerContainer[]).map(({ Id }) => Id);
 
-    // ###########################################################
-    // # TODO: Create Grafana dashboards for each container here #
-    // ###########################################################
+    // Populate two arrays, mapping through them in order ensures that their INDEX VALUES
+    // can properly CORRELATE each container's respective IDs and Names.
+
+    const containerIDs: string[] = [];
+    const containerNames: string[] = [];
+    (response.data as DockerContainer[]).forEach((el) => {
+      containerIDs.push(el.Id);
+      containerNames.push(el.Names[0].replace(/^\//, ''));
+    });
+
+    // Get necessary datasource information from Grafana directly.
+    const datasource = await getGrafanaDatasource();
+
+    // Iterate through ID array and create a dashboard object for each container.
+    containerIDs.forEach(async (id, index) => {
+      const dashboard = await createGrafanaDashboardObject(id, containerNames[index], datasource);
+
+      // Post request to Grafana API to create a dashboard using the returned dashboard object.
+      await axios.post(
+        'http://host.docker.internal:2999/api/dashboards/db',
+        JSON.stringify(dashboard),
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+
+      // A simple console log to show when graphs are done being posted to Grafana.
+      console.log(`📊 Grafana graphs 📊 for the ${containerNames[index]} container are ready!!`);
+    });
 
     // For each container, create and HTTP request to the Docker Engine to get the stats.
     // This is a streaming connection that will close when the container is deleted.
-    containers.forEach(async (id) => {
+    containerIDs.forEach(async (id) => {
       const response = await axios.get(`/containers/${id}/stats`, {
         socketPath: DOCKER_DAEMON_SOCKET_PATH,
         params: { all: true },

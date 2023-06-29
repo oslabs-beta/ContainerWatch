@@ -46,8 +46,8 @@ export default function Stats() {
           </TableRow>
         </TableHead>
         <TableBody>
-          {stats.map((row: DockerStats, i: number) => (
-            <Row panelID={i + 1} rowStats={row} />
+          {stats.map((row: DockerStats) => (
+            <Row rowStats={row} />
           ))}
         </TableBody>
       </Table>
@@ -61,7 +61,7 @@ export default function Stats() {
 
 function Row(props: any) {
   const [open, setOpen] = useState<boolean>(false);
-  const { rowStats, panelID } = props;
+  const { rowStats } = props;
   const { Name, ID, CPUPerc, MemUsage, MemPerc, NetIO, BlockIO, PIDs }: DockerStats = rowStats;
 
   return (
@@ -108,7 +108,10 @@ function Row(props: any) {
       <TableRow>
         <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={HEADERS.length}>
           <Collapse in={open} timeout="auto" unmountOnExit>
-            <StatsGraph panelID={3} containerID="test" />
+            <StatsGraph 
+              containerName={Name} 
+              containerID={ID}
+            />
           </Collapse>
         </TableCell>
       </TableRow>
