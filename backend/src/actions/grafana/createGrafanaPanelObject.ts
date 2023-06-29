@@ -18,11 +18,11 @@ export default function createGrafanaPanelObject(
   // if you add more metrics, add more cases here!
   switch (panelId) {
     case 1: {
-      metricsName = 'CPU%';
+      metricsName = 'CPU %';
       break;
     }
     case 2: {
-      metricsName = 'RAM%';
+      metricsName = 'RAM %';
       break;
     }
     default: {
