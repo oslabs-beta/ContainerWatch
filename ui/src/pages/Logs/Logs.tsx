@@ -84,9 +84,6 @@ export default function Logs() {
     refreshAll();
   }, []);
 
-  // TODO: Delete console log
-  console.log('firing: ' + Date.now());
-
   // Lodash debounce implementation
   const debounced = debounce((value) => {
     setSearchText(value);
