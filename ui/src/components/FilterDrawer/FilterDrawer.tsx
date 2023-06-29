@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Launch } from '@mui/icons-material';
+import { debounce } from 'lodash';
 import {
   List,
   Box,
@@ -39,18 +40,18 @@ export default function FilterDrawer({
   const [fromTimestamp, setFromTimestamp] = useState('');
   const [untilTimestamp, setUntilTimestamp] = useState('');
 
-  let timeoutID: ReturnType<typeof setTimeout>;
+  // let timeoutID: ReturnType<typeof setTimeout>;
   // Debounce function
-  const debounce = (value: any, check: boolean = true) => {
-    clearTimeout(timeoutID);
-    if (value !== '' && check === false) {
-      console.log('false');
-      timeoutID = setTimeout(() => setValidFromTimestamp(value), 1500);
-    } else if (value !== '' && check === true) {
-      console.log('true');
-      timeoutID = setTimeout(() => setValidUntilTimestamp(value), 1500);
-    }
-  };
+  // const debounce = (value: any, check: boolean = true) => {
+  //   clearTimeout(timeoutID);
+  //   if (value !== '' && check === false) {
+  //     console.log('false');
+  //     timeoutID = setTimeout(() => setValidFromTimestamp(value), 1500);
+  //   } else if (value !== '' && check === true) {
+  //     console.log('true');
+  //     timeoutID = setTimeout(() => setValidUntilTimestamp(value), 1500);
+  //   }
+  // };
 
   // TODO: Refactored debounce function using ternary operators
   // const debounce = (value: any, check: boolean) => {
@@ -76,6 +77,15 @@ export default function FilterDrawer({
   //     }, 4000);
   //   }
   // };
+
+  const debouncedFrom = debounce((value) => {
+    isTimestampValid(value) ? setValidFromTimestamp(value) : '';
+  }, 1000);
+
+  const debouncedUntil = debounce((value) => {
+    isTimestampValid(value) ? setValidUntilTimestamp(value) : '';
+    // setValidUntilTimestamp(value);
+  }, 1000);
 
   const checkAllContainers = (event: React.ChangeEvent<HTMLInputElement>) => {
     const allContainerIds = containers.map(({ Id }) => Id);
@@ -230,8 +240,11 @@ export default function FilterDrawer({
               variant="outlined"
               size="small"
               // value={fromTimestamp}
+              // onChange={(e) => {
+              //   debouncedFrom(isTimestampValid(e.target.value) ? e.target.value : '');
+              // }}
               onChange={(e) => {
-                debounce(isTimestampValid(e.target.value) ? e.target.value : '', false);
+                debouncedFrom(e.target.value);
               }}
               error={!isTimestampValid(fromTimestamp || '0')}
             />
@@ -240,8 +253,11 @@ export default function FilterDrawer({
               variant="outlined"
               size="small"
               // value={untilTimestamp}
+              // onChange={(e) => {
+              //   debouncedUntil(isTimestampValid(e.target.value) ? e.target.value : '');
+              // }}
               onChange={(e) => {
-                debounce(isTimestampValid(e.target.value) ? e.target.value : '', true);
+                debouncedUntil(e.target.value);
               }}
               error={!isTimestampValid(untilTimestamp || '0')}
             />

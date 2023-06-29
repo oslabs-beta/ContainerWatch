@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { createDockerDesktopClient } from '@docker/extension-api-client';
 import {
   Search,
@@ -31,6 +31,7 @@ import fetchAllContainers from '../../actions/fetchAllContainers';
 import fetchAllContainerLogs from '../../actions/fetchAllContainerLogs';
 import { DockerLog, DockerContainer, LogFilters } from '../../types';
 import { createTheme } from '@mui/material/styles';
+import { debounce } from 'lodash';
 
 const HEADERS = ['', 'Timestamp', 'Container', 'Message'];
 
@@ -92,12 +93,26 @@ export default function Logs() {
     refreshAll();
   }, []);
 
-  let timeoutID: ReturnType<typeof setTimeout>;
+  useEffect(() => {
+    debounced.cancel();
+  }, [debounced]);
+
+  // TODO: Delete console log
+  console.log('firing: ' + Date.now());
+
+  // let timeoutID: ReturnType<typeof setTimeout>;
   // Debounce function
-  const debounce = (value: string) => {
-    clearTimeout(timeoutID);
-    timeoutID = setTimeout(() => setSearchText(value), 400);
-  };
+  // const debounce = (value: string) => {
+  //   clearTimeout(timeoutID);
+  //   timeoutID = setTimeout(() => setSearchText(value), 400);
+  // };
+
+  // Lodash debounce implementation
+  const debounced = debounce((value) => {
+    setSearchText(value);
+  }, 400);
+
+  // const debouncedRequest = useCallback((value: any) => debounced(value), []);
 
   // Refreshes logs page fetching all new containers
   const refreshAll = async () => {
@@ -127,9 +142,6 @@ export default function Logs() {
       console.error(err);
     }
   };
-
-  // TODO: Delete console log
-  console.log('firing: ' + Date.now());
 
   // Apply the filters
   const upperCaseSearchText = searchText.toUpperCase();
@@ -181,7 +193,10 @@ export default function Logs() {
               </InputAdornment>
             }
             // value={searchText}
-            onChange={(e) => debounce(e.target.value)}
+            // onChange={(e) => debounce(e.target.value)}
+            onChange={(e) => {
+              debounced(e.target.value);
+            }}
           />
           <IconButton
             onClick={(e) => {
