@@ -8,10 +8,6 @@ export type DockerLog = {
   time: string;
   stream: 'stdout' | 'stderr';
   log: string;
-  containerLabelColor: Record<string, string>;
-  setContainerLabelColor: React.Dispatch<React.SetStateAction<Record<string, string>>>;
-  containerIconColor: Record<string, string>;
-  setContainerIconColor: React.Dispatch<React.SetStateAction<Record<string, string>>>;
 };
 
 export type DockerContainer = {
