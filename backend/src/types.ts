@@ -1,7 +1,8 @@
 export type GrafanaDashboard = {
   dashboard: {
     id: null | number;
-    title: string;
+    uid: string;
+    title: string | undefined;
     tags: string[];
     timezone: string;
     schemaVersion: number;
