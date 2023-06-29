@@ -27,6 +27,7 @@ import {
 } from '@mui/material';
 import ContainerIcon from '../../components/ContainerIcon/ContainerIcon';
 import FilterDrawer from '../../components/FilterDrawer/FilterDrawer';
+import RefreshMessage from '../../components/Refresh/Refresh';
 import fetchAllContainers from '../../actions/fetchAllContainers';
 import fetchAllContainerLogs from '../../actions/fetchAllContainerLogs';
 import { DockerLog, DockerContainer, LogFilters } from '../../types';
@@ -117,32 +118,11 @@ export default function Logs() {
         {}
       );
       setContainerIconColor(updatedContainerIconColor);
-
       setElapsedTimeInMinutes(0);
     } catch (err) {
       console.error(err);
     }
   };
-
-  useEffect(() => {
-    const intervalId = setInterval(() => {
-      setElapsedTimeInMinutes((prevElapsedTime) => prevElapsedTime + 1);
-    }, 60000);
-
-    return () => {
-      clearInterval(intervalId);
-    };
-  }, []);
-
-  let message;
-  if (elapsedTimeInMinutes < 60) {
-    message = `Last refreshed ${elapsedTimeInMinutes}m ago`;
-  } else {
-    const elapsedHours = Math.floor(elapsedTimeInMinutes / 60);
-    const remainingMinutes = elapsedTimeInMinutes % 60;
-    const formattedTime = `${elapsedHours}h ${remainingMinutes}m`;
-    message = `Last refreshed ${formattedTime} ago`;
-  }
 
   // Apply the filters
   const upperCaseSearchText = searchText.toUpperCase();
@@ -172,7 +152,7 @@ export default function Logs() {
         containerLabelColor={containerLabelColor}
       />
       <Box sx={{ minHeight: 0, display: 'flex', flexDirection: 'column' }}>
-        <Stack direction="row" spacing={2} alignContent={'center'}>
+        <Stack direction="row" spacing={2} alignContent="center">
           <OutlinedInput
             placeholder="Search"
             size="small"
@@ -207,9 +187,10 @@ export default function Logs() {
           <IconButton onClick={refreshAll}>
             <Refresh />
           </IconButton>
-          <Stack justifyContent={'center'}>
-            <Typography variant="subtitle2">{message}</Typography>
-          </Stack>
+          <RefreshMessage
+            elapsedTimeInMinutes={elapsedTimeInMinutes}
+            setElapsedTimeInMinutes={setElapsedTimeInMinutes}
+          />
         </Stack>
 
         <TableContainer
