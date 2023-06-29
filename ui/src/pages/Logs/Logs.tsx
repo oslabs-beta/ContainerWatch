@@ -208,9 +208,9 @@ export default function Logs() {
               </TableRow>
             </TableHead>
             <TableBody>
-              {filteredLogs.map((row) => (
+              {filteredLogs.map((logInfo) => (
                 <Row
-                  {...row}
+                  logInfo={logInfo}
                   containerLabelColor={containerLabelColor}
                   containerIconColor={containerIconColor}
                 />
@@ -230,14 +230,15 @@ const logsDisplayStyle = {
 };
 
 function Row({
-  containerName,
-  containerId,
-  time,
-  stream,
-  log,
+  logInfo: logInfo,
   containerLabelColor,
   containerIconColor,
-}: DockerLog) {
+}: {
+  logInfo: DockerLog;
+  containerLabelColor: Record<string, string>;
+  containerIconColor: Record<string, string>;
+}) {
+  const { containerId, containerName, time, stream, log } = logInfo;
   const [open, setOpen] = useState<boolean>(false);
 
   const labelColor = containerLabelColor[containerId];
