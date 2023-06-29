@@ -66,7 +66,7 @@ export default function Logs() {
   // Debounce function
   const debounce = (value: string) => {
     clearTimeout(timeoutID);
-    timeoutID = setTimeout(() => setSearchText(value), 400);
+    timeoutID = setTimeout(() => setValidFromTimestamp(value), 2000);
   };
 
   // Refreshes logs page fetching all new containers

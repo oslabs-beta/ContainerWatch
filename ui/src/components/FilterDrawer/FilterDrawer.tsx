@@ -39,10 +39,16 @@ export default function FilterDrawer({
 
   let timeoutID: any;
   // Debounce function
-  const debounce = (value: any) => {
-    console.log('hello');
-    clearTimeout(timeoutID);
-    timeoutID = setTimeout(() => setFilters(value), 2000);
+  const debounce = (value: any, check: boolean = true) => {
+    if (value !== '' && check === false) {
+      console.log('false');
+      clearTimeout(timeoutID);
+      timeoutID = setTimeout(() => setValidFromTimestamp(value), 4000);
+    } else if (value !== '' && check === true) {
+      console.log('true');
+      clearTimeout(timeoutID);
+      timeoutID = setTimeout(() => setValidUntilTimestamp(value), 4000);
+    }
   };
 
   const checkAllContainers = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -199,8 +205,16 @@ export default function FilterDrawer({
               size="small"
               // value={fromTimestamp}
               onChange={(e) => {
-                setValidFromTimestamp(isTimestampValid(e.target.value) ? e.target.value : '');
-                setFromTimestamp(e.target.value);
+                // setValidFromTimestamp(isTimestampValid(e.target.value) ? e.target.value : '');
+                // debounce(isTimestampValid(e.target.value) ? e.target.value : '');
+                debounce(() => {
+                  if (isTimestampValid(e.target.value)) {
+                    return e.target.value;
+                  } else {
+                    return '';
+                  }
+                }, false);
+                // setFromTimestamp(e.target.value);
               }}
               error={!isTimestampValid(fromTimestamp || '0')}
             />
@@ -210,8 +224,18 @@ export default function FilterDrawer({
               size="small"
               // value={untilTimestamp}
               onChange={(e) => {
-                setUntilTimestamp(e.target.value);
-                setValidUntilTimestamp(isTimestampValid(e.target.value) ? e.target.value : '');
+                // setUntilTimestamp(e.target.value);
+                // setValidUntilTimestamp(isTimestampValid(e.target.value) ? e.target.value : '');
+                // debounce(
+                //   setValidUntilTimestamp(isTimestampValid(e.target.value) ? e.target.value : '')
+                // );
+                debounce(() => {
+                  if (isTimestampValid(e.target.value)) {
+                    return e.target.value;
+                  } else {
+                    return '';
+                  }
+                });
               }}
               error={!isTimestampValid(untilTimestamp || '0')}
             />
