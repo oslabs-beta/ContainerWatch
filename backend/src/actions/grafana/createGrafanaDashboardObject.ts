@@ -10,6 +10,7 @@ export default async function createGrafanaDashboardObject(
   const dashboard: GrafanaDashboard = {
     dashboard: {
       id: null,
+      uid: containerID.slice(1),
       title: containerName,
       tags: ['templated'],
       timezone: 'browser',
