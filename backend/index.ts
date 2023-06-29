@@ -55,7 +55,6 @@ metricsServer.listen(METRICS_PORT, () => {
     containerIDs.forEach(async (id, index) => {
       const dashboard = await createGrafanaDashboardObject(id, containerNames[index], datasource);
 
-      console.log(JSON.stringify(dashboard, null, 4));
       const dashboardReponse = await fetch('http://host.docker.internal:2999/api/dashboards/db', {
         method: 'POST',
         headers: {
