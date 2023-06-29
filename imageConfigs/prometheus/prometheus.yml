@@ -1,7 +1,8 @@
-#prometheus.yml - config file for Prometheus
+# Configuration file for Prometheus
+# https://prometheus.io/docs/prometheus/latest/configuration/configuration/
 
 scrape_configs:
-  - job_name: cadvisor
+  - job_name: docker_container_metrics
     scrape_interval: 5s
     static_configs:
-      - targets: ['cadvisor:8080']
+      - targets: ['host.docker.internal:3333']

@@ -23,6 +23,7 @@ type FilterDrawerProps = {
   setDrawerOpen: Function;
   setValidFromTimestamp: React.Dispatch<React.SetStateAction<string>>;
   setValidUntilTimestamp: React.Dispatch<React.SetStateAction<string>>;
+  containerLabelColor: Record<string, string>;
 };
 
 export default function FilterDrawer({
