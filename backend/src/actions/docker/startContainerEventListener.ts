@@ -38,10 +38,30 @@ export default async function startContainerEventListener(datasource: GrafanaDat
     }
 
     // Destroy action: delete grafana DASHBOARD with the same name
-    // May need to consider swapping ID and container name in grafana dashboard
-    // to account for containers with the same name but different IDs
     if (event.Action === 'destroy') {
       console.log('💣 DESTROYED CONTAINER: ', event.Actor.Attributes.name, '!!');
+      try {
+        // Request to Grafana API to delete the Dashboard of the stopped container.
+        // Metrics are already being stopped when the container stops running.
+        // Properly cleaning up Dashboards for containers that are deleted.
+        const deleteResponse = await axios.delete(
+          `http://host.docker.internal:2999/api/dashboards/uid/${event.Actor.ID.slice(0, 12)}`,
+          {
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          }
+        );
+
+        // Console logs to tell the user if the request was successful or not.
+        if (deleteResponse.status >= 400) {
+          console.log('Dashboard deletion failed 👎');
+        } else {
+          console.log('Dashboard', event.Actor.ID.slice(0, 12), 'successfully deleted 👋');
+        }
+      } catch (err) {
+        console.log(err);
+      }
     }
   });
 
