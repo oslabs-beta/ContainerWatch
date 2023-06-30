@@ -3,6 +3,7 @@ import { DOCKER_DAEMON_SOCKET_PATH } from '../../constants';
 import { cpuGauge, memoryGauge } from '../../promClient';
 import calculateDockerStats from './calculateDockerStats';
 
+// This is a streaming connection that will close when the container is deleted.
 export default async function startContainerMetricsStream(id: string) {
   const response = await axios.get(`/containers/${id}/stats`, {
     socketPath: DOCKER_DAEMON_SOCKET_PATH,
