@@ -1,4 +1,4 @@
-import { QueryStringPanelID } from "../../types";
+import { QueryStringPanelID } from '../../types';
 
 // Create a function that returns an an array of queryStrings.
 // Allows space for additional queries.

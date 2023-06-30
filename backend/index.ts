@@ -1,13 +1,10 @@
 import fs from 'fs';
-import axios from 'axios';
 import extensionServer from './src/extensionServer';
 import metricsServer from './src/metricsServer';
-import { cpuGauge, memoryGauge } from './src/promClient';
-import createGrafanaDashboardObject from './src/actions/grafana/createGrafanaDashboardObject';
 import getGrafanaDatasource from './src/actions/grafana/getGrafanaDatasource';
-import calculateDockerStats from './src/actions/docker/calculateDockerStats';
-import { DockerContainer } from './src/types';
-import { DOCKER_DAEMON_SOCKET_PATH, SOCKETFILE, METRICS_PORT } from './src/constants';
+import startContainerEventListener from './src/actions/docker/startContainerEventListener';
+import onLoadSetup from './src/actions/docker/onLoadSetup';
+import { SOCKETFILE, METRICS_PORT } from './src/constants';
 
 // After a server is done with the unix domain socket, it is not automatically destroyed.
 // You must instead unlink the socket in order to reuse that address/path.
@@ -35,70 +32,19 @@ metricsServer.listen(METRICS_PORT, () => {
     console.log('⏳ Waiting ... ');
     await new Promise((r) => setTimeout(r, 1000 * 10));
     console.log('⌛ Done waiting.');
-
-    // Get a list of all the Docker containers
-    const response = await axios.get('/containers/json', {
-      socketPath: DOCKER_DAEMON_SOCKET_PATH,
-      params: { all: true },
-    });
-
-    // Populate two arrays, mapping through them in order ensures that their INDEX VALUES
-    // can properly CORRELATE each container's respective IDs and Names.
-
-    const containerIDs: string[] = [];
-    const containerNames: string[] = [];
-    (response.data as DockerContainer[]).forEach((el) => {
-      containerIDs.push(el.Id);
-      containerNames.push(el.Names[0].replace(/^\//, ''));
-    });
+    // STRETCH GOAL: Not a very likely scenario but consider this scenario:
+    // A CPU or MEM spike causes DockerPulse container to stop/restart
+    // but Grafana stays running, we may end up creating double the amount
+    // of containers. May need to delete all dashboards first.
 
     // Get necessary datasource information from Grafana directly.
     const datasource = await getGrafanaDatasource();
 
-    // Iterate through ID array and create a dashboard object for each container.
-    containerIDs.forEach(async (id, index) => {
-      const dashboard = await createGrafanaDashboardObject(id, containerNames[index], datasource);
+    // Start data collection and create Grafana graphs for all containers available on load.
+    onLoadSetup(datasource);
 
-      // Post request to Grafana API to create a dashboard using the returned dashboard object.
-      await axios.post(
-        'http://host.docker.internal:2999/api/dashboards/db',
-        JSON.stringify(dashboard),
-        {
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        }
-      );
-
-      // A simple console log to show when graphs are done being posted to Grafana.
-      console.log(`📊 Grafana graphs 📊 for the ${containerNames[index]} container are ready!!`);
-    });
-
-    // For each container, create and HTTP request to the Docker Engine to get the stats.
-    // This is a streaming connection that will close when the container is deleted.
-    containerIDs.forEach(async (id) => {
-      const response = await axios.get(`/containers/${id}/stats`, {
-        socketPath: DOCKER_DAEMON_SOCKET_PATH,
-        params: { all: true },
-        responseType: 'stream',
-      });
-
-      const stream = response.data;
-
-      stream.on('data', (data: Buffer) => {
-        const stats = JSON.parse(data.toString());
-        // Calculate the CPU % and MEM %
-        // If the container is stopped, these values will be NaN
-        const { cpu_usage_percent, memory_usage_percent } = calculateDockerStats(stats);
-        // Set the metrics gauges of the prometheus client
-        cpuGauge.labels({ id }).set(cpu_usage_percent);
-        memoryGauge.labels({ id }).set(memory_usage_percent);
-      });
-
-      stream.on('end', () => {
-        console.log(`Stream ended for ${id} stats`);
-      });
-    });
+    // Start container event listener
+    startContainerEventListener(datasource);
   } catch (err) {
     console.error(err);
   }
