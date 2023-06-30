@@ -23,4 +23,7 @@ export default async function startStreamAndCreateDashboard(
       },
     }
   );
+  
+  // A simple console log to show when graphs are done being posted to Grafana.
+  console.log(`📊 Grafana graphs 📊 for the ${containerName} container are ready!!`);
 }

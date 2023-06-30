@@ -23,8 +23,5 @@ export default async function onLoadSetup(datasource: GrafanaDatasource) {
   containerIDs.forEach(async (id, index) => {
     // Invoke function to start metrics stream and create Grafana Dashboard
     startStreamAndCreateDashboard(id, containerNames[index], datasource);
-
-    // A simple console log to show when graphs are done being posted to Grafana.
-    console.log(`📊 Grafana graphs 📊 for the ${containerNames[index]} container are ready!!`);
   });
 }
