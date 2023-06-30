@@ -23,7 +23,7 @@ export default function LogsRow({
 }) {
   const { containerId, containerName, time, stream, log } = logInfo;
   const [open, setOpen] = useState<boolean>(false);
-  const [dummyData, setdummyData] = useState('');
+  const [dummyData, setDummyData] = useState('');
 
   const labelColor = containerLabelColor[containerId];
   let iconColor = containerIconColor[containerId] === 'running' ? 'teal' : 'grey';
@@ -32,7 +32,7 @@ export default function LogsRow({
     // Skeleton for response
     // const response = await fetch(`/metrics/${containerId}`);
     const dumbData = 'CPU:3%, RAM:15MB';
-    setdummyData(dumbData);
+    setDummyData(dumbData);
     console.log('im working');
   };
 
@@ -100,7 +100,7 @@ export default function LogsRow({
         <TableCell sx={{ p: 0 }} />
         <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={HEADERS.length - 1}>
           <Collapse in={open} addEndListener={fetchMetrics} timeout="auto" unmountOnExit>
-            <Typography sx={{ fontSize: '11px' }}>{dummyData}</Typography>
+            <Typography sx={{ display: 'flex', fontSize: '11px' }}>{dummyData}</Typography>
             <Box
               sx={{
                 display: 'flex',
