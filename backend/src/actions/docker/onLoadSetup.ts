@@ -1,5 +1,6 @@
 import axios from 'axios';
-import startStreamAndCreateDashboard from '../startStreamAndCreateDashboard';
+import createGrafanaDashboard from '../grafana/createGrafanaDashboard';
+import startContainerMetricsStream from './startContainerMetricsStream';
 import { DOCKER_DAEMON_SOCKET_PATH } from '../../constants';
 import { DockerContainer, GrafanaDatasource } from '../../types';
 
@@ -22,6 +23,7 @@ export default async function onLoadSetup(datasource: GrafanaDatasource) {
   // Iterate through ID array and create a dashboard object for each container.
   containerIDs.forEach(async (id, index) => {
     // Invoke function to start metrics stream and create Grafana Dashboard
-    startStreamAndCreateDashboard(id, containerNames[index], datasource);
+    startContainerMetricsStream(id);
+    await createGrafanaDashboardObject(id, containerNames[index], datasource);
   });
 }

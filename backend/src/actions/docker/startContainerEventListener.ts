@@ -1,5 +1,6 @@
 import axios from 'axios';
-import startStreamAndCreateDashboard from '../startStreamAndCreateDashboard';
+import startContainerMetricsStream from './startContainerMetricsStream';
+import createGrafanaDashboard from '../grafana/createGrafanaDashboard';
 import { DOCKER_DAEMON_SOCKET_PATH } from '../../constants';
 import { GrafanaDatasource } from '../../types';
 
@@ -31,8 +32,9 @@ export default async function startContainerEventListener(datasource: GrafanaDat
       // Display event start in console.
       console.log('🚩 STARTED CONTAINER: ', event.Actor.Attributes.name, '!!');
 
-      // Invoke function to start metrics stream and create Grafana Dashboard
-      startStreamAndCreateDashboard(event.Actor.ID, event.Actor.Attributes.name, datasource);
+      // Invoke functions to start metrics stream and create Grafana Dashboard
+      startContainerMetricsStream(event.Actor.ID);
+      createGrafanaDashboardObject(event.Actor.ID, event.Actor.Attributes.name, datasource);
     }
 
     // Destroy action: delete grafana DASHBOARD with the same name

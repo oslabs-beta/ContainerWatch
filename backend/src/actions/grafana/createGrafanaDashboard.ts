@@ -1,12 +1,13 @@
+import axios from 'axios';
 import createGrafanaPanelObject from './createGrafanaPanelObject';
 import { GrafanaDashboard, GrafanaDatasource, QueryStringPanelID } from '../../types';
 import createPromQLQueries from './createPromQLQueries';
 
-export default function createGrafanaDashboardObject(
+export default async function createGrafanaDashboard(
   containerID: string,
   containerName: string | undefined,
   datasource: GrafanaDatasource
-): GrafanaDashboard {
+): Promise<number> {
   // create dashboard object boilerplate
   const dashboard: GrafanaDashboard = {
     dashboard: {
@@ -39,5 +40,31 @@ export default function createGrafanaDashboardObject(
     );
   });
 
-  return dashboard;
+  try {
+    const dashboardResponse = await axios.post(
+      'http://host.docker.internal:2999/api/dashboards/db',
+      JSON.stringify(dashboard),
+      {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+
+    // Descriptive error log for developers
+    if (dashboardResponse.status >= 400) {
+      console.log(
+        'Error with POST request to Grafana Dashboards API. In createGrafanaDashboardObject.'
+      );
+    } else {
+      // A simple console log to show when graphs are done being posted to Grafana.
+      console.log(`📊 Grafana graphs 📊 for the ${containerName} container are ready!!`);
+    }
+
+    return dashboardResponse.status;
+  } catch (err) {
+    console.log(err);
+  }
+
+  return 400;
 }
