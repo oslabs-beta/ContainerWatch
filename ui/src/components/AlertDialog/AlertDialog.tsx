@@ -16,10 +16,10 @@ import {
   InputAdornment,
 } from '@mui/material';
 import fetchAllContainers from '../../actions/fetchAllContainers';
-import { DockerDesktopClient, DockerContainer, Alert } from '../../types';
+import { DDClient, DockerContainer, Alert } from '../../types';
 
 type AlertDialogProps = {
-  ddClient: DockerDesktopClient;
+  ddClient: DDClient;
   dialogOpen: boolean;
   setDialogOpen: React.Dispatch<React.SetStateAction<boolean>>;
 };
