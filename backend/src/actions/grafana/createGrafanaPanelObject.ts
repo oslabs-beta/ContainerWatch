@@ -22,7 +22,7 @@ export default function createGrafanaPanelObject(
       break;
     }
     case 2: {
-      metricsName = 'RAM %';
+      metricsName = 'MEM %';
       break;
     }
     default: {
@@ -53,11 +53,11 @@ export default function createGrafanaPanelObject(
       custom: {
         axisCenteredZero: false,
         axisColorMode: 'text',
-        axisLabel: '',
+        axisLabel: metricsName,
         axisPlacement: 'auto',
         barAlignment: 0,
         drawStyle: 'line',
-        fillOpacity: 0,
+        fillOpacity: 10, // Fill area under line
         gradientMode: 'none',
         hideFrom: {
           legend: false,
@@ -94,17 +94,18 @@ export default function createGrafanaPanelObject(
           },
         ],
       },
+      min: 0,
     },
     overrides: [
       {
         matcher: {
           id: 'byName',
-          options: 'Value',
+          options: 'Time',
         },
         properties: [
           {
-            id: 'displayName',
-            value: `${metricsName}`,
+            id: 'custom.fillBelowTo',
+            value: 'Value',
           },
         ],
       },
@@ -117,7 +118,7 @@ export default function createGrafanaPanelObject(
       calcs: [],
       displayMode: 'list',
       placement: 'bottom',
-      showLegend: true,
+      showLegend: false, // Do not show legend
     },
     tooltip: {
       mode: 'single',
@@ -138,7 +139,7 @@ export default function createGrafanaPanelObject(
     options: optionsObject,
     id: panelId,
     targets: targets,
-    title: `${containerName} ${metricsName}`,
+    title: '', // No title on panel to conserve vertical space
     type: 'timeseries',
     interval: '10s',
   };
