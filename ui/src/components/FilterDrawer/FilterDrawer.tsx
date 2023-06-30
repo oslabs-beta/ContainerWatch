@@ -172,10 +172,10 @@ export default function FilterDrawer({
                       whiteSpace: 'nowrap',
                       textOverflow: 'ellipsis',
                       overflow: 'hidden',
-                      fontFamily: 'monospace',
                       backgroundColor: containerLabelColor[Id],
                       borderRadius: '5px',
-                      padding: 0.5,
+                      px: 1,
+                      my: 0.25,
                     }}
                   >
                     {Names[0].replace(/^\//, '')}
