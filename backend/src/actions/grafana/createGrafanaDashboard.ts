@@ -7,7 +7,7 @@ export default async function createGrafanaDashboard(
   containerID: string,
   containerName: string | undefined,
   datasource: GrafanaDatasource
-): Promise<number> {
+): Promise<void> {
   // create dashboard object boilerplate
   const dashboard: GrafanaDashboard = {
     dashboard: {
@@ -63,6 +63,4 @@ export default async function createGrafanaDashboard(
   } catch (err) {
     console.log(err);
   }
-
-  return 400;
 }
