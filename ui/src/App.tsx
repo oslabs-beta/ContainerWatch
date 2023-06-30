@@ -12,7 +12,7 @@ export default function App() {
       <Routes>
         <Route path="/" element={<Stats />} />
         <Route path="/logs" element={<Logs />} />
-        <Route path="/settings" element={<Alerts />} />
+        <Route path="/alerts" element={<Alerts />} />
         <Route path="*" element={<div>Page not found</div>} />
       </Routes>
     </Box>
