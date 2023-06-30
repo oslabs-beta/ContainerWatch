@@ -6,7 +6,7 @@ import { ReactComponent as DockerPulseSVG } from '../../../assets/dockerpulse.sv
 const pages = [
   { label: 'Stats', path: '/' },
   { label: 'Logs', path: '/logs' },
-  { label: 'Settings', path: '/settings' },
+  { label: 'Alerts', path: '/alerts' },
 ];
 
 export default function NavBar() {

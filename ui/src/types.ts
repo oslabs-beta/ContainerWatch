@@ -21,3 +21,14 @@ export type LogFilters = {
   stderr: boolean;
   allowedContainers: Set<string>;
 };
+
+export type Alert = {
+  name: string;
+  containerId: string;
+  targetMetric: 'CPU %' | 'MEM %';
+  threshold: number;
+  email: string;
+  lastExceeded?: number;
+  lastNotification?: number;
+  created?: number;
+};
