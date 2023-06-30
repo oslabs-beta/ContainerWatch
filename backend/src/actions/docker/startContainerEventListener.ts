@@ -33,8 +33,8 @@ export default async function startContainerEventListener(datasource: GrafanaDat
       console.log('🚩 STARTED CONTAINER: ', event.Actor.Attributes.name, '!!');
 
       // Invoke functions to start metrics stream and create Grafana Dashboard
-      startContainerMetricsStream(event.Actor.ID);
-      createGrafanaDashboard(event.Actor.ID, event.Actor.Attributes.name, datasource);
+      await startContainerMetricsStream(event.Actor.ID);
+      await createGrafanaDashboard(event.Actor.ID, event.Actor.Attributes.name, datasource);
     }
 
     // Destroy action: delete grafana DASHBOARD with the same name
