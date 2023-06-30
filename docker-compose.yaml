@@ -6,19 +6,15 @@ services:
     container_name: dockerpulse
     volumes:
       - /var/run/docker.sock.raw:/var/run/docker.sock
-      # Create a named volume which is mapped to the /grafana folder in the extension container
-      # (The /grafana folder is added to the extension container in the extension's Dockerfile)
+      # Create named volumes which are mapped to the /grafana & /prometheus folder in the extension container
+      # (The /grafana & /prometheus folder is added to the extension container in the extension's Dockerfile)
       - shared-grafana-files:/grafana
-      # Create a named volume which is mapped to the /prometheus folder in the extension container
-      # (The /prometheus folder is added to the extension container in the extension's Dockerfile)
       - shared-prometheus-files:/prometheus
     ports:
       # Expose port 3333 to the host so that you can see metrics on localhost:3333/metrics
       - 3333:3333
 
   prometheus:
-    # Pulling a custom image that has been pushed to the hub that has been configured to scrape
-    # from cadvisor so there is no need to create a bind mount that configures the prometheus.yml file
     image: prom/prometheus:latest
     container_name: prometheus
     ports:
