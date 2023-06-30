@@ -1,10 +1,9 @@
-import axios from "axios";
-import createGrafanaDashboardObject from "../grafana/createGrafanaDashboardObject";
-import startContainerMetricsStream from "./startContainerMetricsStream";
-import { DOCKER_DAEMON_SOCKET_PATH } from "../../constants";
-import { DockerContainer } from "../../types";
+import axios from 'axios';
+import startStreamAndCreateDashboard from '../startStreamAndCreateDashboard';
+import { DOCKER_DAEMON_SOCKET_PATH } from '../../constants';
+import { DockerContainer, GrafanaDatasource } from '../../types';
 
-export default async function onLoadSetup(datasource) {
+export default async function onLoadSetup(datasource: GrafanaDatasource) {
   // Get a list of all the Docker containers
   const response = await axios.get('/containers/json', {
     socketPath: DOCKER_DAEMON_SOCKET_PATH,
@@ -13,7 +12,6 @@ export default async function onLoadSetup(datasource) {
 
   // Populate two arrays, mapping through them in order ensures that their INDEX VALUES
   // can properly CORRELATE each container's respective IDs and Names.
-
   const containerIDs: string[] = [];
   const containerNames: string[] = [];
   (response.data as DockerContainer[]).forEach((el) => {
@@ -23,24 +21,10 @@ export default async function onLoadSetup(datasource) {
 
   // Iterate through ID array and create a dashboard object for each container.
   containerIDs.forEach(async (id, index) => {
-    startContainerMetricsStream(id);
-    const dashboard = createGrafanaDashboardObject(id, containerNames[index], datasource);
-
-    // Post request to Grafana API to create a dashboard using the returned dashboard object.
-    await axios.post(
-      'http://host.docker.internal:2999/api/dashboards/db',
-      JSON.stringify(dashboard),
-      {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      }
-    );
+    // Invoke function to start metrics stream and create Grafana Dashboard
+    startStreamAndCreateDashboard(id, containerNames[index], datasource);
 
     // A simple console log to show when graphs are done being posted to Grafana.
     console.log(`📊 Grafana graphs 📊 for the ${containerNames[index]} container are ready!!`);
   });
-
-  
-
 }

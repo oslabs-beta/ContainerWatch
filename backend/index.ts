@@ -1,13 +1,10 @@
 import fs from 'fs';
-import axios from 'axios';
 import extensionServer from './src/extensionServer';
 import metricsServer from './src/metricsServer';
-import createGrafanaDashboardObject from './src/actions/grafana/createGrafanaDashboardObject';
 import getGrafanaDatasource from './src/actions/grafana/getGrafanaDatasource';
-import startContainerMetricsStream from './src/actions/docker/startContainerMetricsStream';
 import startContainerEventListener from './src/actions/docker/startContainerEventListener';
-import { DockerContainer } from './src/types';
-import { DOCKER_DAEMON_SOCKET_PATH, SOCKETFILE, METRICS_PORT } from './src/constants';
+import onLoadSetup from './src/actions/docker/onLoadSetup';
+import { SOCKETFILE, METRICS_PORT } from './src/constants';
 
 // After a server is done with the unix domain socket, it is not automatically destroyed.
 // You must instead unlink the socket in order to reuse that address/path.
@@ -40,6 +37,7 @@ metricsServer.listen(METRICS_PORT, () => {
     const datasource = await getGrafanaDatasource();
 
     // Start data collection and create Grafana graphs for all containers available on load.
+    onLoadSetup(datasource);
 
     // Start container event listener
     startContainerEventListener(datasource);
