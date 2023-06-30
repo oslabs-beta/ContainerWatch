@@ -14,6 +14,24 @@ export type GrafanaDashboard = {
   overwrite: boolean;
 };
 
+export type GrafanaDatasourceResponse = {
+  id: number;
+  uid: string;
+  orgId: number;
+  name: string;
+  type: string;
+  typeName: string;
+  typeLogoUrl: string;
+  access: string;
+  url: string;
+  user: string;
+  database: string;
+  basicAuth: boolean;
+  isDefault: true;
+  jsonData: {};
+  readOnly: false;
+}
+
 export type GrafanaDatasource = {
   type: string;
   uid: string;
