@@ -1,14 +1,6 @@
 import { useEffect, useState } from 'react';
 import { createDockerDesktopClient } from '@docker/extension-api-client';
-import {
-  Search,
-  Clear,
-  FilterList,
-  KeyboardArrowUp,
-  KeyboardArrowDown,
-  Refresh,
-  ErrorRounded,
-} from '@mui/icons-material';
+import { Search, Clear, FilterList, Refresh } from '@mui/icons-material';
 import {
   Box,
   Stack,
@@ -23,17 +15,17 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  Collapse,
 } from '@mui/material';
-import ContainerIcon from '../../components/ContainerIcon/ContainerIcon';
 import FilterDrawer from '../../components/FilterDrawer/FilterDrawer';
 import RefreshMessage from '../../components/RefreshMessage/RefreshMessage';
+import LogsRow from '../../components/LogsRow/LogsRow';
 import fetchAllContainers from '../../actions/fetchAllContainers';
 import fetchAllContainerLogs from '../../actions/fetchAllContainerLogs';
 import { DockerLog, DockerContainer, LogFilters } from '../../types';
 import { createTheme } from '@mui/material/styles';
+import { debounce } from 'lodash';
 
-const HEADERS = ['', 'Timestamp', 'Container', 'Message'];
+export const HEADERS = ['', 'Timestamp', 'Container', 'Message'];
 
 // Obtain Docker Desktop client
 const client = createDockerDesktopClient();
@@ -43,7 +35,7 @@ const useDockerDesktopClient = () => {
 
 // Detecting whether user is in dark or light mode
 const prefersDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
-const theme = createTheme({
+export const theme = createTheme({
   palette: {
     mode: prefersDarkMode ? 'dark' : 'light',
     background: {
@@ -93,6 +85,15 @@ export default function Logs() {
   useEffect(() => {
     refreshAll();
   }, []);
+
+  // Lodash debounce implementation
+  const debounced = debounce((value) => {
+    setSearchText(value);
+  }, 400);
+  // Clean up debounce functions
+  useEffect(() => {
+    debounced.cancel();
+  }, [debounced]);
 
   // Refreshes logs page fetching all new containers
   const refreshAll = async () => {
@@ -173,8 +174,9 @@ export default function Logs() {
                 />
               </InputAdornment>
             }
-            value={searchText}
-            onChange={(e) => setSearchText(e.target.value)}
+            onChange={(e) => {
+              debounced(e.target.value);
+            }}
           />
           <IconButton
             onClick={(e) => {
@@ -216,7 +218,7 @@ export default function Logs() {
             </TableHead>
             <TableBody>
               {filteredLogs.map((logInfo) => (
-                <Row
+                <LogsRow
                   logInfo={logInfo}
                   containerLabelColor={containerLabelColor}
                   containerIconColor={containerIconColor}
@@ -226,116 +228,6 @@ export default function Logs() {
           </Table>
         </TableContainer>
       </Box>
-    </>
-  );
-}
-const logsDisplayStyle = {
-  whiteSpace: 'nowrap',
-  textOverflow: 'ellipsis',
-  overflow: 'hidden',
-  fontFamily: 'monospace',
-};
-
-function Row({
-  logInfo: logInfo,
-  containerLabelColor,
-  containerIconColor,
-}: {
-  logInfo: DockerLog;
-  containerLabelColor: Record<string, string>;
-  containerIconColor: Record<string, string>;
-}) {
-  const { containerId, containerName, time, stream, log } = logInfo;
-  const [open, setOpen] = useState<boolean>(false);
-
-  const labelColor = containerLabelColor[containerId];
-  let iconColor = containerIconColor[containerId] === 'running' ? 'teal' : 'grey';
-
-  return (
-    <>
-      <TableRow hover sx={{ '& td': { border: 'none', paddingTop: 0, paddingBottom: 0 } }}>
-        <TableCell sx={{ p: 0 }}>
-          <IconButton size="small" sx={{ background: 'none' }} onClick={() => setOpen(!open)}>
-            {open ? <KeyboardArrowUp /> : <KeyboardArrowDown />}
-          </IconButton>
-        </TableCell>
-        <TableCell>
-          <Typography sx={{ whiteSpace: 'nowrap' }}>{time.split('.')[0]}</Typography>
-        </TableCell>
-        <TableCell>
-          <Box
-            sx={{
-              height: '100%',
-              display: 'flex',
-              alignItems: 'center',
-              gap: 1,
-              maxWidth: '150px',
-            }}
-          >
-            <ContainerIcon htmlColor={iconColor} sx={{ fontSize: 14 }} />
-            <Typography
-              sx={{
-                whiteSpace: 'nowrap',
-                textOverflow: 'ellipsis',
-                overflow: 'hidden',
-                fontFamily: 'monospace',
-                backgroundColor: labelColor,
-                borderRadius: '5px',
-                padding: 0.5,
-              }}
-            >
-              {containerName}
-            </Typography>
-          </Box>
-        </TableCell>
-        <TableCell
-          sx={{
-            // The combination of width: 100% and maxWidth: 0 makes the cell grow to fit
-            // the horizontal space. The table will not overflow in the x direction.
-            width: '100%',
-            maxWidth: 0,
-          }}
-        >
-          <Typography sx={logsDisplayStyle}>
-            {stream === 'stdout' ? (
-              log
-            ) : (
-              <>
-                <ErrorRounded
-                  htmlColor="red"
-                  sx={{ verticalAlign: 'middle', fontSize: 14, marginRight: 1 }}
-                />
-                {log}
-              </>
-            )}
-          </Typography>
-        </TableCell>
-      </TableRow>
-      <TableRow>
-        <TableCell sx={{ p: 0 }} />
-        <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={HEADERS.length - 1}>
-          <Collapse in={open} timeout="auto" unmountOnExit>
-            <Box
-              sx={{
-                display: 'flex',
-                border: 'lightgray',
-                backgroundColor: theme.palette.background.default,
-                borderRadius: '5px',
-                paddingTop: 0.5,
-                paddingBottom: 0.5,
-                paddingLeft: 1,
-                paddingRight: 1,
-                marginTop: 1,
-                marginBottom: 1,
-              }}
-            >
-              <Typography sx={{ fontFamily: 'monospace', whiteSpace: 'pre' }}>
-                {log || ' '}
-              </Typography>
-            </Box>
-          </Collapse>
-        </TableCell>
-      </TableRow>
     </>
   );
 }
