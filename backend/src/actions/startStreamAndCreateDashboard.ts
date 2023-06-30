@@ -25,6 +25,7 @@ export default async function startStreamAndCreateDashboard(
       }
     );
 
+    // Descriptive error log for developers
     if (dashboardResponse.status >= 400) {
       console.log(
         'Error with POST request to Grafana Dashboards API. In createGrafanaDashboardObject.'
