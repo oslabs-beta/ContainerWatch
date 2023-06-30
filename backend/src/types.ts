@@ -91,19 +91,19 @@ export type GrafanaPanelFieldConfigKey = {
         value: number | null;
       }[];
     };
+    min?: number;
+    max?: number;
   };
   overrides: [
     {
       matcher: {
         id: string;
         options: string;
-      },
-      properties: [
-        {
-          id: string;
-          value: string;
-        }
-      ]
+      };
+      properties: {
+        id: string;
+        value: string;
+      }[];
     }
   ];
 };
@@ -156,4 +156,4 @@ export type DockerContainer = {
 export type QueryStringPanelID = {
   panelID: number;
   queryString: string;
-}
+};
