@@ -30,6 +30,8 @@ services:
       - prometheusdata:/prometheus
       # Share the named volume with the prometheus container
       - shared-prometheus-files:/etc/prometheus
+    depends_on:
+      - myExtension
 
   grafana:
     image: grafana/grafana:latest
