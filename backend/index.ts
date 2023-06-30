@@ -32,10 +32,6 @@ metricsServer.listen(METRICS_PORT, () => {
     console.log('⏳ Waiting ... ');
     await new Promise((r) => setTimeout(r, 1000 * 10));
     console.log('⌛ Done waiting.');
-    // STRETCH GOAL: Not a very likely scenario but consider this scenario:
-    // A CPU or MEM spike causes DockerPulse container to stop/restart
-    // but Grafana stays running, we may end up creating double the amount
-    // of containers. May need to delete all dashboards first.
 
     // Get necessary datasource information from Grafana directly.
     const datasource = await getGrafanaDatasource();
