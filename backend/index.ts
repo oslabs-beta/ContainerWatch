@@ -57,7 +57,7 @@ metricsServer.listen(METRICS_PORT, () => {
 
     // Iterate through ID array and create a dashboard object for each container.
     containerIDs.forEach(async (id, index) => {
-      const dashboard = await createGrafanaDashboardObject(id, containerNames[index], datasource);
+      const dashboard = createGrafanaDashboardObject(id, containerNames[index], datasource);
 
       // Post request to Grafana API to create a dashboard using the returned dashboard object.
       await axios.post(
@@ -74,7 +74,59 @@ metricsServer.listen(METRICS_PORT, () => {
       console.log(`📊 Grafana graphs 📊 for the ${containerNames[index]} container are ready!!`);
     });
 
-    // For each container, create and HTTP request to the Docker Engine to get the stats.
+
+    // Open up a streaming connection that listens for container 'start' and 'destroy events.
+    // Whenever a container starts we will create a dashboard with grafana graphs for that container.
+    // Whenever a container is destroyed, we will delete the corresponding grafana dashboard. (WIP)
+    const eventsRequest = await axios.get('/events', {
+      socketPath: DOCKER_DAEMON_SOCKET_PATH,
+      params: {
+        type: 'container',
+        filters: JSON.stringify({
+          event: ['start', 'destroy'],
+        }),
+      },
+      responseType: 'stream',
+    });
+
+    const eventStream = eventsRequest.data;
+    eventStream.on('data', async (eventData: Buffer) => {
+      const event = JSON.parse(eventData.toString());
+      console.log(`------------------------NEW EVENT------------------------`);
+      // console.log(event); // to view event object for debugging
+
+      // These will check for two actions, start and stop
+      
+      // Start action: create new grafana graphs using name and id
+      if (event.Action === 'start') {
+        // Log 
+        console.log('🚩 STARTED CONTAINER: ', event.Actor.Attributes.name, '!!');
+        const dashboard = createGrafanaDashboardObject(event.Actor.ID, event.Actor.Attributes.name, datasource);
+
+        await axios.post(
+          'http://host.docker.internal:2999/api/dashboards/db',
+          JSON.stringify(dashboard),
+          {
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          }
+        );
+      }
+
+      // Destroy action: delete grafana DASHBOARD with the same name
+      // May need to consider swapping ID and container name in grafana dashboard
+      // to account for containers with the same name but different IDs
+      if (event.Action === 'destroy') {
+        console.log('💣 DESTROYED CONTAINER: ', event.Actor.Attributes.name, '!!')
+      }
+    });
+
+    eventStream.on('end', () => {
+      console.log('event request ended');
+    });
+
+    // For each container, create an HTTP request to the Docker Engine to get the stats.
     // This is a streaming connection that will close when the container is deleted.
     containerIDs.forEach(async (id) => {
       const response = await axios.get(`/containers/${id}/stats`, {
