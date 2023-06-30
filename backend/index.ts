@@ -2,10 +2,9 @@ import fs from 'fs';
 import axios from 'axios';
 import extensionServer from './src/extensionServer';
 import metricsServer from './src/metricsServer';
-import { cpuGauge, memoryGauge } from './src/promClient';
 import createGrafanaDashboardObject from './src/actions/grafana/createGrafanaDashboardObject';
 import getGrafanaDatasource from './src/actions/grafana/getGrafanaDatasource';
-import calculateDockerStats from './src/actions/docker/calculateDockerStats';
+import startContainerMetricsStream from './src/actions/docker/startContainerMetricsStream';
 import { DockerContainer } from './src/types';
 import { DOCKER_DAEMON_SOCKET_PATH, SOCKETFILE, METRICS_PORT } from './src/constants';
 
@@ -74,7 +73,6 @@ metricsServer.listen(METRICS_PORT, () => {
       console.log(`📊 Grafana graphs 📊 for the ${containerNames[index]} container are ready!!`);
     });
 
-
     // Open up a streaming connection that listens for container 'start' and 'destroy events.
     // Whenever a container starts we will create a dashboard with grafana graphs for that container.
     // Whenever a container is destroyed, we will delete the corresponding grafana dashboard. (WIP)
@@ -96,12 +94,16 @@ metricsServer.listen(METRICS_PORT, () => {
       // console.log(event); // to view event object for debugging
 
       // These will check for two actions, start and stop
-      
+
       // Start action: create new grafana graphs using name and id
       if (event.Action === 'start') {
-        // Log 
+        // Log
         console.log('🚩 STARTED CONTAINER: ', event.Actor.Attributes.name, '!!');
-        const dashboard = createGrafanaDashboardObject(event.Actor.ID, event.Actor.Attributes.name, datasource);
+        const dashboard = createGrafanaDashboardObject(
+          event.Actor.ID,
+          event.Actor.Attributes.name,
+          datasource
+        );
 
         await axios.post(
           'http://host.docker.internal:2999/api/dashboards/db',
@@ -118,7 +120,7 @@ metricsServer.listen(METRICS_PORT, () => {
       // May need to consider swapping ID and container name in grafana dashboard
       // to account for containers with the same name but different IDs
       if (event.Action === 'destroy') {
-        console.log('💣 DESTROYED CONTAINER: ', event.Actor.Attributes.name, '!!')
+        console.log('💣 DESTROYED CONTAINER: ', event.Actor.Attributes.name, '!!');
       }
     });
 
@@ -129,27 +131,8 @@ metricsServer.listen(METRICS_PORT, () => {
     // For each container, create an HTTP request to the Docker Engine to get the stats.
     // This is a streaming connection that will close when the container is deleted.
     containerIDs.forEach(async (id) => {
-      const response = await axios.get(`/containers/${id}/stats`, {
-        socketPath: DOCKER_DAEMON_SOCKET_PATH,
-        params: { all: true },
-        responseType: 'stream',
-      });
-
-      const stream = response.data;
-
-      stream.on('data', (data: Buffer) => {
-        const stats = JSON.parse(data.toString());
-        // Calculate the CPU % and MEM %
-        // If the container is stopped, these values will be NaN
-        const { cpu_usage_percent, memory_usage_percent } = calculateDockerStats(stats);
-        // Set the metrics gauges of the prometheus client
-        cpuGauge.labels({ id }).set(cpu_usage_percent);
-        memoryGauge.labels({ id }).set(memory_usage_percent);
-      });
-
-      stream.on('end', () => {
-        console.log(`Stream ended for ${id} stats`);
-      });
+      // invoke function to open metrics stream
+      startContainerMetricsStream(id);
     });
   } catch (err) {
     console.error(err);
