@@ -30,10 +30,10 @@ export default async function startStreamAndCreateDashboard(
       console.log(
         'Error with POST request to Grafana Dashboards API. In createGrafanaDashboardObject.'
       );
+    } else {
+      // A simple console log to show when graphs are done being posted to Grafana.
+      console.log(`📊 Grafana graphs 📊 for the ${containerName} container are ready!!`);
     }
-
-    // A simple console log to show when graphs are done being posted to Grafana.
-    console.log(`📊 Grafana graphs 📊 for the ${containerName} container are ready!!`);
   } catch (err) {
     console.log(err);
   }
