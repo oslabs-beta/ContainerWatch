@@ -7,16 +7,37 @@ import {
 } from '../../types';
 
 export default function createGrafanaPanelObject(
-  containerName: string,
-  id: number,
+  containerName: string | undefined,
+  containerID: string,
+  panelId: number,
+  promQLQuery: string,
   promDatasource: GrafanaDatasource
 ): GrafanaPanel {
+  let metricsName = '';
+  // switch case to handle name of panel
+  // if you add more metrics, add more cases here!
+  switch (panelId) {
+    case 1: {
+      metricsName = 'CPU %';
+      break;
+    }
+    case 2: {
+      metricsName = 'RAM %';
+      break;
+    }
+    default: {
+      // panelId is being assigned in the file: createPromQLQueries.ts
+      console.log('Please ensure you are properly assigning panelId');
+      break;
+    }
+  }
+
   // create targets key for grafana panel
   const targets: GrafanaPanelTargetsKey = [
     {
       datasource: promDatasource,
       editorMode: 'builder',
-      expr: `sum(rate(container_cpu_usage_seconds_total{name="${containerName}"}[$__interval])) * 100`,
+      expr: promQLQuery,
       instant: false,
       range: true,
       refId: 'A',
@@ -74,7 +95,20 @@ export default function createGrafanaPanelObject(
         ],
       },
     },
-    overrides: [],
+    overrides: [
+      {
+        matcher: {
+          id: 'byName',
+          options: 'Value',
+        },
+        properties: [
+          {
+            id: 'displayName',
+            value: `${metricsName}`,
+          },
+        ],
+      },
+    ],
   };
 
   // create options key for grafana panel
@@ -102,10 +136,11 @@ export default function createGrafanaPanelObject(
       y: 0,
     },
     options: optionsObject,
-    id: id,
+    id: panelId,
     targets: targets,
-    title: `${containerName} CPU`,
+    title: `${containerName} ${metricsName}`,
     type: 'timeseries',
+    interval: '10s',
   };
 
   // return the compiled grafana panel object
