@@ -1,7 +1,7 @@
 # Use the Docker socket from the extension backend:
 # https://docs.docker.com/desktop/extensions-sdk/guides/use-docker-socket-from-backend/
 services:
-  myExtension:
+  DockerPulse:
     image: ${DESKTOP_PLUGIN_IMAGE}
     container_name: dockerpulse
     volumes:
@@ -31,7 +31,7 @@ services:
       # Share the named volume with the prometheus container
       - shared-prometheus-files:/etc/prometheus
     depends_on:
-      - myExtension
+      - DockerPulse
 
   grafana:
     image: grafana/grafana:latest
