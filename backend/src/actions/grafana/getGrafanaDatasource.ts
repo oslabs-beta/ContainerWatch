@@ -8,7 +8,7 @@ export default async function getGrafanaDatasource(): Promise<GrafanaDatasource>
 
   // Axios parses data for you in the response
   // This line is unnecessary. It is simply here for readability.
-  const datasourceData: GrafanaDatasourceResponse[] = datasourceResponse.data
+  const datasourceData: GrafanaDatasourceResponse[] = datasourceResponse.data;
 
   // Create a datasource object to be used within panels.
   const datasource: GrafanaDatasource = {

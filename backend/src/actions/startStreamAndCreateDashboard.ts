@@ -3,7 +3,8 @@ import startContainerMetricsStream from './docker/startContainerMetricsStream';
 import createGrafanaDashboardObject from './grafana/createGrafanaDashboardObject';
 import { GrafanaDatasource } from '../types';
 
-
+// Function that aggregates container info needed to get metrics and make dashboards.
+// Uses relevant container info and starts a metrics stream and creates a Grafana dashboard.
 export default async function startStreamAndCreateDashboard(
   id: string,
   containerName: string,

@@ -32,7 +32,7 @@ metricsServer.listen(METRICS_PORT, () => {
     console.log('⏳ Waiting ... ');
     await new Promise((r) => setTimeout(r, 1000 * 10));
     console.log('⌛ Done waiting.');
-    
+
     // Get necessary datasource information from Grafana directly.
     const datasource = await getGrafanaDatasource();
 
