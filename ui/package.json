@@ -49,5 +49,14 @@
     "typescript": "^4.8.3",
     "vite": "^3.1.0",
     "vite-plugin-svgr": "^3.2.0"
+  },
+  "jest": {
+    "testEnvironment": "jsdom",
+    "setupFilesAfterEnv": [
+      "<rootDir>/jest-setup.ts"
+    ],
+    "moduleNameMapper": {
+      "\\.(css|less)$": "identity-obj-proxy"
+    }
   }
 }
