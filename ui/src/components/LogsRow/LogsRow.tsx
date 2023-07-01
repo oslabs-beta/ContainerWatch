@@ -46,7 +46,7 @@ export default function LogsRow({
       });
 
       // Create a display string using the provided response from our backend.
-      const newMetricsString = `CPU %: ${response.CPU} MEM %: ${response.MEM}`
+      const newMetricsString = `CPU %: ${response.CPU} MEM %: ${response.MEM}`;
 
       // Set metrics to display metrics at the time of the log!
       setMetrics(newMetricsString);
@@ -54,26 +54,6 @@ export default function LogsRow({
       console.error(err);
     }
   };
-
-  /*
-
-BODY: {
-  containerID: 'string'
-  time: Date.now() format <-- unix time
-}
-
-try {
-  const response = (await ddClient.extension.vm?.service?.post(
-    '/api/promQL',
-    { BODY }
-  ))
-} catch (err) {
-  console.log(err)
-}
-
-*/
-
-  // Conversion for front end
 
   return (
     <>
