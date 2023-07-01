@@ -62,7 +62,5 @@ const metricsController = {
     }
   },
 };
-// Conversion for front end
-// const promTime = (Date.parse(time) / 1000).toFixed(3);
 
 export default metricsController;
