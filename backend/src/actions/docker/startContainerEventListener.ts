@@ -28,24 +28,27 @@ export default async function startContainerEventListener(datasource: GrafanaDat
 
     // These will check for two actions, start and destroy.
     // Start action: Start metrics stream and create new grafana graphs for new container.
+    const containerName = event.Actor.Attributes.name;
+    const containerId = event.Actor.ID;
+
     if (event.Action === 'start') {
       // Display event start in console.
-      console.log('🚩 STARTED CONTAINER: ', event.Actor.Attributes.name, '!!');
+      console.log('🚩 STARTED CONTAINER: ', containerName, '!!');
 
       // Invoke functions to start metrics stream and create Grafana Dashboard
-      startContainerMetricsStream(event.Actor.ID);
-      createGrafanaDashboard(event.Actor.ID, event.Actor.Attributes.name, datasource);
+      await startContainerMetricsStream(containerId);
+      await createGrafanaDashboard(containerId, containerName, datasource);
     }
 
     // Destroy action: delete grafana DASHBOARD with the same name
     if (event.Action === 'destroy') {
-      console.log('💣 DESTROYED CONTAINER: ', event.Actor.Attributes.name, '!!');
+      console.log('💣 DESTROYED CONTAINER: ', containerName, '!!');
       try {
         // Request to Grafana API to delete the Dashboard of the stopped container.
         // Metrics are already being stopped when the container stops running.
         // Properly cleaning up Dashboards for containers that are deleted.
         const deleteResponse = await axios.delete(
-          `http://host.docker.internal:2999/api/dashboards/uid/${event.Actor.ID.slice(0, 12)}`,
+          `http://host.docker.internal:2999/api/dashboards/uid/${containerId.slice(0, 12)}`,
           {
             headers: {
               'Content-Type': 'application/json',
@@ -57,7 +60,7 @@ export default async function startContainerEventListener(datasource: GrafanaDat
         if (deleteResponse.status >= 400) {
           console.log('Dashboard deletion failed 👎');
         } else {
-          console.log('Dashboard', event.Actor.ID.slice(0, 12), 'successfully deleted 👋');
+          console.log('Dashboard', containerId.slice(0, 12), 'successfully deleted 👋');
         }
       } catch (err) {
         console.log(err);

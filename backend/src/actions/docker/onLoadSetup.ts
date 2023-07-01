@@ -23,7 +23,7 @@ export default async function onLoadSetup(datasource: GrafanaDatasource) {
   // Iterate through ID array and create a dashboard object for each container.
   containerIDs.forEach(async (id, index) => {
     // Invoke function to start metrics stream and create Grafana Dashboard
-    startContainerMetricsStream(id);
+    await startContainerMetricsStream(id);
     await createGrafanaDashboard(id, containerNames[index], datasource);
   });
 }

@@ -7,7 +7,7 @@ export default async function createGrafanaDashboard(
   containerID: string,
   containerName: string | undefined,
   datasource: GrafanaDatasource
-): Promise<number> {
+): Promise<void> {
   // create dashboard object boilerplate
   const dashboard: GrafanaDashboard = {
     dashboard: {
@@ -60,11 +60,7 @@ export default async function createGrafanaDashboard(
       // A simple console log to show when graphs are done being posted to Grafana.
       console.log(`📊 Grafana graphs 📊 for the ${containerName} container are ready!!`);
     }
-
-    return dashboardResponse.status;
   } catch (err) {
     console.log(err);
   }
-
-  return 400;
 }
