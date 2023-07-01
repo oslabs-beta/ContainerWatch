@@ -25,32 +25,31 @@ export default function LogsRow({
 }) {
   const { containerId, containerName, time, stream, log } = logInfo;
   const [open, setOpen] = useState<boolean>(false);
-  const [dummyData, setDummyData] = useState('');
+  const [metrics, setMetrics] = useState('');
 
   const labelColor = containerLabelColor[containerId];
   let iconColor = containerIconColor[containerId] === 'running' ? 'teal' : 'grey';
 
   const fetchMetrics = async (ddClient: DDClient) => {
-    // Skeleton for response
     try {
+      // Parse time into Prometheus API friendly format
       const promTime = (Date.parse(time) / 1000).toFixed(3);
+      // Create an object to be passed into our backend
       const promQLBody = {
         containerID: containerId,
         time: promTime,
       };
 
-      console.log(promQLBody);
+      // POST request to the backend via the ddClient.
       const response: any = await ddClient.extension.vm?.service?.post('/api/promQL', {
         promQLBody,
       });
-      console.log(response);
-      
-      const newMetricsString = `CPU %: ${response.CPU} MEM %: ${response.MEM}`
-      console.log(newMetricsString);
 
-      setDummyData(newMetricsString);
-      // setDummyData('hello world');
-      console.log('im working');
+      // Create a display string using the provided response from our backend.
+      const newMetricsString = `CPU %: ${response.CPU} MEM %: ${response.MEM}`
+
+      // Set metrics to display metrics at the time of the log!
+      setMetrics(newMetricsString);
     } catch (err) {
       console.error(err);
     }
@@ -144,7 +143,7 @@ try {
             timeout="auto"
             unmountOnExit
           >
-            <Typography sx={{ display: 'flex', fontSize: '11px' }}>{dummyData}</Typography>
+            <Typography sx={{ display: 'flex', fontSize: '11px' }}>{metrics}</Typography>
             <Box
               sx={{
                 display: 'flex',
