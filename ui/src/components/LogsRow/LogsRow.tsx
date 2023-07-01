@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { KeyboardArrowUp, KeyboardArrowDown, ErrorRounded } from '@mui/icons-material';
 import { Box, Typography, IconButton, TableCell, TableRow, Collapse } from '@mui/material';
 import ContainerIcon from '../ContainerIcon/ContainerIcon';
-import { DockerLog } from '../../types';
+import { DockerLog, DDClient } from '../../types';
 import { HEADERS, theme } from '../../pages/Logs/Logs';
 
 const logsDisplayStyle = {
@@ -16,10 +16,12 @@ export default function LogsRow({
   logInfo: logInfo,
   containerLabelColor,
   containerIconColor,
+  ddClient,
 }: {
   logInfo: DockerLog;
   containerLabelColor: Record<string, string>;
   containerIconColor: Record<string, string>;
+  ddClient: DDClient;
 }) {
   const { containerId, containerName, time, stream, log } = logInfo;
   const [open, setOpen] = useState<boolean>(false);
@@ -28,13 +30,51 @@ export default function LogsRow({
   const labelColor = containerLabelColor[containerId];
   let iconColor = containerIconColor[containerId] === 'running' ? 'teal' : 'grey';
 
-  const fetchMetrics = () => {
+  const fetchMetrics = async (ddClient: DDClient) => {
     // Skeleton for response
-    // const response = await fetch(`/metrics/${containerId}`);
-    const dumbData = 'CPU:3%, RAM:15MB';
-    setDummyData(dumbData);
-    console.log('im working');
+    try {
+      const promTime = (Date.parse(time) / 1000).toFixed(3);
+      const promQLBody = {
+        containerID: containerId,
+        time: promTime,
+      };
+
+      console.log(promQLBody);
+      const response: any = await ddClient.extension.vm?.service?.post('/api/promQL', {
+        promQLBody,
+      });
+      console.log(response);
+      
+      const newMetricsString = `CPU %: ${response.CPU} MEM %: ${response.MEM}`
+      console.log(newMetricsString);
+
+      setDummyData(newMetricsString);
+      // setDummyData('hello world');
+      console.log('im working');
+    } catch (err) {
+      console.error(err);
+    }
   };
+
+  /*
+
+BODY: {
+  containerID: 'string'
+  time: Date.now() format <-- unix time
+}
+
+try {
+  const response = (await ddClient.extension.vm?.service?.post(
+    '/api/promQL',
+    { BODY }
+  ))
+} catch (err) {
+  console.log(err)
+}
+
+*/
+
+  // Conversion for front end
 
   return (
     <>
@@ -98,7 +138,12 @@ export default function LogsRow({
       <TableRow>
         <TableCell sx={{ p: 0 }} />
         <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={HEADERS.length - 1}>
-          <Collapse in={open} addEndListener={fetchMetrics} timeout="auto" unmountOnExit>
+          <Collapse
+            in={open}
+            addEndListener={() => fetchMetrics(ddClient)}
+            timeout="auto"
+            unmountOnExit
+          >
             <Typography sx={{ display: 'flex', fontSize: '11px' }}>{dummyData}</Typography>
             <Box
               sx={{
