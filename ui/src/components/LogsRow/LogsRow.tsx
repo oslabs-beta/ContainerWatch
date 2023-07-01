@@ -46,7 +46,7 @@ export default function LogsRow({
       });
 
       // Create a display string using the provided response from our backend.
-      const newMetricsString = `CPU %: ${response.CPU} MEM %: ${response.MEM}`;
+      const newMetricsString = `CPU: ${response.CPU}% MEM: ${response.MEM}%`;
 
       // Set metrics to display metrics at the time of the log!
       setMetrics(newMetricsString);
