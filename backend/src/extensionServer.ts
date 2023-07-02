@@ -13,8 +13,9 @@ app.get('/hello', (req, res) => {
   res.send('hello world from the server');
 });
 
-// Post request handler for endpoint /api/promQL
-app.post(
+// GET request handler for endpoint /api/promQL.
+// Expects query parameters for containerID and time.
+app.get(
   '/api/promQL',
   metricsController.getCPUMetrics,
   metricsController.getMEMMetrics,
