@@ -30,23 +30,27 @@ export default function LogsRow({
   const labelColor = containerLabelColor[containerId];
   let iconColor = containerIconColor[containerId] === 'running' ? 'teal' : 'grey';
 
-  const fetchMetrics = async (ddClient: DDClient) => {
+  // Row opening handler, makes a request to the backend to get data from Prometheus.
+  // Parses and displays the data at the time of the log.
+  const fetchMetrics = async () => {
     try {
       // Parse time into Prometheus API friendly format
       const promTime = (Date.parse(time) / 1000).toFixed(3);
-      // Create an object to be passed into our backend
-      const promQLBody = {
-        containerID: containerId,
-        time: promTime,
-      };
 
       // POST request to the backend via the ddClient.
-      const response: any = await ddClient.extension.vm?.service?.post('/api/promQL', {
-        promQLBody,
-      });
+      const response: any = await ddClient.extension.vm?.service?.get(
+        `/api/promQL?containerID=${containerId}&time=${promTime}`
+      );
 
+      // If the returned value is a valid metric, show only up to two digits after the decimal.
+      Object.keys(response).forEach((el) => {
+        if (response[el] !== 'NaN') {
+          response[el] = parseFloat(response[el]).toFixed(2);
+        }
+      });
+      
       // Create a display string using the provided response from our backend.
-      const newMetricsString = `CPU: ${response.CPU}% MEM: ${response.MEM}%`;
+      const newMetricsString = `CPU %: ${response.CPU} MEM %: ${response.MEM}`;
 
       // Set metrics to display metrics at the time of the log!
       setMetrics(newMetricsString);
@@ -117,12 +121,7 @@ export default function LogsRow({
       <TableRow>
         <TableCell sx={{ p: 0 }} />
         <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={HEADERS.length - 1}>
-          <Collapse
-            in={open}
-            addEndListener={() => fetchMetrics(ddClient)}
-            timeout="auto"
-            unmountOnExit
-          >
+          <Collapse in={open} addEndListener={fetchMetrics} timeout="auto" unmountOnExit>
             <Typography sx={{ display: 'flex', fontSize: '11px' }}>{metrics}</Typography>
             <Box
               sx={{
