@@ -222,6 +222,7 @@ export default function Logs() {
                   logInfo={logInfo}
                   containerLabelColor={containerLabelColor}
                   containerIconColor={containerIconColor}
+                  ddClient={ddClient}
                 />
               ))}
             </TableBody>
