@@ -2,3 +2,4 @@ node_modules
 ui/build
 storybook-static
 dist
+ui/coverage
