@@ -18,7 +18,7 @@ const metricsController = {
       const queryResult = prometheusResponse.data.data.result;
 
       // Set value equal to either 0 (No result from Prometheus) or the result from Prometheus.
-      const queryValue = queryResult.length === 0 ? 0 : parseInt(queryResult[0].value[1]);
+      const queryValue = queryResult.length ? queryResult[0].value[1] : 0;
 
       // Round value to two decimal places.
       const queryValueRounded = (Math.round(queryValue * 100) / 100).toFixed(2);
@@ -49,7 +49,7 @@ const metricsController = {
       const queryResult = prometheusResponse.data.data.result;
 
       // Set value equal to either 0 (No result from Prometheus) or the result from Prometheus.
-      const queryValue = queryResult.length === 0 ? 0 : parseInt(queryResult[0].value[1]);
+      const queryValue = queryResult.length ? queryResult[0].value[1] : 0;
 
       // Round value to two decimal places.
       const queryValueRounded = (Math.round(queryValue * 100) / 100).toFixed(2);
