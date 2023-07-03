@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Launch } from '@mui/icons-material';
 import { debounce } from 'lodash';
 import {
