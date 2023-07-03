@@ -74,19 +74,19 @@ export default function LogsRow({
   const buildMetricsRow = () => {
     if (CPU !== 'No data' || MEM !== 'No data') {
       return (
-        <TableRow sx={{ display: 'flex', alignContent: 'flex-end', fontSize: '11px', mt: 1 }}>
+        <Box sx={{ display: 'flex', alignContent: 'flex-end', fontSize: '11px', mt: 1 }}>
           <Typography>Closest metrics datapoint {time.slice(0, 19)} ·</Typography>
           <Typography sx={{color: 'green'}}>CPU %:</Typography>
           <Typography>{CPU} ·</Typography>
           <Typography sx={{color: 'green'}}>MEM %:</Typography>
           <Typography>{MEM}</Typography>
-        </TableRow>
+        </Box>
       );
     } else {
       return (
-        <TableRow sx={{ display: 'flex', alignContent: 'flex-end', fontSize: '11px', mt: 1 }}>
+        <Box sx={{ display: 'flex', alignContent: 'flex-end', fontSize: '11px', mt: 1 }}>
           <Typography>There are no metrics saved near the timestamp of this log</Typography>
-        </TableRow>
+        </Box>
       );
     }
   };
