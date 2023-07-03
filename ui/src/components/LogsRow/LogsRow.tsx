@@ -34,12 +34,9 @@ export default function LogsRow({
   // Parses and displays the data at the time of the log.
   const fetchMetrics = async () => {
     try {
-      // Parse time into Prometheus API friendly format
-      const promTime = (Date.parse(time) / 1000).toFixed(3);
-
       // POST request to the backend via the ddClient.
       const response: any = await ddClient.extension.vm?.service?.get(
-        `/api/promQL?containerID=${containerId}&time=${promTime}`
+        `/api/promQL?containerID=${containerId}&time=${time}`
       );
 
       // If the returned value is a valid metric, show only up to two digits after the decimal.
