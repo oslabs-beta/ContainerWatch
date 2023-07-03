@@ -77,6 +77,7 @@ export default function Logs() {
   const [containerLabelColor, setContainerLabelColor] = useState<Record<string, string>>({});
   const [containerIconColor, setContainerIconColor] = useState<Record<string, string>>({});
   const [elapsedTimeInMinutes, setElapsedTimeInMinutes] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);
   const [filters, setFilters] = useState<LogFilters>({
     stdout: true,
     stderr: true,
@@ -84,6 +85,7 @@ export default function Logs() {
   });
 
   useEffect(() => {
+    setIsLoading(true);
     refreshAll();
   }, []);
 
@@ -121,6 +123,7 @@ export default function Logs() {
       );
       setContainerIconColor(updatedContainerIconColor);
       setElapsedTimeInMinutes(0);
+      setIsLoading(false);
     } catch (err) {
       console.error(err);
     }
@@ -218,7 +221,7 @@ export default function Logs() {
               </TableRow>
             </TableHead>
             <TableBody>
-              {filteredLogs.length === 0 ? (
+              {isLoading ? (
                 <Box sx={{ display: 'flex', justifyContent: 'center', width: '100vw' }}>
                   <CircularProgress />
                 </Box>
