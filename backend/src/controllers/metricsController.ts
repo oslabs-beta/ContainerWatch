@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { Request, Response, NextFunction } from 'express';
+import { NO_DATA_MESSAGE } from '../constants';
 
 // Controller object for Metrics. Contains middleware that gets metrics at a passed in
 // timestamp and creates an object with key-value pairs (Metric Type and Metric Value)
@@ -30,7 +31,7 @@ const metricsController = {
       const queryResult = prometheusResponse.data.data.result;
 
       // Set value equal to either 'No data' (No result from Prometheus) or the result from Prometheus.
-      const queryValue = queryResult.length ? queryResult[0].value[1] : 'No data';
+      const queryValue = queryResult.length ? queryResult[0].value[1] : NO_DATA_MESSAGE;
 
       // If more metrics are added in the future, ensure that this middleware is called first!
       // Create an empty object to be passed down through res.locals.
@@ -70,7 +71,7 @@ const metricsController = {
       const queryResult = prometheusResponse.data.data.result;
 
       // Set value equal to either 'No data' (No result from Prometheus) or the result from Prometheus.
-      const queryValue = queryResult.length ? queryResult[0].value[1] : 'No data';
+      const queryValue = queryResult.length ? queryResult[0].value[1] : NO_DATA_MESSAGE;
 
       // Set the key of MEM equal to the rounded, formatted query value.
       res.locals.metrics['MEM'] = queryValue;
