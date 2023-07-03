@@ -4,18 +4,19 @@ import {
   GrafanaPanelFieldConfigKey,
   GrafanaPanel,
   GrafanaPanelOptionsKey,
+  panelOverrideProperties,
 } from '../../types';
 
 export default function createGrafanaPanelObject(
-  containerName: string | undefined,
-  containerID: string,
   panelId: number,
   promQLQuery: string,
   promDatasource: GrafanaDatasource
 ): GrafanaPanel {
+  // Declare variable metrics name that gets assigned based on PanelID
   let metricsName = '';
-  // switch case to handle name of panel
-  // if you add more metrics, add more cases here!
+
+  // Switch case to handle name of panel.
+  // If you add more metrics, add more cases here!
   switch (panelId) {
     case 1: {
       metricsName = 'CPU %';
@@ -26,13 +27,13 @@ export default function createGrafanaPanelObject(
       break;
     }
     default: {
-      // panelId is being assigned in the file: createPromQLQueries.ts
+      // PanelId is being assigned in the file: createPromQLQueries.ts
       console.log('Please ensure you are properly assigning panelId');
       break;
     }
   }
 
-  // create targets key for grafana panel
+  // Create targets key for Grafana panel.
   const targets: GrafanaPanelTargetsKey = [
     {
       datasource: promDatasource,
@@ -44,7 +45,35 @@ export default function createGrafanaPanelObject(
     },
   ];
 
-  // create fieldConfig key for grafana panel
+  // Create overrides property for fieldConfigsObject
+  const panelOverrides: panelOverrideProperties[] = [
+    {
+      matcher: {
+        id: 'byName',
+        options: 'Time',
+      },
+      properties: [
+        {
+          id: 'custom.fillBelowTo',
+          value: 'Value',
+        },
+      ],
+    },
+    {
+      matcher: {
+        id: 'byName',
+        options: 'Value',
+      },
+      properties: [
+        {
+          id: 'displayName',
+          value: metricsName,
+        },
+      ],
+    },
+  ];
+
+  // Create fieldConfig key for Grafana panel.
   const fieldConfigObject: GrafanaPanelFieldConfigKey = {
     defaults: {
       color: {
@@ -96,23 +125,10 @@ export default function createGrafanaPanelObject(
       },
       min: 0,
     },
-    overrides: [
-      {
-        matcher: {
-          id: 'byName',
-          options: 'Time',
-        },
-        properties: [
-          {
-            id: 'custom.fillBelowTo',
-            value: 'Value',
-          },
-        ],
-      },
-    ],
+    overrides: panelOverrides,
   };
 
-  // create options key for grafana panel
+  // Create options key for Grafana panel
   const optionsObject: GrafanaPanelOptionsKey = {
     legend: {
       calcs: [],
@@ -126,7 +142,7 @@ export default function createGrafanaPanelObject(
     },
   };
 
-  // create grafana panel using previously built objects
+  // Create grafana panel using previously built objects.
   const grafanaPanel: GrafanaPanel = {
     datasource: promDatasource,
     fieldConfig: fieldConfigObject,

@@ -31,7 +31,6 @@ export default async function createGrafanaDashboard(
     // push panels into dashboard object FOR EACH entry in promQLQueries object
     dashboard.dashboard.panels.push(
       createGrafanaPanelObject(
-        containerID,
         queryObject.panelID,
         queryObject.queryString,
         datasource
