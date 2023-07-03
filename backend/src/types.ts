@@ -30,7 +30,7 @@ export type GrafanaDatasourceResponse = {
   isDefault: true;
   jsonData: {};
   readOnly: false;
-}
+};
 
 export type GrafanaDatasource = {
   type: string;
@@ -94,18 +94,18 @@ export type GrafanaPanelFieldConfigKey = {
     min?: number;
     max?: number;
   };
-  overrides: [
-    {
-      matcher: {
-        id: string;
-        options: string;
-      };
-      properties: {
-        id: string;
-        value: string;
-      }[];
-    }
-  ];
+  overrides: panelOverrideProperties[];
+};
+
+export type panelOverrideProperties = {
+  matcher: {
+    id: string;
+    options: string;
+  };
+  properties: {
+    id: string;
+    value: string;
+  }[];
 };
 
 export type GrafanaPanelOptionsKey = {

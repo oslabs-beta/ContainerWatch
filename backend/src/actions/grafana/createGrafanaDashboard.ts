@@ -5,7 +5,7 @@ import createPromQLQueries from './createPromQLQueries';
 
 export default async function createGrafanaDashboard(
   containerID: string,
-  containerName: string | undefined,
+  containerName: string,
   datasource: GrafanaDatasource
 ): Promise<void> {
   // create dashboard object boilerplate
@@ -31,8 +31,6 @@ export default async function createGrafanaDashboard(
     // push panels into dashboard object FOR EACH entry in promQLQueries object
     dashboard.dashboard.panels.push(
       createGrafanaPanelObject(
-        containerName,
-        containerID,
         queryObject.panelID,
         queryObject.queryString,
         datasource
@@ -41,6 +39,7 @@ export default async function createGrafanaDashboard(
   });
 
   try {
+    // POST request to Grafana Dashboard API to create a dashboard
     const dashboardResponse = await axios.post(
       'http://host.docker.internal:2999/api/dashboards/db',
       JSON.stringify(dashboard),
