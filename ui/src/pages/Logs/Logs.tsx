@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { createDockerDesktopClient } from '@docker/extension-api-client';
 import { Search, Clear, FilterList, Refresh } from '@mui/icons-material';
 import {
