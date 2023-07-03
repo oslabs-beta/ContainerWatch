@@ -9,15 +9,23 @@ const metricsController = {
       // Destructure req.body.promQLBody to get variables from the frontend.
       const { containerID, time } = req.query;
 
+      if (!time || containerID) {
+        // error handler
+        return next();
+      }
+
+      // Parse time into Prometheus API friendly format
+      const promTime = (Date.parse(time.toString()) / 1000).toFixed(3);
+
       // Construct the query string for CPU % and the GET request URL for Prometheus API.
-      const CPUQueryParam = `rate(cpu_usage_percent{id="${containerID}"}[10s])`
+      const CPUQueryParam = `rate(cpu_usage_percent{id="${containerID}"}[10s])`;
 
       // Make GET request to Prometheus API and store result in an accessible const.
-      const prometheusResponse = await axios.get('http://host.docker.internal:9090/api/v1/query',{
+      const prometheusResponse = await axios.get('http://host.docker.internal:9090/api/v1/query', {
         params: {
           query: CPUQueryParam,
-          time: time
-        }
+          time: promTime,
+        },
       });
       const queryResult = prometheusResponse.data.data.result;
 
@@ -26,7 +34,9 @@ const metricsController = {
 
       // If more metrics are added in the future, ensure that this middleware is called first!
       // Create an empty object to be passed down through res.locals.
-      res.locals.metrics = {};
+      res.locals.metrics = {
+        time: time,
+      };
 
       // Set the key of CPU equal to the rounded, formatted query value.
       res.locals.metrics['CPU'] = queryValue;
@@ -41,15 +51,23 @@ const metricsController = {
       // Destructure req.body.promQLBody to get variables from the frontend.
       const { containerID, time } = req.query;
 
+      if (!time || containerID) {
+        // error handler
+        return next();
+      }
+
+      // Parse time into Prometheus API friendly format
+      const promTime = (Date.parse(time.toString()) / 1000).toFixed(3);
+
       // Construct the query string for MEM % and the GET request URL for Prometheus API.
-      const MEMQueryParam = `avg(memory_usage_percent{id='${containerID}'})`
+      const MEMQueryParam = `avg(memory_usage_percent{id='${containerID}'})`;
 
       // Make GET request to Prometheus API and store result in an accessible const.
-      const prometheusResponse = await axios.get('http://host.docker.internal:9090/api/v1/query',{
+      const prometheusResponse = await axios.get('http://host.docker.internal:9090/api/v1/query', {
         params: {
           query: MEMQueryParam,
-          time: time
-        }
+          time: time,
+        },
       });
       const queryResult = prometheusResponse.data.data.result;
 
