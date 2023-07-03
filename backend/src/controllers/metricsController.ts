@@ -9,7 +9,7 @@ const metricsController = {
       // Destructure req.body.promQLBody to get variables from the frontend.
       const { containerID, time } = req.query;
 
-      if (!time || containerID) {
+      if (!time || !containerID) {
         // error handler
         return next();
       }
@@ -34,9 +34,7 @@ const metricsController = {
 
       // If more metrics are added in the future, ensure that this middleware is called first!
       // Create an empty object to be passed down through res.locals.
-      res.locals.metrics = {
-        time: time,
-      };
+      res.locals.metrics = {};
 
       // Set the key of CPU equal to the rounded, formatted query value.
       res.locals.metrics['CPU'] = queryValue;
@@ -51,7 +49,7 @@ const metricsController = {
       // Destructure req.body.promQLBody to get variables from the frontend.
       const { containerID, time } = req.query;
 
-      if (!time || containerID) {
+      if (!time || !containerID) {
         // error handler
         return next();
       }
@@ -66,7 +64,7 @@ const metricsController = {
       const prometheusResponse = await axios.get('http://host.docker.internal:9090/api/v1/query', {
         params: {
           query: MEMQueryParam,
-          time: time,
+          time: promTime,
         },
       });
       const queryResult = prometheusResponse.data.data.result;
