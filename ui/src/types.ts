@@ -22,7 +22,8 @@ export type LogFilters = {
   allowedContainers: Set<string>;
 };
 
-export type Alert = {
+export type UserAlert = {
+  uuid?: string;
   name: string;
   containerId: string;
   targetMetric: 'CPU %' | 'MEM %';
@@ -31,4 +32,16 @@ export type Alert = {
   lastExceeded?: number;
   lastNotification?: number;
   created?: number;
+};
+
+export type PopupAlertType = {
+  open: boolean;
+  message: string;
+  severity: 'error' | 'warning' | 'info' | 'success';
+};
+
+export type ResponseErr = {
+  name: string;
+  statusCode: number;
+  message: string;
 };

@@ -1,11 +1,11 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { createDockerDesktopClient } from '@docker/extension-api-client';
-import { Box, Stack, Button, Typography, Card, IconButton } from '@mui/material';
+import { Box, Stack, Button, Typography, Card, IconButton, Snackbar, Alert } from '@mui/material';
 import { Edit, Delete } from '@mui/icons-material';
 import AlertDialog from '../../components/AlertDialog/AlertDialog';
-import { Alert } from '../../types';
+import { UserAlert, PopupAlertType } from '../../types';
 
-const MOCK_ALERTS: Alert[] = [
+const MOCK_ALERTS: UserAlert[] = [
   {
     name: 'My Custom Alert',
     containerId: '1024453d18bd5d7d45741471b765f48b2ec2a6f1e89d5834e0d69b0b69e039bc',
@@ -35,14 +35,63 @@ function useDockerDesktopClient() {
 }
 
 export default function Alerts() {
-  const [alerts, setAlerts] = useState(MOCK_ALERTS);
+  const [userAlerts, setUserAlerts] = useState(MOCK_ALERTS);
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [popupAlert, setPopupAlert] = useState<PopupAlertType>({
+    open: false,
+    message: 'Something went wrong',
+    severity: 'warning',
+  });
 
   const ddClient = useDockerDesktopClient();
 
+  const handlePopupAlertClose = () => setPopupAlert({ ...popupAlert, open: false });
+
+  const handleDeleteUserAlert = async (id: string) => {
+    console.log('Deleting alert for ');
+  };
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const response = (await ddClient.extension.vm?.service?.get('/api/alerts')) as UserAlert[];
+
+        // There was an fetching the user's alerts
+        if ('statusCode' in response) {
+          return setPopupAlert({
+            open: true,
+            message: "There was an error while fetching the user's alerts",
+            severity: 'error',
+          });
+        }
+
+        return setUserAlerts(response);
+      } catch (err) {
+        console.error(err);
+      }
+    })();
+  }, []);
+
   return (
     <>
-      <AlertDialog ddClient={ddClient} dialogOpen={dialogOpen} setDialogOpen={setDialogOpen} />
+      <Snackbar
+        open={popupAlert.open}
+        autoHideDuration={4000}
+        onClose={handlePopupAlertClose}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+      >
+        <Alert onClose={handlePopupAlertClose} severity="warning">
+          {popupAlert.message}
+        </Alert>
+      </Snackbar>
+      <AlertDialog
+        ddClient={ddClient}
+        dialogOpen={dialogOpen}
+        setDialogOpen={setDialogOpen}
+        setPopupAlert={setPopupAlert}
+        userAlerts={userAlerts}
+        setUserAlerts={setUserAlerts}
+      />
       <Box
         sx={{
           minHeight: 0,
@@ -57,7 +106,7 @@ export default function Alerts() {
         </Button>
         <Box sx={{ flexGrow: 1, overflowY: 'auto', width: '100%' }}>
           <Stack direction="column" spacing={2}>
-            {alerts.map((alert) => (
+            {userAlerts.map((alert) => (
               <AlertCard {...alert} />
             ))}
           </Stack>
@@ -76,7 +125,7 @@ function AlertCard({
   lastExceeded,
   lastNotification,
   created,
-}: Alert) {
+}: UserAlert) {
   return (
     <Card sx={{ px: 2, py: 1 }}>
       <Stack direction="column" spacing={2}>
