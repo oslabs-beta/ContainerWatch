@@ -21,8 +21,8 @@ const metricsController = {
       });
       const queryResult = prometheusResponse.data.data.result;
 
-      // Set value equal to either 0 (No result from Prometheus) or the result from Prometheus.
-      const queryValue = queryResult.length ? queryResult[0].value[1] : 'NaN';
+      // Set value equal to either 'No data' (No result from Prometheus) or the result from Prometheus.
+      const queryValue = queryResult.length ? queryResult[0].value[1] : 'No data';
 
       // If more metrics are added in the future, ensure that this middleware is called first!
       // Create an empty object to be passed down through res.locals.
@@ -53,8 +53,8 @@ const metricsController = {
       });
       const queryResult = prometheusResponse.data.data.result;
 
-      // Set value equal to either 0 (No result from Prometheus) or the result from Prometheus.
-      const queryValue = queryResult.length ? queryResult[0].value[1] : 'NaN';
+      // Set value equal to either 'No data' (No result from Prometheus) or the result from Prometheus.
+      const queryValue = queryResult.length ? queryResult[0].value[1] : 'No data';
 
       // Set the key of MEM equal to the rounded, formatted query value.
       res.locals.metrics['MEM'] = queryValue;
