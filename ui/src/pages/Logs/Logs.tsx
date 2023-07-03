@@ -125,39 +125,20 @@ export default function Logs() {
     }
   };
 
-  // // Apply the filters
-  // const upperCaseSearchText = searchText.toUpperCase();
-  // const filteredLogs = logs.filter(({ containerName, containerId, time, stream, log }) => {
-  //   if (!filters.stdout && stream === 'stdout') return false; // Filter out stdout
-  //   if (!filters.stderr && stream === 'stderr') return false; // Filter out stderr
-  //   if (!filters.allowedContainers.has(containerId)) return false; // Filter out containers
-  //   const convertTime = time.slice(0, time.indexOf('.') + 4);
-  //   const numTime = Date.parse(convertTime);
-  //   const numFromTime = Date.parse(validFromTimestamp);
-  //   const numUntilTime = Date.parse(validUntilTimestamp);
-  //   if (!log.toUpperCase().includes(upperCaseSearchText)) return false;
-  //   if (numTime > numUntilTime || numTime < numFromTime) return false;
-  //   return true;
-  // });
-
   // Apply the filters
-  const upperCaseSearchText = useMemo(() => searchText.toUpperCase(), [searchText]);
-  const filteredLogs = useMemo(() => {
-    // Apply the filters
-    const filteredLogs = logs.filter(({ containerId, time, stream, log }) => {
-      if (!filters.stdout && stream === 'stdout') return false; // Filter out stdout
-      if (!filters.stderr && stream === 'stderr') return false; // Filter out stderr
-      if (!filters.allowedContainers.has(containerId)) return false; // Filter out containers
-      const convertTime = time.slice(0, time.indexOf('.') + 4);
-      const numTime = Date.parse(convertTime);
-      const numFromTime = Date.parse(validFromTimestamp);
-      const numUntilTime = Date.parse(validUntilTimestamp);
-      if (!log.toUpperCase().includes(upperCaseSearchText)) return false;
-      if (numTime > numUntilTime || numTime < numFromTime) return false;
-      return true;
-    });
-    return filteredLogs;
-  }, [upperCaseSearchText, logs, filters, validFromTimestamp, validUntilTimestamp]);
+  const upperCaseSearchText = searchText.toUpperCase();
+  const filteredLogs = logs.filter(({ containerName, containerId, time, stream, log }) => {
+    if (!filters.stdout && stream === 'stdout') return false;
+    if (!filters.stderr && stream === 'stderr') return false;
+    if (!filters.allowedContainers.has(containerId)) return false;
+    const convertTime = time.slice(0, time.indexOf('.') + 4);
+    const numTime = Date.parse(convertTime);
+    const numFromTime = Date.parse(validFromTimestamp);
+    const numUntilTime = Date.parse(validUntilTimestamp);
+    if (!log.toUpperCase().includes(upperCaseSearchText)) return false;
+    if (numTime > numUntilTime || numTime < numFromTime) return false;
+    return true;
+  });
 
   return (
     <>
