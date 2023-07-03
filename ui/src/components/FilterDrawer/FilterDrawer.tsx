@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Launch } from '@mui/icons-material';
 import { debounce } from 'lodash';
 import {
@@ -37,8 +37,11 @@ export default function FilterDrawer({
   containerLabelColor,
 }: FilterDrawerProps) {
   // These represent user input of time regardless of validity
-  const fromTimestampInput = useRef<HTMLInputElement>(null);
-  const untilTimestampInput = useRef<HTMLInputElement>(null);
+  // const fromTimestampInput = useRef<HTMLInputElement>(null);
+  // const untilTimestampInput = useRef<HTMLInputElement>(null);
+  const [fromTimeStampInput, setFromTimeStampInput] = useState('');
+  const [untilTimeStampInput, setUntilTimeStampInput] = useState('');
+  console.log('firing: ' + Date.now());
 
   const isTimestampValid = (value: string) => {
     return !Number.isNaN(Date.parse(value));
@@ -210,24 +213,34 @@ export default function FilterDrawer({
           </Typography>
           <Stack direction="column" spacing={2}>
             <TextField
-              ref={fromTimestampInput}
+              // ref={fromTimestampInput}
               label="From"
               variant="outlined"
               size="small"
+              // value={validFromTimestamp}
+              value={fromTimeStampInput}
               onChange={(e) => {
+                // setFromTimeStampInput(e.target.value);
+                setFromTimeStampInput(e.target.value);
                 debouncedSetValidFromTimestamp(e.target.value);
               }}
-              error={!isTimestampValid(fromTimestampInput.current?.value || '0')}
+              // useref version
+              // error={!isTimestampValid(fromTimestampInput.current?.value || '0')}
+              error={!isTimestampValid(fromTimeStampInput || '0')}
             />
             <TextField
-              ref={untilTimestampInput}
+              // ref={untilTimestampInput}
               label="Until"
               variant="outlined"
               size="small"
+              // value={validUntilTimestamp}
+              value={untilTimeStampInput}
               onChange={(e) => {
+                setUntilTimeStampInput(e.target.value);
                 debouncedSetValidUntilTimestamp(e.target.value);
               }}
-              error={!isTimestampValid(untilTimestampInput.current?.value || '0')}
+              // error={!isTimestampValid(untilTimestampInput.current?.value || '0')}
+              error={!isTimestampValid(untilTimeStampInput || '0')}
             />
           </Stack>
         </Stack>

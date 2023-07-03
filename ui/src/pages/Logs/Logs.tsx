@@ -66,6 +66,7 @@ const colorArray: string[] = [
 
 export default function Logs() {
   const ddClient = useDockerDesktopClient();
+  // console.log('firing Logs Page: ' + Date.now());
 
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [containers, setContainers] = useState<DockerContainer[]>([]);
