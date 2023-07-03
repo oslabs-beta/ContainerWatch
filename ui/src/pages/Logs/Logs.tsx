@@ -3,6 +3,7 @@ import { createDockerDesktopClient } from '@docker/extension-api-client';
 import { Search, Clear, FilterList, Refresh } from '@mui/icons-material';
 import {
   Box,
+  CircularProgress,
   Stack,
   Typography,
   OutlinedInput,
@@ -217,14 +218,20 @@ export default function Logs() {
               </TableRow>
             </TableHead>
             <TableBody>
-              {filteredLogs.map((logInfo) => (
-                <LogsRow
-                  logInfo={logInfo}
-                  containerLabelColor={containerLabelColor}
-                  containerIconColor={containerIconColor}
-                  ddClient={ddClient}
-                />
-              ))}
+              {filteredLogs.length === 0 ? (
+                <Box sx={{ display: 'flex', justifyContent: 'center', width: '100vw' }}>
+                  <CircularProgress />
+                </Box>
+              ) : (
+                filteredLogs.map((logInfo) => (
+                  <LogsRow
+                    logInfo={logInfo}
+                    containerLabelColor={containerLabelColor}
+                    containerIconColor={containerIconColor}
+                    ddClient={ddClient}
+                  />
+                ))
+              )}
             </TableBody>
           </Table>
         </TableContainer>
