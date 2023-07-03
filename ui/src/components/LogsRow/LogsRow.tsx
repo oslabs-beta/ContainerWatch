@@ -36,18 +36,25 @@ export default function LogsRow({
     try {
       // POST request to the backend via the ddClient.
       const response: any = await ddClient.extension.vm?.service?.get(
-        `/api/promQL?containerID=${containerId}&time=${time}`
+        `/api/promQL?containerID=${containerId}&time=${time.toString()}`
       );
 
       // If the returned value is a valid metric, show only up to two digits after the decimal.
       Object.keys(response).forEach((el) => {
-        if (response[el] !== 'NaN') {
+        if (response[el] !== 'No data') {
           response[el] = parseFloat(response[el]).toFixed(2);
         }
       });
 
+      let newMetricsString = '';
       // Create a display string using the provided response from our backend.
-      const newMetricsString = `CPU %: ${response.CPU} MEM %: ${response.MEM}`;
+      if (response.CPU === 'No data' && response.MEM === 'No data') {
+        newMetricsString = 'There are no metrics saved near the timestamp of this log';
+      } else {
+        newMetricsString = `Closest metrics datapoint ${time.slice(0, 19)} · CPU %: ${
+          response.CPU
+        } · MEM %: ${response.MEM}`;
+      }
 
       // Set metrics to display metrics at the time of the log!
       setMetrics(newMetricsString);
