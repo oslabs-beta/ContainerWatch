@@ -198,46 +198,45 @@ export default function Logs() {
             setElapsedTimeInMinutes={setElapsedTimeInMinutes}
           />
         </Stack>
-
-        <TableContainer
-          component={Paper}
-          sx={{
-            marginTop: 2,
-            flexGrow: 1,
-            background: 'none',
-            border: 'none',
-          }}
-        >
-          <Table size="small" stickyHeader>
-            <TableHead>
-              <TableRow>
-                {HEADERS.map((header) => (
-                  <TableCell>
-                    <Typography sx={{ whiteSpace: 'nowrap', fontWeight: 'bold' }}>
-                      {header}
-                    </Typography>
-                  </TableCell>
-                ))}
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {isLoading ? (
-                <Box sx={{ display: 'flex', justifyContent: 'center', width: '100vw' }}>
-                  <CircularProgress />
-                </Box>
-              ) : (
-                filteredLogs.map((logInfo) => (
+        {isLoading ? (
+          <Box sx={{ p: 4, display: 'flex', justifyContent: 'center' }}>
+            <CircularProgress />
+          </Box>
+        ) : (
+          <TableContainer
+            component={Paper}
+            sx={{
+              marginTop: 2,
+              flexGrow: 1,
+              background: 'none',
+              border: 'none',
+            }}
+          >
+            <Table size="small" stickyHeader>
+              <TableHead>
+                <TableRow>
+                  {HEADERS.map((header) => (
+                    <TableCell>
+                      <Typography sx={{ whiteSpace: 'nowrap', fontWeight: 'bold' }}>
+                        {header}
+                      </Typography>
+                    </TableCell>
+                  ))}
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {filteredLogs.map((logInfo) => (
                   <LogsRow
                     logInfo={logInfo}
                     containerLabelColor={containerLabelColor}
                     containerIconColor={containerIconColor}
                     ddClient={ddClient}
                   />
-                ))
-              )}
-            </TableBody>
-          </Table>
-        </TableContainer>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        )}
       </Box>
     </>
   );
