@@ -85,7 +85,6 @@ export default function Logs() {
   });
 
   useEffect(() => {
-    setIsLoading(true);
     refreshAll();
   }, []);
 
@@ -100,6 +99,7 @@ export default function Logs() {
 
   // Refreshes logs page fetching all new containers
   const refreshAll = async () => {
+    setIsLoading(true);
     try {
       const allContainers = await fetchAllContainers(ddClient);
       const allContainerLogs = await fetchAllContainerLogs(ddClient, allContainers);
