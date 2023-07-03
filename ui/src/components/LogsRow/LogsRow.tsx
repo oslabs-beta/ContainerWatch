@@ -48,7 +48,7 @@ export default function LogsRow({
           response[el] = parseFloat(response[el]).toFixed(2);
         }
       });
-      
+
       // Create a display string using the provided response from our backend.
       const newMetricsString = `CPU %: ${response.CPU} MEM %: ${response.MEM}`;
 
@@ -122,16 +122,17 @@ export default function LogsRow({
         <TableCell sx={{ p: 0 }} />
         <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={HEADERS.length - 1}>
           <Collapse in={open} addEndListener={fetchMetrics} timeout="auto" unmountOnExit>
-            <Typography sx={{ display: 'flex', fontSize: '11px' }}>{metrics}</Typography>
+            <Typography sx={{ display: 'flex', alignContent: 'flex-end', fontSize: '11px', mt: 1 }}>
+              {metrics}
+            </Typography>
             <Box
               sx={{
                 display: 'flex',
                 border: 'lightgray',
                 backgroundColor: theme.palette.background.default,
                 borderRadius: '5px',
-                py: 0.5,
+                mb: 1,
                 px: 1,
-                my: 1,
               }}
             >
               <Typography sx={{ fontFamily: 'monospace', whiteSpace: 'pre' }}>
