@@ -3,6 +3,7 @@ import { createDockerDesktopClient } from '@docker/extension-api-client';
 import { Search, Clear, FilterList, Refresh } from '@mui/icons-material';
 import {
   Box,
+  CircularProgress,
   Stack,
   Typography,
   OutlinedInput,
@@ -76,6 +77,7 @@ export default function Logs() {
   const [containerLabelColor, setContainerLabelColor] = useState<Record<string, string>>({});
   const [containerIconColor, setContainerIconColor] = useState<Record<string, string>>({});
   const [elapsedTimeInMinutes, setElapsedTimeInMinutes] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);
   const [filters, setFilters] = useState<LogFilters>({
     stdout: true,
     stderr: true,
@@ -97,6 +99,7 @@ export default function Logs() {
 
   // Refreshes logs page fetching all new containers
   const refreshAll = async () => {
+    setIsLoading(true);
     try {
       const allContainers = await fetchAllContainers(ddClient);
       const allContainerLogs = await fetchAllContainerLogs(ddClient, allContainers);
@@ -120,6 +123,7 @@ export default function Logs() {
       );
       setContainerIconColor(updatedContainerIconColor);
       setElapsedTimeInMinutes(0);
+      setIsLoading(false);
     } catch (err) {
       console.error(err);
     }
@@ -194,40 +198,45 @@ export default function Logs() {
             setElapsedTimeInMinutes={setElapsedTimeInMinutes}
           />
         </Stack>
-
-        <TableContainer
-          component={Paper}
-          sx={{
-            marginTop: 2,
-            flexGrow: 1,
-            background: 'none',
-            border: 'none',
-          }}
-        >
-          <Table size="small" stickyHeader>
-            <TableHead>
-              <TableRow>
-                {HEADERS.map((header) => (
-                  <TableCell>
-                    <Typography sx={{ whiteSpace: 'nowrap', fontWeight: 'bold' }}>
-                      {header}
-                    </Typography>
-                  </TableCell>
+        {isLoading ? (
+          <Box sx={{ p: 4, display: 'flex', justifyContent: 'center' }}>
+            <CircularProgress />
+          </Box>
+        ) : (
+          <TableContainer
+            component={Paper}
+            sx={{
+              marginTop: 2,
+              flexGrow: 1,
+              background: 'none',
+              border: 'none',
+            }}
+          >
+            <Table size="small" stickyHeader>
+              <TableHead>
+                <TableRow>
+                  {HEADERS.map((header) => (
+                    <TableCell>
+                      <Typography sx={{ whiteSpace: 'nowrap', fontWeight: 'bold' }}>
+                        {header}
+                      </Typography>
+                    </TableCell>
+                  ))}
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {filteredLogs.map((logInfo) => (
+                  <LogsRow
+                    logInfo={logInfo}
+                    containerLabelColor={containerLabelColor}
+                    containerIconColor={containerIconColor}
+                    ddClient={ddClient}
+                  />
                 ))}
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {filteredLogs.map((logInfo) => (
-                <LogsRow
-                  logInfo={logInfo}
-                  containerLabelColor={containerLabelColor}
-                  containerIconColor={containerIconColor}
-                  ddClient={ddClient}
-                />
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
+              </TableBody>
+            </Table>
+          </TableContainer>
+        )}
       </Box>
     </>
   );
