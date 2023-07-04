@@ -157,3 +157,15 @@ export type QueryStringPanelID = {
   panelID: number;
   queryString: string;
 };
+
+export type UserAlert = {
+  uuid: string;
+  name: string;
+  containerId: string;
+  targetMetric: 'CPU %' | 'MEM %';
+  threshold: number;
+  email: string;
+  lastExceeded: number;
+  lastNotification: number;
+  created: number;
+};

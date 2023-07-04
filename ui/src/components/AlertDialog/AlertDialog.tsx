@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import { createDockerDesktopClient } from '@docker/extension-api-client';
 import {
   Dialog,
   DialogTitle,
@@ -16,30 +15,42 @@ import {
   InputAdornment,
 } from '@mui/material';
 import fetchAllContainers from '../../actions/fetchAllContainers';
-import { DDClient, DockerContainer, Alert } from '../../types';
-
-type AlertDialogProps = {
-  ddClient: DDClient;
-  dialogOpen: boolean;
-  setDialogOpen: React.Dispatch<React.SetStateAction<boolean>>;
-};
+import { DDClient, DockerContainer, UserAlert, DialogSettings } from '../../types';
 
 const metricHelperText = {
   'CPU %': '% of CPU used by the container based on the number of cores allocated',
   'MEM %': '% of memory used by the container',
 };
 
-export default function AlertDialog({ ddClient, dialogOpen, setDialogOpen }: AlertDialogProps) {
+const dialogTitle = {
+  NEW: 'Create Alert',
+  EDIT: 'Edit Alert',
+};
+
+type AlertDialogProps = {
+  ddClient: DDClient;
+  dialogSettings: DialogSettings;
+  setDialogSettings: React.Dispatch<React.SetStateAction<DialogSettings>>;
+  handleCreateUserAlert: Function;
+  handleUpdateUserAlert: Function;
+  newUserAlert: UserAlert;
+  setNewUserAlert: React.Dispatch<React.SetStateAction<UserAlert>>;
+};
+
+export default function AlertDialog({
+  ddClient,
+  dialogSettings,
+  setDialogSettings,
+  handleCreateUserAlert,
+  handleUpdateUserAlert,
+  newUserAlert,
+  setNewUserAlert,
+}: AlertDialogProps) {
   const [containers, setContainers] = useState<DockerContainer[]>();
 
-  const [alert, setAlert] = useState<Alert>({
-    name: '',
-    containerId: '',
-    targetMetric: 'CPU %',
-    threshold: 25,
-    email: '',
-  });
+  const handleDialogClose = () => setDialogSettings({ ...dialogSettings, open: false });
 
+  // Fetch all the user's containers which will populate the select options in the form
   useEffect(() => {
     (async () => {
       try {
@@ -51,23 +62,19 @@ export default function AlertDialog({ ddClient, dialogOpen, setDialogOpen }: Ale
     })();
   }, []);
 
-  const createAlert = async () => {
-    const response = (await ddClient.extension.vm?.service?.get('/hello')) as any;
-    console.log(response);
-  };
-
   return (
-    <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)}>
-      <DialogTitle>Create a new alert</DialogTitle>
+    <Dialog open={dialogSettings.open} onClose={handleDialogClose}>
+      <DialogTitle>{dialogTitle[dialogSettings.mode]}</DialogTitle>
       <DialogContent>
         <Stack direction="column" spacing={2} sx={{ alignItems: 'flex-start' }}>
           <FormControl required>
             <TextField
+              required
               label="Name"
               variant="outlined"
               autoFocus
-              value={alert.name}
-              onChange={(e) => setAlert({ ...alert, name: e.target.value })}
+              value={newUserAlert.name}
+              onChange={(e) => setNewUserAlert({ ...newUserAlert, name: e.target.value })}
               sx={{ width: '400px' }}
             />
             <FormHelperText>A name for your alert!</FormHelperText>
@@ -78,15 +85,15 @@ export default function AlertDialog({ ddClient, dialogOpen, setDialogOpen }: Ale
             <Select
               label="Container"
               displayEmpty
-              value={alert.containerId}
-              onChange={(e) => setAlert({ ...alert, containerId: e.target.value })}
+              value={newUserAlert.containerId}
+              onChange={(e) => setNewUserAlert({ ...newUserAlert, containerId: e.target.value })}
               sx={{ width: '400px' }}
             >
               {containers?.map(({ Id, Names }) => (
                 <MenuItem value={Id}>{Names[0].replace(/^\//, '')}</MenuItem>
               ))}
             </Select>
-            <FormHelperText>{alert.containerId.slice(0, 12) || ' '}</FormHelperText>
+            <FormHelperText>{newUserAlert.containerId.slice(0, 12) || ' '}</FormHelperText>
           </FormControl>
 
           <FormControl required>
@@ -94,16 +101,19 @@ export default function AlertDialog({ ddClient, dialogOpen, setDialogOpen }: Ale
             <Select
               label="Target metric"
               displayEmpty
-              value={alert.targetMetric}
+              value={newUserAlert.targetMetric}
               onChange={(e) =>
-                setAlert({ ...alert, targetMetric: e.target.value as 'CPU %' | 'MEM %' })
+                setNewUserAlert({
+                  ...newUserAlert,
+                  targetMetric: e.target.value as 'CPU %' | 'MEM %',
+                })
               }
               sx={{ width: '400px' }}
             >
               <MenuItem value={'CPU %'}>CPU %</MenuItem>
               <MenuItem value={'MEM %'}>MEM %</MenuItem>
             </Select>
-            <FormHelperText>{metricHelperText[alert.targetMetric]}</FormHelperText>
+            <FormHelperText>{metricHelperText[newUserAlert.targetMetric]}</FormHelperText>
           </FormControl>
 
           <FormControl required>
@@ -112,8 +122,10 @@ export default function AlertDialog({ ddClient, dialogOpen, setDialogOpen }: Ale
               label="Threshold"
               type="number"
               variant="outlined"
-              value={alert.threshold}
-              onChange={(e) => setAlert({ ...alert, threshold: parseInt(e.target.value) })}
+              value={newUserAlert.threshold}
+              onChange={(e) =>
+                setNewUserAlert({ ...newUserAlert, threshold: parseInt(e.target.value) })
+              }
               sx={{ width: '400px' }}
               InputProps={{
                 inputProps: {
@@ -135,21 +147,22 @@ export default function AlertDialog({ ddClient, dialogOpen, setDialogOpen }: Ale
               label="Email"
               variant="outlined"
               type="email"
-              value={alert.email}
-              onChange={(e) => setAlert({ ...alert, email: e.target.value })}
+              value={newUserAlert.email}
+              onChange={(e) => setNewUserAlert({ ...newUserAlert, email: e.target.value })}
             />
             <FormHelperText>Optional. Maximum one email per day.</FormHelperText>
           </FormControl>
         </Stack>
       </DialogContent>
       <DialogActions>
-        <Button variant="text" onClick={() => setDialogOpen(false)}>
+        <Button variant="text" onClick={handleDialogClose}>
           Cancel
         </Button>
         <Button
           onClick={() => {
-            createAlert();
-            setDialogOpen(false);
+            if (dialogSettings.mode === 'NEW') handleCreateUserAlert();
+            else if (dialogSettings.mode === 'EDIT') handleUpdateUserAlert(dialogSettings.uuid);
+            handleDialogClose();
           }}
         >
           Submit
