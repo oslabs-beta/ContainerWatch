@@ -15,40 +15,40 @@ import {
   InputAdornment,
 } from '@mui/material';
 import fetchAllContainers from '../../actions/fetchAllContainers';
-import { DDClient, DockerContainer, UserAlert, PopupAlertType, ResponseErr } from '../../types';
-import { v4 as uuidv4 } from 'uuid';
-
-type AlertDialogProps = {
-  ddClient: DDClient;
-  dialogOpen: boolean;
-  setDialogOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  setPopupAlert: React.Dispatch<React.SetStateAction<PopupAlertType>>;
-  userAlerts: UserAlert[];
-  setUserAlerts: React.Dispatch<React.SetStateAction<UserAlert[]>>;
-};
+import { DDClient, DockerContainer, UserAlert, DialogSettings } from '../../types';
 
 const metricHelperText = {
   'CPU %': '% of CPU used by the container based on the number of cores allocated',
   'MEM %': '% of memory used by the container',
 };
 
+const dialogTitle = {
+  NEW: 'Create Alert',
+  EDIT: 'Edit Alert',
+};
+
+type AlertDialogProps = {
+  ddClient: DDClient;
+  dialogSettings: DialogSettings;
+  setDialogSettings: React.Dispatch<React.SetStateAction<DialogSettings>>;
+  handleCreateUserAlert: Function;
+  handleUpdateUserAlert: Function;
+  newUserAlert: UserAlert;
+  setNewUserAlert: React.Dispatch<React.SetStateAction<UserAlert>>;
+};
+
 export default function AlertDialog({
   ddClient,
-  dialogOpen,
-  setDialogOpen,
-  setPopupAlert,
-  userAlerts,
-  setUserAlerts,
+  dialogSettings,
+  setDialogSettings,
+  handleCreateUserAlert,
+  handleUpdateUserAlert,
+  newUserAlert,
+  setNewUserAlert,
 }: AlertDialogProps) {
   const [containers, setContainers] = useState<DockerContainer[]>();
-  const [newUserAlert, setNewUserAlert] = useState<UserAlert>({
-    uuid: '',
-    name: '',
-    containerId: '',
-    targetMetric: 'CPU %',
-    threshold: 25,
-    email: '',
-  });
+
+  const handleDialogClose = () => setDialogSettings({ ...dialogSettings, open: false });
 
   // Fetch all the user's containers which will populate the select options in the form
   useEffect(() => {
@@ -62,31 +62,9 @@ export default function AlertDialog({
     })();
   }, []);
 
-  const createAlert = async () => {
-    try {
-      const response = (await ddClient.extension.vm?.service?.post('/api/alerts', {
-        ...newUserAlert,
-        uuid: uuidv4(),
-      })) as UserAlert;
-
-      if ('statusCode' in response) {
-        const responseErr = response as unknown as ResponseErr;
-        setPopupAlert({
-          open: true,
-          message: responseErr.message,
-          severity: 'warning',
-        });
-      }
-
-      setUserAlerts([...userAlerts, response]);
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
   return (
-    <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)}>
-      <DialogTitle>Create a new alert</DialogTitle>
+    <Dialog open={dialogSettings.open} onClose={handleDialogClose}>
+      <DialogTitle>{dialogTitle[dialogSettings.mode]}</DialogTitle>
       <DialogContent>
         <Stack direction="column" spacing={2} sx={{ alignItems: 'flex-start' }}>
           <FormControl required>
@@ -177,13 +155,14 @@ export default function AlertDialog({
         </Stack>
       </DialogContent>
       <DialogActions>
-        <Button variant="text" onClick={() => setDialogOpen(false)}>
+        <Button variant="text" onClick={handleDialogClose}>
           Cancel
         </Button>
         <Button
           onClick={() => {
-            createAlert();
-            setDialogOpen(false);
+            if (dialogSettings.mode === 'NEW') handleCreateUserAlert();
+            else if (dialogSettings.mode === 'EDIT') handleUpdateUserAlert(dialogSettings.uuid);
+            handleDialogClose();
           }}
         >
           Submit

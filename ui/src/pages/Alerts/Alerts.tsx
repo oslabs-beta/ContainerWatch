@@ -1,32 +1,9 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { createDockerDesktopClient } from '@docker/extension-api-client';
 import { Box, Stack, Button, Typography, Card, IconButton, Snackbar, Alert } from '@mui/material';
-import { Edit, Delete } from '@mui/icons-material';
+import { Edit, Delete, ConstructionOutlined } from '@mui/icons-material';
 import AlertDialog from '../../components/AlertDialog/AlertDialog';
-import { UserAlert, PopupAlertType } from '../../types';
-
-const MOCK_ALERTS: UserAlert[] = [
-  {
-    name: 'My Custom Alert',
-    containerId: '1024453d18bd5d7d45741471b765f48b2ec2a6f1e89d5834e0d69b0b69e039bc',
-    targetMetric: 'CPU %',
-    threshold: 50,
-    email: 'coolguy@gmail.com',
-    lastExceeded: Date.now(),
-    lastNotification: Date.now(),
-    created: Date.now(),
-  },
-  {
-    name: 'Another One',
-    containerId: 'ddfd67f9a7d5b55f549efdf4c9268fca3da90958864e1688a247767227247de3',
-    targetMetric: 'MEM %',
-    threshold: 25,
-    email: 'coolguy@gmail.com',
-    lastExceeded: Date.now(),
-    lastNotification: Date.now(),
-    created: Date.now(),
-  },
-];
+import { UserAlert, PopupAlertType, ResponseErr, DialogSettings } from '../../types';
 
 // Obtain Docker Desktop Client
 const client = createDockerDesktopClient();
@@ -34,43 +11,96 @@ function useDockerDesktopClient() {
   return client;
 }
 
+const defaultNewUserAlert: UserAlert = {
+  name: '',
+  containerId: '',
+  targetMetric: 'CPU %',
+  threshold: 25,
+  email: '',
+};
+
+const defaultPopupAlert: PopupAlertType = {
+  open: false,
+  message: 'Something went wrong',
+  severity: 'warning',
+};
+
+const defaultDialogSettings: DialogSettings = {
+  open: false,
+  mode: 'NEW',
+  uuid: '',
+};
+
 export default function Alerts() {
-  const [userAlerts, setUserAlerts] = useState(MOCK_ALERTS);
-  const [dialogOpen, setDialogOpen] = useState(false);
-  const [popupAlert, setPopupAlert] = useState<PopupAlertType>({
-    open: false,
-    message: 'Something went wrong',
-    severity: 'warning',
-  });
+  const [userAlerts, setUserAlerts] = useState<UserAlert[]>([]);
+  const [dialogSettings, setDialogSettings] = useState<DialogSettings>(defaultDialogSettings);
+  const [newUserAlert, setNewUserAlert] = useState<UserAlert>(defaultNewUserAlert);
+  const [popupAlert, setPopupAlert] = useState<PopupAlertType>(defaultPopupAlert);
 
   const ddClient = useDockerDesktopClient();
 
   const handlePopupAlertClose = () => setPopupAlert({ ...popupAlert, open: false });
 
-  const handleDeleteUserAlert = async (id: string) => {
-    console.log('Deleting alert for ');
+  const triggerPopupAlertFromErr = (err: unknown) => {
+    setPopupAlert({
+      open: true,
+      message: (err as ResponseErr).message,
+      severity: 'error',
+    });
   };
 
+  // Fetch the user's saved alerts from the extension server
   useEffect(() => {
     (async () => {
       try {
         const response = (await ddClient.extension.vm?.service?.get('/api/alerts')) as UserAlert[];
-
-        // There was an fetching the user's alerts
-        if ('statusCode' in response) {
-          return setPopupAlert({
-            open: true,
-            message: "There was an error while fetching the user's alerts",
-            severity: 'error',
-          });
-        }
-
         return setUserAlerts(response);
       } catch (err) {
-        console.error(err);
+        triggerPopupAlertFromErr(err);
       }
     })();
   }, []);
+
+  const handleCreateUserAlert = async () => {
+    try {
+      const response = (await ddClient.extension.vm?.service?.post(
+        '/api/alerts',
+        newUserAlert
+      )) as UserAlert;
+      setUserAlerts([...userAlerts, response]);
+    } catch (err) {
+      triggerPopupAlertFromErr(err);
+    }
+  };
+
+  const handleUpdateUserAlert = async (uuid: string) => {
+    try {
+      const response = (await ddClient.extension.vm?.service?.put(
+        `/api/alerts/${uuid}`,
+        newUserAlert
+      )) as UserAlert;
+
+      const newUserAlerts = structuredClone(userAlerts);
+      const updatedAlertIndex = newUserAlerts.findIndex((e) => e.uuid === uuid);
+      newUserAlerts[updatedAlertIndex] = response;
+      setUserAlerts(newUserAlerts);
+    } catch (err) {
+      triggerPopupAlertFromErr(err);
+    }
+  };
+
+  const handleDeleteUserAlert = async (uuid: string) => {
+    try {
+      await ddClient.extension.vm?.service?.delete(`/api/alerts/${uuid}`);
+
+      const newUserAlerts = structuredClone(userAlerts);
+      const updatedAlertIndex = newUserAlerts.findIndex((e) => e.uuid === uuid);
+      newUserAlerts.splice(updatedAlertIndex, 1);
+      setUserAlerts(newUserAlerts);
+    } catch (err) {
+      triggerPopupAlertFromErr(err);
+    }
+  };
 
   return (
     <>
@@ -86,11 +116,12 @@ export default function Alerts() {
       </Snackbar>
       <AlertDialog
         ddClient={ddClient}
-        dialogOpen={dialogOpen}
-        setDialogOpen={setDialogOpen}
-        setPopupAlert={setPopupAlert}
-        userAlerts={userAlerts}
-        setUserAlerts={setUserAlerts}
+        dialogSettings={dialogSettings}
+        setDialogSettings={setDialogSettings}
+        handleCreateUserAlert={handleCreateUserAlert}
+        handleUpdateUserAlert={handleUpdateUserAlert}
+        newUserAlert={newUserAlert}
+        setNewUserAlert={setNewUserAlert}
       />
       <Box
         sx={{
@@ -101,13 +132,24 @@ export default function Alerts() {
           gap: 2,
         }}
       >
-        <Button variant="contained" onClick={() => setDialogOpen(true)}>
+        <Button
+          variant="contained"
+          onClick={() => {
+            setNewUserAlert(defaultNewUserAlert);
+            setDialogSettings({ open: true, mode: 'NEW', uuid: undefined });
+          }}
+        >
           Create Alert
         </Button>
         <Box sx={{ flexGrow: 1, overflowY: 'auto', width: '100%' }}>
           <Stack direction="column" spacing={2}>
-            {userAlerts.map((alert) => (
-              <AlertCard {...alert} />
+            {userAlerts.map((userAlert) => (
+              <AlertCard
+                userAlert={userAlert}
+                setNewUserAlert={setNewUserAlert}
+                setDialogSettings={setDialogSettings}
+                handleDeleteUserAlert={handleDeleteUserAlert}
+              />
             ))}
           </Stack>
         </Box>
@@ -116,16 +158,31 @@ export default function Alerts() {
   );
 }
 
+type AlertCardProps = {
+  userAlert: UserAlert;
+  setNewUserAlert: React.Dispatch<React.SetStateAction<UserAlert>>;
+  setDialogSettings: React.Dispatch<React.SetStateAction<DialogSettings>>;
+  handleDeleteUserAlert: Function;
+};
+
 function AlertCard({
-  name,
-  containerId,
-  targetMetric,
-  threshold,
-  email,
-  lastExceeded,
-  lastNotification,
-  created,
-}: UserAlert) {
+  userAlert,
+  setNewUserAlert,
+  setDialogSettings,
+  handleDeleteUserAlert,
+}: AlertCardProps) {
+  const {
+    uuid,
+    name,
+    containerId,
+    targetMetric,
+    threshold,
+    email,
+    lastExceeded,
+    lastNotification,
+    created,
+  } = userAlert;
+
   return (
     <Card sx={{ px: 2, py: 1 }}>
       <Stack direction="column" spacing={2}>
@@ -137,10 +194,17 @@ function AlertCard({
           }}
         >
           <Typography variant="h3">{name}</Typography>
-          <IconButton sx={{ ml: 'auto' }}>
+          <IconButton
+            sx={{ ml: 'auto' }}
+            onClick={() => {
+              // In the EDIT mode, populate the dialog form fields with all the alert settings
+              setDialogSettings({ open: true, mode: 'EDIT', uuid: uuid as string });
+              setNewUserAlert(userAlert);
+            }}
+          >
             <Edit />
           </IconButton>
-          <IconButton>
+          <IconButton onClick={() => handleDeleteUserAlert(uuid)}>
             <Delete />
           </IconButton>
         </Box>
