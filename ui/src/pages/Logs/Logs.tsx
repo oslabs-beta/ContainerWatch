@@ -106,7 +106,11 @@ export default function Logs() {
       setContainers(allContainers);
       setLogs(allContainerLogs);
       filters.allowedContainers.size === 0
-        ? setFilters({ ...filters, allowedContainers: new Set(allContainers.map(({ Id }) => Id)) })
+        ? setFilters({
+            stdout: true,
+            stderr: true,
+            allowedContainers: new Set(allContainers.map(({ Id }) => Id)),
+          })
         : setFilters({ ...filters });
       const updatedContainerLabelColor = allContainers.reduce(
         (prevContainerLabelColor, container, index) => ({
