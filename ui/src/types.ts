@@ -45,3 +45,9 @@ export type ResponseErr = {
   statusCode: number;
   message: string;
 };
+
+export type DialogSettings = {
+  open: boolean;
+  mode: 'NEW' | 'EDIT';
+  uuid: string | undefined;
+};
