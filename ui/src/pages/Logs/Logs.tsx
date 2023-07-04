@@ -105,7 +105,9 @@ export default function Logs() {
       const allContainerLogs = await fetchAllContainerLogs(ddClient, allContainers);
       setContainers(allContainers);
       setLogs(allContainerLogs);
-      setFilters({ ...filters, allowedContainers: new Set(allContainers.map(({ Id }) => Id)) });
+      filters.allowedContainers.size === 0
+        ? setFilters({ ...filters, allowedContainers: new Set(allContainers.map(({ Id }) => Id)) })
+        : setFilters({ ...filters });
       const updatedContainerLabelColor = allContainers.reduce(
         (prevContainerLabelColor, container, index) => ({
           ...prevContainerLabelColor,
