@@ -1,4 +1,5 @@
-import { Stack } from '@mui/material';
+import { Stack, FormControl, Select, MenuItem, InputLabel } from '@mui/material';
+import { useState } from 'react';
 
 type StatsGraphProps = {
   containerName: string;
@@ -13,8 +14,19 @@ export default function StatsGraph({ containerName, containerID }: StatsGraphPro
 
   return (
     <Stack direction="column" spacing={1}>
+      <FormControl fullWidth>
+        <InputLabel>Time Frame</InputLabel>
+        <Select
+          label="Age"
+          // onChange={handleChange}
+        >
+          <MenuItem value={10}>Ten</MenuItem>
+          <MenuItem value={20}>Twenty</MenuItem>
+          <MenuItem value={30}>Thirty</MenuItem>
+        </Select>
+      </FormControl>
       <iframe
-        src={`http://localhost:2999/d-solo/${shortContainerID}/${containerName}?orgId=1&refresh=15s&panelId=1&from=now-15m&to=now`}
+        src={`http://localhost:2999/d-solo/${shortContainerID}/${containerName}?orgId=1&refresh=15s&panelId=1&from=now-{placeholder}m&to=now`}
         width="100%"
         height="200px"
         style={{ border: 0 }}
