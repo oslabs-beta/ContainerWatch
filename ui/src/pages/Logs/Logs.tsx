@@ -93,45 +93,25 @@ export default function Logs() {
     try {
       const allContainers = await fetchAllContainers(ddClient);
       const allContainerLogs = await fetchAllContainerLogs(ddClient, allContainers);
-      // Added new container and filters are applied
-      if (
-        allContainers.length > containers.length &&
-        (filters.allowedContainers.size < containers.length || !filters.stderr || !filters.stdout)
-      ) {
-        setFilters({
-          ...filters,
-          allowedContainers: filters.allowedContainers.add(allContainers[0].Id),
-        });
-      } // If no new containers but filters are applied
-      else if (
-        allContainers.length === containers.length &&
-        (filters.allowedContainers.size < containers.length || !filters.stdout || !filters.stderr)
-      ) {
-        setFilters({ ...filters });
-      } // On initial render as well as if no new containers as well as no filters applied
-      else {
-        setFilters({
-          stdout: true,
-          stderr: true,
-          allowedContainers: new Set(allContainers.map(({ Id }) => Id)),
-        });
-      }
+
+      const newAllowedContainers = new Set(allContainers.map(({ Id }) => Id));
+      containers
+        .filter((container) => !filters.allowedContainers.has(container.Id))
+        .forEach(({ Id }) => newAllowedContainers.delete(Id));
+
+      setFilters({ ...filters, allowedContainers: newAllowedContainers });
+
       setContainers(allContainers);
       setLogs(allContainerLogs);
-      const updatedContainerLabelColor = allContainers.reduce(
-        (prevContainerLabelColor, container, index) => ({
-          ...prevContainerLabelColor,
-          [container.Id]: colorArray[index % colorArray.length],
-        }),
-        {}
+      const updatedContainerLabelColor = Object.fromEntries(
+        allContainers.map((container, index) => [
+          container.Id,
+          colorArray[index % colorArray.length],
+        ])
       );
       setContainerLabelColor(updatedContainerLabelColor);
-      const updatedContainerIconColor = allContainers.reduce(
-        (prevContainerIconColor, container) => ({
-          ...prevContainerIconColor,
-          [container.Id]: container.State,
-        }),
-        {}
+      const updatedContainerIconColor = Object.fromEntries(
+        allContainers.map((container) => [container.Id, container.State])
       );
       setContainerIconColor(updatedContainerIconColor);
       setElapsedTimeInMinutes(0);
@@ -222,3 +202,29 @@ export default function Logs() {
     </>
   );
 }
+
+/*
+if (
+  allContainers.length > containers.length &&
+  (filters.allowedContainers.size < containers.length || !filters.stderr || !filters.stdout)
+) {
+  setFilters({
+    ...filters,
+    allowedContainers: filters.allowedContainers.add(allContainers[0].Id),
+  });
+} // If no new containers but filters are applied
+else if (
+  allContainers.length === containers.length &&
+  (filters.allowedContainers.size < containers.length || !filters.stdout || !filters.stderr)
+) {
+  setFilters({ ...filters });
+} // On initial render as well as if no new containers as well as no filters applied
+else {
+  setFilters({
+    stdout: true,
+    stderr: true,
+    allowedContainers: new Set(allContainers.map(({ Id }) => Id)),
+  });
+}
+
+*/
