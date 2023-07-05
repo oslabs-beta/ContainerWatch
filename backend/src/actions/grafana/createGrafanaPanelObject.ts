@@ -89,7 +89,7 @@ export default function createGrafanaPanelObject(
       calcs: [],
       displayMode: 'list',
       placement: 'bottom',
-      showLegend: true, 
+      showLegend: true,
     },
     tooltip: {
       mode: 'single',
@@ -137,6 +137,7 @@ export default function createGrafanaPanelObject(
       refId: el.panelID.toString(),
     };
 
+    // Switch case handles slightly more unique override properties
     switch (metricsId) {
       case 1: {
         metricsName = 'CPU %';
@@ -207,10 +208,11 @@ export default function createGrafanaPanelObject(
       }
     }
 
+    // Push updated objects into correct arrays in panel object.
     grafanaPanel.targets.push(targetsObject);
     panelOverrides.push(metricsOverrides);
   });
 
-  // return the compiled grafana panel object
+  // Return the compiled grafana panel object
   return grafanaPanel;
 }
