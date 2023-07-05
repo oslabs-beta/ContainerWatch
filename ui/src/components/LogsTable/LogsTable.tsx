@@ -1,6 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { TableVirtuoso, TableComponents } from 'react-virtuoso';
-import { TableContainer, Table, TableHead, TableBody, Paper, Box } from '@mui/material';
+import {
+  TableContainer,
+  Table,
+  TableHead,
+  TableBody,
+  Paper,
+  Typography,
+  Stack,
+  Divider,
+} from '@mui/material';
 import LogsRow from '../LogsRow/LogsRow';
 import { LogFilters, DockerLog, DDClient } from '../../types';
 
@@ -89,7 +98,7 @@ export function LogsTable({
   };
 
   return (
-    <Box sx={{ paddingTop: 2, flexGrow: 1 }}>
+    <Stack sx={{ paddingTop: 2, flexGrow: 1 }}>
       <TableVirtuoso
         style={{
           background: 'none',
@@ -99,6 +108,10 @@ export function LogsTable({
         components={VirtuosoTableComponents}
         itemContent={rowContent}
       />
-    </Box>
+      <Stack spacing={1}>
+        <Divider sx={{ m: 0 }} />
+        <Typography variant="caption">{`Showing ${filteredLogs.length} of ${logs.length} logs`}</Typography>
+      </Stack>
+    </Stack>
   );
 }
