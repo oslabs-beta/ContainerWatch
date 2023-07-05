@@ -16,7 +16,7 @@ export default function StatsGraph({ containerName, containerID }: StatsGraphPro
       <iframe
         src={`http://localhost:2999/d-solo/${shortContainerID}/${containerName}?orgId=1&refresh=15s&panelId=1&from=now-5m&to=now`}
         width="100%"
-        height="200px"
+        height="300px"
         style={{ border: 0 }}
       />
     </Stack>
