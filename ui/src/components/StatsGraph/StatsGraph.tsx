@@ -12,15 +12,15 @@ export default function StatsGraph({ containerName, containerID }: StatsGraphPro
   // 40 character limit on a dashboard name.
   const shortContainerID = containerID.slice(0, 12);
   const [timeFrame, setTimeFrame] = useState('');
+  const handleChange = (event: any) => {
+    setTimeFrame(event.target.value);
+  };
 
   return (
     <Stack direction="column" spacing={1}>
       <FormControl fullWidth>
         <InputLabel>Time Frame</InputLabel>
-        <Select
-          label="Age"
-          // onChange={handleChange}
-        >
+        <Select label="Age" onChange={handleChange}>
           <MenuItem value={10}>Ten</MenuItem>
           <MenuItem value={20}>Twenty</MenuItem>
           <MenuItem value={30}>Thirty</MenuItem>
