@@ -1,4 +1,4 @@
-import { Stack, FormControl, Select, MenuItem, InputLabel, SelectChangeEvent } from '@mui/material';
+import { Stack, FormControl, Select, MenuItem, InputLabel } from '@mui/material';
 import { useState } from 'react';
 
 type StatsGraphProps = {
