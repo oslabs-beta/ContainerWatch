@@ -103,15 +103,31 @@ export default function Logs() {
     try {
       const allContainers = await fetchAllContainers(ddClient);
       const allContainerLogs = await fetchAllContainerLogs(ddClient, allContainers);
+      // Added new container and filters are applied
+      if (
+        allContainers.length > containers.length &&
+        (filters.allowedContainers.size < containers.length || !filters.stderr || !filters.stdout)
+      ) {
+        setFilters({
+          ...filters,
+          allowedContainers: filters.allowedContainers.add(allContainers[0].Id),
+        });
+      } // If no new containers but filters are applied
+      else if (
+        allContainers.length === containers.length &&
+        (filters.allowedContainers.size < containers.length || !filters.stdout || !filters.stderr)
+      ) {
+        setFilters({ ...filters });
+      } // On initial render as well as if no new containers as well as no filters applied
+      else {
+        setFilters({
+          stdout: true,
+          stderr: true,
+          allowedContainers: new Set(allContainers.map(({ Id }) => Id)),
+        });
+      }
       setContainers(allContainers);
       setLogs(allContainerLogs);
-      filters.allowedContainers.size === 0
-        ? setFilters({
-            stdout: true,
-            stderr: true,
-            allowedContainers: new Set(allContainers.map(({ Id }) => Id)),
-          })
-        : setFilters({ ...filters });
       const updatedContainerLabelColor = allContainers.reduce(
         (prevContainerLabelColor, container, index) => ({
           ...prevContainerLabelColor,
