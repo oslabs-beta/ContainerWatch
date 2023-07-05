@@ -17,7 +17,7 @@ export default function StatsGraph({ containerName, containerID }: StatsGraphPro
 
   return (
     <Stack direction="column" spacing={1}>
-      <FormControl sx={{ m: 0, maxWidth: 130 }} size="small">
+      <FormControl sx={{ m: 0, maxWidth: 140 }} size="small">
         <InputLabel>Time</InputLabel>
         <Select
           autoWidth
@@ -25,13 +25,13 @@ export default function StatsGraph({ containerName, containerID }: StatsGraphPro
           label="Time"
           onChange={(e) => setTimeFrame(e.target.value as TimeFrame)}
         >
-          <MenuItem value={'5m'}>5 Minute</MenuItem>
-          <MenuItem value={'15m'}>15 Minute</MenuItem>
-          <MenuItem value={'1h'}>1 Hour</MenuItem>
-          <MenuItem value={'2h'}>2 Hour</MenuItem>
-          <MenuItem value={'1d'}>1 Day</MenuItem>
-          <MenuItem value={'2d'}>2 Day</MenuItem>
-          <MenuItem value={'3d'}>3 Day</MenuItem>
+          <MenuItem value={'5m'}>5 minutes</MenuItem>
+          <MenuItem value={'15m'}>15 minutes</MenuItem>
+          <MenuItem value={'1h'}>1 hour</MenuItem>
+          <MenuItem value={'2h'}>2 hours</MenuItem>
+          <MenuItem value={'1d'}>1 day</MenuItem>
+          <MenuItem value={'2d'}>2 days</MenuItem>
+          <MenuItem value={'3d'}>3 days</MenuItem>
         </Select>
       </FormControl>
       <iframe
