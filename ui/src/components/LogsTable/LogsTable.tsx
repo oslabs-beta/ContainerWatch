@@ -1,16 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { TableVirtuoso, TableComponents } from 'react-virtuoso';
-import {
-  TableContainer,
-  Table,
-  TableHead,
-  TableBody,
-  TableRow,
-  TableCell,
-  Typography,
-  Paper,
-  Box,
-} from '@mui/material';
+import { TableContainer, Table, TableHead, TableBody, Paper, Box } from '@mui/material';
 import LogsRow from '../LogsRow/LogsRow';
 import { LogFilters, DockerLog, DDClient } from '../../types';
 
@@ -81,20 +71,6 @@ export function LogsTable({
       <TableBody {...props} ref={ref} />
     )),
   };
-
-  // // Commented out because headers do not stay aligned with the table cells
-  // // due to the issue described below.
-  // const fixedHeaderContent = () => {
-  //   return (
-  //     <TableRow>
-  //       {HEADERS.map((header) => (
-  //         <TableCell>
-  //           <Typography sx={{ whiteSpace: 'nowrap', fontWeight: 'bold' }}>{header}</Typography>
-  //         </TableCell>
-  //       ))}
-  //     </TableRow>
-  //   );
-  // };
 
   const rowContent = (_index: number, logInfo: DockerLog) => {
     // This function is passed to the `itemContent` prop in <TableVirtuoso />
