@@ -1,42 +1,25 @@
 # DockerPulse
 
-This repository defines an example of a Docker extension. The files in this repository have been automatically generated as a result of running `docker extension init`.
+## Table of Contents
+1. [Features](#features)
+2. [Installation](#installation)
+3. [Features](#features)
+4. [Diagrams](#diagrams)
+5. [Future Goals](#future-goals)
+6. [Meet the Team](#meet-the-team)
 
-This extension is composed of:
+## Features
 
-- A [frontend](./ui) app in React that makes a request to the `/hello` endpoint and displays the payload in Docker Desktop.
-- A [backend](./backend) container that runs an API in Go. It exposes the `/hello` endpoint which returns a JSON payload.
+- View timestamped statistics displayed in an intuitive graphical interface!
+- Logs! All your containers' logs in one place. Search by keyword, filter by normal logs and error logs, filter by container, filter by time!
+- Create alerts to notify you when one of your containers surpasses a certain threshold!
 
-> You can build your Docker Extension using your fav tech stack:
->
-> - Frontend: React, Angular, Vue, Svelte, etc.
->   Basically, any frontend framework you can bundle in an `index.html` file with CSS, and JS assets.
-> - Backend (optional): anything that can run in a container.
+## Installation
 
-<details>
-  <summary>Looking for more templates?</summary>
+To install the extension:
 
-1. [React + NodeJS](https://github.com/benja-M-1/node-backend-extension).
-2. [React + .NET 6 WebAPI](https://github.com/felipecruz91/dotnet-api-docker-extension).
-
-Request one or submit yours [here](https://github.com/docker/extensions-sdk/issues).
-
-</details>
-
-## Local development
-
-You can use `docker` to build, install and push your extension. Also, we provide an opinionated [Makefile](Makefile) that could be convenient for you. There isn't a strong preference of using one over the other, so just use the one you're most comfortable with.
-
-To build the extension, use `make build-extension` **or**:
-
-```shell
-  docker buildx build -t DockerPulse/DockerPulse:latest . --load
 ```
-
-To install the extension, use `make install-extension` **or**:
-
-```shell
-  docker extension install DockerPulse/DockerPulse:latest
+  make install-extension
 ```
 
 > If you want to automate this command, use the `-f` or `--force` flag to accept the warning message.
@@ -105,3 +88,27 @@ docker extension rm DockerPulse/DockerPulse:latest
 - To publish your extension in the Marketplace visit https://www.docker.com/products/extensions/submissions/.
 - To report issues and feedback visit https://github.com/docker/extensions-sdk/issues.
 - To look for other ideas of new extensions, or propose new ideas of extensions you would like to see, visit https://github.com/docker/extension-ideas/discussions.
+
+
+This repository defines an example of a Docker extension. The files in this repository have been automatically generated as a result of running `docker extension init`.
+
+This extension is composed of:
+
+- A [frontend](./ui) app in React that makes a request to the `/hello` endpoint and displays the payload in Docker Desktop.
+- A [backend](./backend) container that runs an API in Go. It exposes the `/hello` endpoint which returns a JSON payload.
+
+> You can build your Docker Extension using your fav tech stack:
+>
+> - Frontend: React, Angular, Vue, Svelte, etc.
+>   Basically, any frontend framework you can bundle in an `index.html` file with CSS, and JS assets.
+> - Backend (optional): anything that can run in a container.
+
+<details>
+  <summary>Looking for more templates?</summary>
+
+1. [React + NodeJS](https://github.com/benja-M-1/node-backend-extension).
+2. [React + .NET 6 WebAPI](https://github.com/felipecruz91/dotnet-api-docker-extension).
+
+Request one or submit yours [here](https://github.com/docker/extensions-sdk/issues).
+
+</details>

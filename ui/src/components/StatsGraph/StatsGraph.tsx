@@ -31,19 +31,9 @@ export default function StatsGraph({ containerName, containerID }: StatsGraphPro
         </Select>
       </FormControl>
       <iframe
-        // key={timeFrame}
-        key={`iframe1-${timeFrame}`}
-        src={`http://localhost:2999/d-solo/${shortContainerID}/${containerName}?orgId=1&refresh=15s&panelId=1&from=now-${timeFrame}&to=now`}
+        src={`http://localhost:2999/d-solo/${shortContainerID}/${containerName}?orgId=1&refresh=15s&panelId=1&from=now-5m&to=now`}
         width="100%"
-        height="200px"
-        style={{ border: 0 }}
-      />
-      <iframe
-        // key={timeFrame}
-        key={`iframe2-${timeFrame}`}
-        src={`http://localhost:2999/d-solo/${shortContainerID}/${containerName}?orgId=1&refresh=15s&panelId=2&from=now-${timeFrame}&to=now`}
-        width="100%"
-        height="200px"
+        height="300px"
         style={{ border: 0 }}
       />
     </Stack>

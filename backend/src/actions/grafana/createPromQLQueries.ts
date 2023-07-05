@@ -6,7 +6,7 @@ export default function createPromQLQueries(id: string): any {
   const queryArray: QueryStringPanelID[] = [
     {
       panelID: 1,
-      queryString: `rate(cpu_usage_percent{id="${id}"}[$__interval])`,
+      queryString: `cpu_usage_percent{id="${id}"}`,
     },
     {
       panelID: 2,
