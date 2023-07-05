@@ -27,7 +27,7 @@ metricsServer.listen(METRICS_PORT, () => {
 
 (async () => {
   try {
-    // Wait 15 seconds to give the Grafana container extra time to spin up and be ready to respond
+    // Wait 10 seconds to give the Grafana container extra time to spin up and be ready to respond
     // to requests. This implementation can be improved later.
     console.log('⏳ Waiting ... ');
     await new Promise((r) => setTimeout(r, 1000 * 10));

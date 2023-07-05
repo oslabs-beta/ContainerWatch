@@ -3,7 +3,7 @@ import { KeyboardArrowUp, KeyboardArrowDown, ErrorRounded } from '@mui/icons-mat
 import { Box, Typography, IconButton, TableCell, TableRow, Collapse } from '@mui/material';
 import ContainerIcon from '../ContainerIcon/ContainerIcon';
 import { DockerLog, DDClient } from '../../types';
-import { HEADERS, theme } from '../../pages/Logs/Logs';
+import { theme } from '../../pages/Logs/Logs';
 
 const logsDisplayStyle = {
   whiteSpace: 'nowrap',
@@ -12,17 +12,21 @@ const logsDisplayStyle = {
   fontFamily: 'monospace',
 };
 
+type LogsRowProps = {
+  logInfo: DockerLog;
+  containerLabelColor: Record<string, string>;
+  containerIconColor: Record<string, string>;
+  ddClient: DDClient;
+  headers: string[];
+};
+
 export default function LogsRow({
   logInfo: logInfo,
   containerLabelColor,
   containerIconColor,
   ddClient,
-}: {
-  logInfo: DockerLog;
-  containerLabelColor: Record<string, string>;
-  containerIconColor: Record<string, string>;
-  ddClient: DDClient;
-}) {
+  headers,
+}: LogsRowProps) {
   const { containerId, containerName, time, stream, log } = logInfo;
   const [open, setOpen] = useState<boolean>(false);
   const [CPU, setCPU] = useState('');
@@ -76,9 +80,9 @@ export default function LogsRow({
       return (
         <Box sx={{ display: 'flex', alignContent: 'flex-end', fontSize: '11px', mt: 1 }}>
           <Typography>Closest metrics datapoint {time.slice(0, 19)} ·</Typography>
-          <Typography sx={{color: 'green'}}>CPU %:</Typography>
+          <Typography sx={{ color: 'green' }}>CPU %:</Typography>
           <Typography>{CPU} ·</Typography>
-          <Typography sx={{color: 'green'}}>MEM %:</Typography>
+          <Typography sx={{ color: 'green' }}>MEM %:</Typography>
           <Typography>{MEM}</Typography>
         </Box>
       );
@@ -152,7 +156,7 @@ export default function LogsRow({
       </TableRow>
       <TableRow>
         <TableCell sx={{ p: 0 }} />
-        <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={HEADERS.length - 1}>
+        <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={headers.length - 1}>
           <Collapse in={open} addEndListener={fetchMetrics} timeout="auto" unmountOnExit>
             {buildMetricsRow()}
             <Box
