@@ -106,7 +106,7 @@ export type panelOverrideProperties = {
     id: string;
     value: string;
   }[];
-};
+} | {};
 
 export type GrafanaPanelOptionsKey = {
   legend: {

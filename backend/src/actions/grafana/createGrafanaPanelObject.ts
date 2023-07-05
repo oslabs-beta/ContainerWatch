@@ -14,16 +14,48 @@ export default function createGrafanaPanelObject(
 ): GrafanaPanel {
   // Declare variable metrics name that gets assigned based on PanelID
   let metricsName = '';
+  // Declare a variable to store panelOverrideProperty for color
+  let startingColor: panelOverrideProperties = {};
 
   // Switch case to handle name of panel.
   // If you add more metrics, add more cases here!
   switch (panelId) {
     case 1: {
       metricsName = 'CPU %';
+      startingColor = {
+        matcher: {
+          id: 'byName',
+          options: 'CPU %',
+        },
+        properties: [
+          {
+            id: 'color',
+            value: {
+              mode: 'fixed',
+              fixedColor: 'semi-dark-blue',
+            },
+          },
+        ],
+      };
       break;
     }
     case 2: {
       metricsName = 'MEM %';
+      startingColor = {
+        matcher: {
+          id: 'byName',
+          options: 'MEM %',
+        },
+        properties: [
+          {
+            id: 'color',
+            value: {
+              mode: 'fixed',
+              fixedColor: 'semi-dark-purple',
+            },
+          },
+        ],
+      };
       break;
     }
     default: {
@@ -72,6 +104,8 @@ export default function createGrafanaPanelObject(
       ],
     },
   ];
+
+  panelOverrides.push(startingColor);
 
   // Create fieldConfig key for Grafana panel.
   const fieldConfigObject: GrafanaPanelFieldConfigKey = {
