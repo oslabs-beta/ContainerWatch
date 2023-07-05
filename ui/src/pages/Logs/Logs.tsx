@@ -3,29 +3,20 @@ import { createDockerDesktopClient } from '@docker/extension-api-client';
 import { Search, Clear, FilterList, Refresh } from '@mui/icons-material';
 import {
   Box,
+  CircularProgress,
   Stack,
-  Typography,
   OutlinedInput,
   InputAdornment,
   IconButton,
-  Paper,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
 } from '@mui/material';
 import FilterDrawer from '../../components/FilterDrawer/FilterDrawer';
 import RefreshMessage from '../../components/RefreshMessage/RefreshMessage';
-import LogsRow from '../../components/LogsRow/LogsRow';
 import fetchAllContainers from '../../actions/fetchAllContainers';
 import fetchAllContainerLogs from '../../actions/fetchAllContainerLogs';
 import { DockerLog, DockerContainer, LogFilters } from '../../types';
 import { createTheme } from '@mui/material/styles';
 import { debounce } from 'lodash';
-
-export const HEADERS = ['', 'Timestamp', 'Container', 'Message'];
+import { LogsTable } from '../../components/LogsTable/LogsTable';
 
 // Obtain Docker Desktop client
 const client = createDockerDesktopClient();
@@ -76,6 +67,7 @@ export default function Logs() {
   const [containerLabelColor, setContainerLabelColor] = useState<Record<string, string>>({});
   const [containerIconColor, setContainerIconColor] = useState<Record<string, string>>({});
   const [elapsedTimeInMinutes, setElapsedTimeInMinutes] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);
   const [filters, setFilters] = useState<LogFilters>({
     stdout: true,
     stderr: true,
@@ -87,16 +79,17 @@ export default function Logs() {
   }, []);
 
   // Lodash debounce implementation
-  const debounced = debounce((value) => {
+  const debouncedSetSearchText = debounce((value) => {
     setSearchText(value);
   }, 400);
   // Clean up debounce functions
   useEffect(() => {
-    debounced.cancel();
-  }, [debounced]);
+    debouncedSetSearchText.cancel();
+  }, [debouncedSetSearchText]);
 
   // Refreshes logs page fetching all new containers
   const refreshAll = async () => {
+    setIsLoading(true);
     try {
       const allContainers = await fetchAllContainers(ddClient);
       const allContainerLogs = await fetchAllContainerLogs(ddClient, allContainers);
@@ -120,25 +113,11 @@ export default function Logs() {
       );
       setContainerIconColor(updatedContainerIconColor);
       setElapsedTimeInMinutes(0);
+      setIsLoading(false);
     } catch (err) {
       console.error(err);
     }
   };
-
-  // Apply the filters
-  const upperCaseSearchText = searchText.toUpperCase();
-  const filteredLogs = logs.filter(({ containerName, containerId, time, stream, log }) => {
-    if (!filters.stdout && stream === 'stdout') return false; // Filter out stdout
-    if (!filters.stderr && stream === 'stderr') return false; // Filter out stderr
-    if (!filters.allowedContainers.has(containerId)) return false; // Filter out containers
-    const convertTime = time.slice(0, time.indexOf('.') + 4);
-    const numTime = Date.parse(convertTime);
-    const numFromTime = Date.parse(validFromTimestamp);
-    const numUntilTime = Date.parse(validUntilTimestamp);
-    if (!log.toUpperCase().includes(upperCaseSearchText)) return false;
-    if (numTime > numUntilTime || numTime < numFromTime) return false;
-    return true;
-  });
 
   return (
     <>
@@ -152,7 +131,14 @@ export default function Logs() {
         setValidUntilTimestamp={setValidUntilTimestamp}
         containerLabelColor={containerLabelColor}
       />
-      <Box sx={{ minHeight: 0, display: 'flex', flexDirection: 'column' }}>
+      <Box
+        sx={{
+          minHeight: 0,
+          flexGrow: 1,
+          display: 'flex',
+          flexDirection: 'column',
+        }}
+      >
         <Stack direction="row" spacing={2} alignContent="center">
           <OutlinedInput
             placeholder="Search"
@@ -175,7 +161,7 @@ export default function Logs() {
               </InputAdornment>
             }
             onChange={(e) => {
-              debounced(e.target.value);
+              debouncedSetSearchText(e.target.value);
             }}
           />
           <IconButton
@@ -194,40 +180,22 @@ export default function Logs() {
             setElapsedTimeInMinutes={setElapsedTimeInMinutes}
           />
         </Stack>
-
-        <TableContainer
-          component={Paper}
-          sx={{
-            marginTop: 2,
-            flexGrow: 1,
-            background: 'none',
-            border: 'none',
-          }}
-        >
-          <Table size="small" stickyHeader>
-            <TableHead>
-              <TableRow>
-                {HEADERS.map((header) => (
-                  <TableCell>
-                    <Typography sx={{ whiteSpace: 'nowrap', fontWeight: 'bold' }}>
-                      {header}
-                    </Typography>
-                  </TableCell>
-                ))}
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {filteredLogs.map((logInfo) => (
-                <LogsRow
-                  logInfo={logInfo}
-                  containerLabelColor={containerLabelColor}
-                  containerIconColor={containerIconColor}
-                  ddClient={ddClient}
-                />
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
+        {isLoading ? (
+          <Box sx={{ p: 4, display: 'flex', justifyContent: 'center' }}>
+            <CircularProgress />
+          </Box>
+        ) : (
+          <LogsTable
+            searchText={searchText}
+            filters={filters}
+            logs={logs}
+            validFromTimestamp={validFromTimestamp}
+            validUntilTimestamp={validUntilTimestamp}
+            containerLabelColor={containerLabelColor}
+            containerIconColor={containerIconColor}
+            ddClient={ddClient}
+          />
+        )}
       </Box>
     </>
   );
