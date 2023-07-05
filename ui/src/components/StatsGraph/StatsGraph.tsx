@@ -22,8 +22,8 @@ export default function StatsGraph({ containerName, containerID }: StatsGraphPro
         <Select
           autoWidth
           value={timeFrame}
-          label="Age"
-          onChange={(e: SelectChangeEvent<TimeFrame>) => setTimeFrame(e.target.value as TimeFrame)}
+          label="Time"
+          onChange={(e) => setTimeFrame(e.target.value as TimeFrame)}
         >
           <MenuItem value={'5m'}>5 Minute</MenuItem>
           <MenuItem value={'15m'}>15 Minute</MenuItem>
