@@ -1,82 +1,17 @@
 import {
   GrafanaDatasource,
-  GrafanaPanelTargetsKey,
+  GrafanaPanelTargetsObject,
   GrafanaPanelFieldConfigKey,
   GrafanaPanel,
   GrafanaPanelOptionsKey,
   panelOverrideProperties,
+  QueryStringPanelID,
 } from '../../types';
 
 export default function createGrafanaPanelObject(
-  panelId: number,
-  promQLQuery: string,
+  promQLQueries: QueryStringPanelID[],
   promDatasource: GrafanaDatasource
 ): GrafanaPanel {
-  // Declare variable metrics name that gets assigned based on PanelID
-  let metricsName = '';
-  // Declare a variable to store panelOverrideProperty for color
-  let startingColor: panelOverrideProperties = {};
-
-  // Switch case to handle name of panel.
-  // If you add more metrics, add more cases here!
-  switch (panelId) {
-    case 1: {
-      metricsName = 'CPU %';
-      startingColor = {
-        matcher: {
-          id: 'byName',
-          options: 'CPU %',
-        },
-        properties: [
-          {
-            id: 'color',
-            value: {
-              mode: 'fixed',
-              fixedColor: 'semi-dark-blue',
-            },
-          },
-        ],
-      };
-      break;
-    }
-    case 2: {
-      metricsName = 'MEM %';
-      startingColor = {
-        matcher: {
-          id: 'byName',
-          options: 'MEM %',
-        },
-        properties: [
-          {
-            id: 'color',
-            value: {
-              mode: 'fixed',
-              fixedColor: 'semi-dark-purple',
-            },
-          },
-        ],
-      };
-      break;
-    }
-    default: {
-      // PanelId is being assigned in the file: createPromQLQueries.ts
-      console.log('Please ensure you are properly assigning panelId');
-      break;
-    }
-  }
-
-  // Create targets key for Grafana panel.
-  const targets: GrafanaPanelTargetsKey = [
-    {
-      datasource: promDatasource,
-      editorMode: 'builder',
-      expr: promQLQuery,
-      instant: false,
-      range: true,
-      refId: 'A',
-    },
-  ];
-
   // Create overrides property for fieldConfigsObject
   const panelOverrides: panelOverrideProperties[] = [
     {
@@ -91,21 +26,7 @@ export default function createGrafanaPanelObject(
         },
       ],
     },
-    {
-      matcher: {
-        id: 'byName',
-        options: 'Value',
-      },
-      properties: [
-        {
-          id: 'displayName',
-          value: metricsName,
-        },
-      ],
-    },
   ];
-
-  panelOverrides.push(startingColor);
 
   // Create fieldConfig key for Grafana panel.
   const fieldConfigObject: GrafanaPanelFieldConfigKey = {
@@ -116,7 +37,7 @@ export default function createGrafanaPanelObject(
       custom: {
         axisCenteredZero: false,
         axisColorMode: 'text',
-        axisLabel: metricsName,
+        axisLabel: '',
         axisPlacement: 'auto',
         barAlignment: 0,
         drawStyle: 'line',
@@ -133,7 +54,7 @@ export default function createGrafanaPanelObject(
         scaleDistribution: {
           type: 'linear',
         },
-        showPoints: 'auto',
+        showPoints: 'never',
         spanNulls: false,
         stacking: {
           group: 'A',
@@ -168,7 +89,7 @@ export default function createGrafanaPanelObject(
       calcs: [],
       displayMode: 'list',
       placement: 'bottom',
-      showLegend: false, // Do not show legend
+      showLegend: true, 
     },
     tooltip: {
       mode: 'single',
@@ -187,12 +108,108 @@ export default function createGrafanaPanelObject(
       y: 0,
     },
     options: optionsObject,
-    id: panelId,
-    targets: targets,
+    id: 1,
+    targets: [],
     title: '', // No title on panel to conserve vertical space
     type: 'timeseries',
     interval: '10s',
   };
+
+  // Switch case to handle name of panel.
+  // If you add more metrics, add more cases here!
+  promQLQueries.forEach((el) => {
+    // Declare variable metrics Id that gets assigned to panelId
+    let metricsId = el.panelID;
+
+    // Declare variable metrics name that gets assigned based on PanelID
+    let metricsName = '';
+
+    // Declare a variable to store panelOverrideProperty for color
+    let metricsOverrides: panelOverrideProperties = {};
+
+    // Create targets key for Grafana panel.
+    const targetsObject: GrafanaPanelTargetsObject = {
+      datasource: promDatasource,
+      editorMode: 'builder',
+      expr: el.queryString,
+      instant: false,
+      range: true,
+      refId: el.panelID.toString(),
+    };
+
+    switch (metricsId) {
+      case 1: {
+        metricsName = 'CPU %';
+        metricsOverrides = {
+          matcher: {
+            id: 'byName',
+            options: 'cpu_usage_percent',
+          },
+          properties: [
+            {
+              id: 'displayName',
+              value: metricsName,
+            },
+            {
+              id: 'color',
+              value: {
+                mode: 'fixed',
+                fixedColor: 'dark-orange',
+              },
+            },
+            {
+              id: 'custom.axisPlacement',
+              value: 'left',
+            },
+            {
+              id: 'custom.axisLabel',
+              value: metricsName,
+            },
+          ],
+        };
+        break;
+      }
+      case 2: {
+        metricsName = 'MEM %';
+        metricsOverrides = {
+          matcher: {
+            id: 'byName',
+            options: 'memory_usage_percent',
+          },
+          properties: [
+            {
+              id: 'displayName',
+              value: metricsName,
+            },
+            {
+              id: 'color',
+              value: {
+                mode: 'fixed',
+                fixedColor: 'dark-blue',
+              },
+            },
+            {
+              id: 'custom.axisPlacement',
+              value: 'right',
+            },
+            {
+              id: 'custom.axisLabel',
+              value: metricsName,
+            },
+          ],
+        };
+        break;
+      }
+      default: {
+        // PanelId is being assigned in the file: createPromQLQueries.ts
+        console.log('Please ensure you are properly assigning affiliating metrics to an Id');
+        break;
+      }
+    }
+
+    grafanaPanel.targets.push(targetsObject);
+    panelOverrides.push(metricsOverrides);
+  });
 
   // return the compiled grafana panel object
   return grafanaPanel;

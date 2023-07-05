@@ -26,17 +26,10 @@ export default async function createGrafanaDashboard(
   };
 
   // create an object by running imported createPromQLQueries function passing in ID
-  const promQLQueries = createPromQLQueries(containerID);
-  promQLQueries.forEach((queryObject: QueryStringPanelID) => {
-    // push panels into dashboard object FOR EACH entry in promQLQueries object
-    dashboard.dashboard.panels.push(
-      createGrafanaPanelObject(
-        queryObject.panelID,
-        queryObject.queryString,
-        datasource
-      )
-    );
-  });
+  const promQLQueries: QueryStringPanelID[] = createPromQLQueries(containerID);
+
+  // push panel into dashboard object with a line for each metric in promQLQueries object
+  dashboard.dashboard.panels.push(createGrafanaPanelObject(promQLQueries, datasource));
 
   try {
     // POST request to Grafana Dashboard API to create a dashboard

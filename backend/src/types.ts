@@ -37,16 +37,14 @@ export type GrafanaDatasource = {
   uid: string;
 };
 
-export type GrafanaPanelTargetsKey = [
-  {
-    datasource: GrafanaDatasource;
-    editorMode: string;
-    expr: string;
-    instant: boolean;
-    range: boolean;
-    refId: string;
-  }
-];
+export type GrafanaPanelTargetsObject = {
+  datasource: GrafanaDatasource;
+  editorMode: string;
+  expr: string;
+  instant: boolean;
+  range: boolean;
+  refId: string;
+};
 
 export type GrafanaPanelFieldConfigKey = {
   defaults: {
@@ -97,16 +95,18 @@ export type GrafanaPanelFieldConfigKey = {
   overrides: panelOverrideProperties[];
 };
 
-export type panelOverrideProperties = {
-  matcher: {
-    id: string;
-    options: string;
-  };
-  properties: {
-    id: string;
-    value: string;
-  }[];
-} | {};
+export type panelOverrideProperties =
+  | {
+      matcher: {
+        id: string;
+        options: string;
+      };
+      properties: {
+        id: string;
+        value: string;
+      }[];
+    }
+  | {};
 
 export type GrafanaPanelOptionsKey = {
   legend: {
@@ -132,7 +132,7 @@ export type GrafanaPanel = {
   };
   options: GrafanaPanelOptionsKey;
   id: number;
-  targets: GrafanaPanelTargetsKey;
+  targets: GrafanaPanelTargetsObject[];
   title: string;
   type: string;
   interval: string;
