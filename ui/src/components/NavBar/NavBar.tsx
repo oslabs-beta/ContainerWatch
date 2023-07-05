@@ -25,8 +25,8 @@ export default function NavBar() {
         <Typography variant="h3">DockerPulse</Typography>
       </Stack>
       <Tabs value={value} onChange={handleChange}>
-        {pages.map(({ label, path }) => (
-          <Tab label={label} to={path} component={Link} />
+        {pages.map(({ id, label, path }) => (
+          <Tab key={id} label={label} to={path} component={Link} />
         ))}
       </Tabs>
     </Stack>
