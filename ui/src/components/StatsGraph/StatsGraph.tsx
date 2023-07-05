@@ -1,4 +1,4 @@
-import { Stack, FormControl, Select, MenuItem, InputLabel } from '@mui/material';
+import { Stack, FormControl, Select, MenuItem, InputLabel, SelectChangeEvent } from '@mui/material';
 import { useState } from 'react';
 
 type StatsGraphProps = {
@@ -12,16 +12,16 @@ export default function StatsGraph({ containerName, containerID }: StatsGraphPro
   // 40 character limit on a dashboard name.
   const shortContainerID = containerID.slice(0, 12);
   const [timeFrame, setTimeFrame] = useState('15m');
-  const handleChange = (event: any) => {
-    setTimeFrame(event.target.value);
+  const handleChange = (event: SelectChangeEvent<unknown>) => {
+    setTimeFrame(event.target.value as string);
   };
 
   return (
     <Stack direction="column" spacing={1}>
-      <FormControl fullWidth>
+      <FormControl sx={{ m: 0, maxWidth: 130 }} size="small">
         <InputLabel>Time</InputLabel>
-        <Select label="Age" onChange={handleChange}>
-          <MenuItem value={'5m'}>5 Minutes</MenuItem>
+        <Select autoWidth value={timeFrame} label="Age" onChange={(event) => handleChange(event)}>
+          <MenuItem value={'5m'}>5 Minute</MenuItem>
           <MenuItem value={'15m'}>15 Minute</MenuItem>
           <MenuItem value={'1h'}>1 Hour</MenuItem>
           <MenuItem value={'2h'}>2 Hour</MenuItem>
