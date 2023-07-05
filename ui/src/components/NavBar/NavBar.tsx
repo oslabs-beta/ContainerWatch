@@ -4,9 +4,9 @@ import { Stack, Box, Typography, Tabs, Tab } from '@mui/material';
 import { ReactComponent as DockerPulseSVG } from '../../../assets/dockerpulse.svg';
 
 const pages = [
-  { label: 'Stats', path: '/' },
-  { label: 'Logs', path: '/logs' },
-  { label: 'Alerts', path: '/alerts' },
+  { id: 1, label: 'Stats', path: '/' },
+  { id: 2, label: 'Logs', path: '/logs' },
+  { id: 3, label: 'Alerts', path: '/alerts' },
 ];
 
 export default function NavBar() {
