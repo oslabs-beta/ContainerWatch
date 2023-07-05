@@ -11,6 +11,7 @@ export default function StatsGraph({ containerName, containerID }: StatsGraphPro
   // because the full container (64 digits) is too long. Grafana API sets a
   // 40 character limit on a dashboard name.
   const shortContainerID = containerID.slice(0, 12);
+  const [timeFrame, setTimeFrame] = useState('');
 
   return (
     <Stack direction="column" spacing={1}>
