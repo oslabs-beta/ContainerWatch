@@ -4,9 +4,9 @@ import { Stack, Box, Typography, Tabs, Tab } from '@mui/material';
 import { ReactComponent as DockerPulseSVG } from '../../../assets/dockerpulse.svg';
 
 const pages = [
-  { label: 'Stats', path: '/' },
-  { label: 'Logs', path: '/logs' },
-  { label: 'Alerts', path: '/alerts' },
+  { id: 1, label: 'Stats', path: '/' },
+  { id: 2, label: 'Logs', path: '/logs' },
+  { id: 3, label: 'Alerts', path: '/alerts' },
 ];
 
 export default function NavBar() {
@@ -25,8 +25,8 @@ export default function NavBar() {
         <Typography variant="h3">DockerPulse</Typography>
       </Stack>
       <Tabs value={value} onChange={handleChange}>
-        {pages.map(({ label, path }) => (
-          <Tab label={label} to={path} component={Link} />
+        {pages.map(({ id, label, path }) => (
+          <Tab key={id} label={label} to={path} component={Link} />
         ))}
       </Tabs>
     </Stack>
