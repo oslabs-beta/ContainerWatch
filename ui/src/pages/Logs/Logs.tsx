@@ -202,29 +202,3 @@ export default function Logs() {
     </>
   );
 }
-
-/*
-if (
-  allContainers.length > containers.length &&
-  (filters.allowedContainers.size < containers.length || !filters.stderr || !filters.stdout)
-) {
-  setFilters({
-    ...filters,
-    allowedContainers: filters.allowedContainers.add(allContainers[0].Id),
-  });
-} // If no new containers but filters are applied
-else if (
-  allContainers.length === containers.length &&
-  (filters.allowedContainers.size < containers.length || !filters.stdout || !filters.stderr)
-) {
-  setFilters({ ...filters });
-} // On initial render as well as if no new containers as well as no filters applied
-else {
-  setFilters({
-    stdout: true,
-    stderr: true,
-    allowedContainers: new Set(allContainers.map(({ Id }) => Id)),
-  });
-}
-
-*/
