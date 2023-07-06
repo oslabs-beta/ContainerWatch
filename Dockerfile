@@ -42,10 +42,13 @@ LABEL org.opencontainers.image.title="DockerPulse" \
 
 COPY docker-compose.yaml .
 COPY metadata.json .
-COPY docker.svg .
+COPY dockerpulse.svg .
 COPY --from=backend-builder /backend backend
 COPY --from=client-builder /ui/build ui
 
+# Copy grafana and prometheus configurations into extension image
+COPY imageConfigs/grafana grafana 
+COPY imageConfigs/prometheus prometheus
 
 # ============ Start the Extension ============ 
 WORKDIR /backend

@@ -1,5 +1,5 @@
 {
-  "icon": "docker.svg",
+  "icon": "dockerpulse.svg",
   "vm": {
     "composefile": "docker-compose.yaml",
     "exposes": {
@@ -8,7 +8,7 @@
   },
   "ui": {
     "dashboard-tab": {
-      "title": "Dockerpulse",
+      "title": "DockerPulse",
       "src": "index.html",
       "root": "ui"
     }

@@ -1,7 +1,48 @@
 # Use the Docker socket from the extension backend:
 # https://docs.docker.com/desktop/extensions-sdk/guides/use-docker-socket-from-backend/
 services:
-  myExtension:
+  DockerPulse:
     image: ${DESKTOP_PLUGIN_IMAGE}
+    container_name: dockerpulse
     volumes:
       - /var/run/docker.sock.raw:/var/run/docker.sock
+      # Create named volumes which are mapped to the /grafana & /prometheus folder in the extension container
+      # (The /grafana & /prometheus folder is added to the extension container in the extension's Dockerfile)
+      - shared-grafana-files:/grafana
+      - shared-prometheus-files:/prometheus
+    ports:
+      # Expose port 3333 to the host so that you can see metrics on localhost:3333/metrics
+      - 3333:3333
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    ports:
+      - 9090:9090
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+    volumes:
+      # Create a named volume for the prometheus data
+      - prometheusdata:/prometheus
+      # Share the named volume with the prometheus container
+      - shared-prometheus-files:/etc/prometheus
+    depends_on:
+      - DockerPulse
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    ports:
+      - 2999:3000
+    volumes:
+      # Share the named volume with the grafana container
+      - shared-grafana-files:/etc/grafana
+    environment:
+      GF_PATHS_CONFIG: /etc/grafana/grafana.ini
+    depends_on:
+      - prometheus
+
+volumes:
+  prometheusdata:
+  shared-grafana-files:
+  shared-prometheus-files:
