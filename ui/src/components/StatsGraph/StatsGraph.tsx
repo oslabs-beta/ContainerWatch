@@ -35,7 +35,7 @@ export default function StatsGraph({ containerName, containerID }: StatsGraphPro
         </Select>
       </FormControl>
       <iframe
-        src={`http://localhost:2999/d-solo/${shortContainerID}/${containerName}?orgId=1&refresh=15s&panelId=1&from=now-${timeFrame}&to=now`}
+        src={`http://localhost:2999/d-solo/${shortContainerID}/${containerName}?orgId=1&refresh=5s&panelId=1&from=now-${timeFrame}&to=now`}
         width="100%"
         height="300px"
         style={{ border: 0 }}
