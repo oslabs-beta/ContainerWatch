@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { createDockerDesktopClient } from '@docker/extension-api-client';
 import { Box, Stack, Button, Typography, Card, IconButton, Snackbar, Alert } from '@mui/material';
-import { Edit, Delete, ConstructionOutlined } from '@mui/icons-material';
+import { Edit, Delete } from '@mui/icons-material';
 import AlertDialog from '../../components/AlertDialog/AlertDialog';
 import { UserAlert, PopupAlertType, ResponseErr, DialogSettings } from '../../types';
 
@@ -49,17 +49,26 @@ export default function Alerts() {
     });
   };
 
-  // Fetch the user's saved alerts from the extension server
   useEffect(() => {
-    (async () => {
-      try {
-        const response = (await ddClient.extension.vm?.service?.get('/api/alerts')) as UserAlert[];
-        return setUserAlerts(response);
-      } catch (err) {
-        triggerPopupAlertFromErr(err);
-      }
-    })();
+    // Refresh the alerts every 5 seconds
+    const intervalId = setInterval(() => {
+      refreshAlerts();
+    }, 5000);
+
+    refreshAlerts(); // Invoke on mount
+
+    return () => clearInterval(intervalId);
   }, []);
+
+  // Fetch the user's saved alerts from the extension server
+  const refreshAlerts = async () => {
+    try {
+      const response = (await ddClient.extension.vm?.service?.get('/api/alerts')) as UserAlert[];
+      return setUserAlerts(response);
+    } catch (err) {
+      triggerPopupAlertFromErr(err);
+    }
+  };
 
   const handleCreateUserAlert = async () => {
     try {
@@ -231,11 +240,13 @@ function AlertCard({
           </Stack>
           <Stack sx={{ pr: 2, py: 1 }}>
             <Typography variant="caption">Threshold Last Exceeded</Typography>
-            <Typography>{lastExceeded}</Typography>
+            <Typography>{lastExceeded ? timestampToISOString(lastExceeded) : '-'}</Typography>
           </Stack>
           <Stack sx={{ pr: 2, py: 1 }}>
             <Typography variant="caption">Last Notification Sent</Typography>
-            <Typography>{lastNotification}</Typography>
+            <Typography>
+              {lastNotification ? timestampToISOString(lastNotification) : '-'}
+            </Typography>
           </Stack>
           <Stack sx={{ pr: 2, py: 1 }}>
             <Typography variant="caption">Notification Email</Typography>
@@ -243,10 +254,15 @@ function AlertCard({
           </Stack>
           <Stack sx={{ pr: 2, py: 1 }}>
             <Typography variant="caption">Alert Created</Typography>
-            <Typography>{created}</Typography>
+            <Typography>{created ? timestampToISOString(created) : '-'}</Typography>
           </Stack>
         </Box>
       </Stack>
     </Card>
   );
+}
+
+function timestampToISOString(timestamp: number): string {
+  const date = new Date(timestamp);
+  return date.toISOString();
 }
