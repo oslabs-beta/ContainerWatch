@@ -37,7 +37,11 @@ export default async function startContainerMetricsStream(id: string) {
 
     // Check if any of the user alert thresholds have been exceeded
     userAlerts.forEach((userAlert) => {
-      const { targetMetric, threshold } = userAlert;
+      const { targetMetric, threshold, containerId } = userAlert;
+
+      // If not for this container, return early
+      if (containerId !== id) return;
+
       switch (targetMetric) {
         case 'CPU %':
           if (cpu_usage_percent >= threshold) {
