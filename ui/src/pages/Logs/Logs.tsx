@@ -93,23 +93,25 @@ export default function Logs() {
     try {
       const allContainers = await fetchAllContainers(ddClient);
       const allContainerLogs = await fetchAllContainerLogs(ddClient, allContainers);
+
+      const newAllowedContainers = new Set(allContainers.map(({ Id }) => Id));
+      containers
+        .filter((container) => !filters.allowedContainers.has(container.Id))
+        .forEach(({ Id }) => newAllowedContainers.delete(Id));
+
+      setFilters({ ...filters, allowedContainers: newAllowedContainers });
+
       setContainers(allContainers);
       setLogs(allContainerLogs);
-      setFilters({ ...filters, allowedContainers: new Set(allContainers.map(({ Id }) => Id)) });
-      const updatedContainerLabelColor = allContainers.reduce(
-        (prevContainerLabelColor, container, index) => ({
-          ...prevContainerLabelColor,
-          [container.Id]: colorArray[index % colorArray.length],
-        }),
-        {}
+      const updatedContainerLabelColor = Object.fromEntries(
+        allContainers.map((container, index) => [
+          container.Id,
+          colorArray[index % colorArray.length],
+        ])
       );
       setContainerLabelColor(updatedContainerLabelColor);
-      const updatedContainerIconColor = allContainers.reduce(
-        (prevContainerIconColor, container) => ({
-          ...prevContainerIconColor,
-          [container.Id]: container.State,
-        }),
-        {}
+      const updatedContainerIconColor = Object.fromEntries(
+        allContainers.map((container) => [container.Id, container.State])
       );
       setContainerIconColor(updatedContainerIconColor);
       setElapsedTimeInMinutes(0);
