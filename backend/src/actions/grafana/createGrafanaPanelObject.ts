@@ -112,7 +112,7 @@ export default function createGrafanaPanelObject(
     targets: [],
     title: '', // No title on panel to conserve vertical space
     type: 'timeseries',
-    interval: '10s',
+    interval: '2s',
   };
 
   // Switch case to handle name of panel.

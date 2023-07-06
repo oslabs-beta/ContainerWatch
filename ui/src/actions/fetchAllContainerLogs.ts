@@ -48,6 +48,9 @@ export default async function fetchAllContainerLogs(
       }
     }
 
+    // Sort by logs by timestamp
+    allLogs.sort((a, b) => Date.parse(a.time) - Date.parse(b.time));
+
     return allLogs;
   } catch (err) {
     console.error('Error retrieving container logs: ', err);
