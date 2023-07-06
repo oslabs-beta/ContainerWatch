@@ -8,6 +8,7 @@ import {
   pidsGauge,
 } from '../../promClient';
 import calculateDockerStats from './calculateDockerStats';
+import { userAlerts } from '../../extensionServer';
 
 // This is a streaming connection that will close when the container is deleted.
 export default async function startContainerMetricsStream(id: string) {
@@ -33,6 +34,25 @@ export default async function startContainerMetricsStream(id: string) {
     networkInGauge.labels({ id }).set(network_in_bytes);
     networkOutGauge.labels({ id }).set(network_out_bytes);
     pidsGauge.labels({ id }).set(pids);
+
+    // Check if any of the user alert thresholds have been exceeded
+    userAlerts.forEach((userAlert) => {
+      const { targetMetric, threshold } = userAlert;
+      switch (targetMetric) {
+        case 'CPU %':
+          if (cpu_usage_percent >= threshold) {
+            userAlert.lastExceeded = Date.now();
+          }
+          break;
+        case 'MEM %':
+          if (memory_usage_percent >= threshold) {
+            userAlert.lastExceeded = Date.now();
+          }
+          break;
+        default:
+          console.error(`Unknown target metric on user alert: "${targetMetric}"`);
+      }
+    });
   });
 
   stream.on('end', () => {
