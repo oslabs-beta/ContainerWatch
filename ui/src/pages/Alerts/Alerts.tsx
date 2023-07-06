@@ -1,6 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { createDockerDesktopClient } from '@docker/extension-api-client';
-import { Box, Stack, Button, Typography, Card, IconButton, Snackbar, Alert } from '@mui/material';
+import {
+  Box,
+  Stack,
+  Button,
+  Typography,
+  Card,
+  IconButton,
+  Snackbar,
+  Alert,
+  Chip,
+} from '@mui/material';
 import { Edit, Delete } from '@mui/icons-material';
 import AlertDialog from '../../components/AlertDialog/AlertDialog';
 import { UserAlert, PopupAlertType, ResponseErr, DialogSettings } from '../../types';
@@ -202,7 +212,10 @@ function AlertCard({
             alignItems: 'center',
           }}
         >
-          <Typography variant="h3">{name}</Typography>
+          <Typography variant="h3" sx={{ mr: 2 }}>
+            {name}
+          </Typography>
+          {lastExceeded && <Chip label="threshold exceeded" color="error" />}
           <IconButton
             sx={{ ml: 'auto' }}
             onClick={() => {
@@ -250,7 +263,7 @@ function AlertCard({
           </Stack>
           <Stack sx={{ pr: 2, py: 1 }}>
             <Typography variant="caption">Notification Email</Typography>
-            <Typography>{email}</Typography>
+            <Typography>{email || '-'}</Typography>
           </Stack>
           <Stack sx={{ pr: 2, py: 1 }}>
             <Typography variant="caption">Alert Created</Typography>
