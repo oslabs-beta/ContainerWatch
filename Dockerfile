@@ -32,13 +32,13 @@ LABEL org.opencontainers.image.title="DockerPulse" \
     org.opencontainers.image.description="A better tool for monitoring container stats and logs." \
     org.opencontainers.image.vendor="DockerPulse" \
     com.docker.desktop.extension.api.version="0.3.4" \
-    com.docker.extension.screenshots="" \
-    com.docker.desktop.extension.icon="" \
-    com.docker.extension.detailed-description="" \
-    com.docker.extension.publisher-url="" \
+    com.docker.extension.screenshots="[{\"alt\":\"DockerPulse stats page\",\"url\":\"https://drive.google.com/file/d/1celpAH2zmthboeVDP7AYUHRhpulAWyoQ/view\"},{\"alt\":\"DockerPulse logs page\",\"url\":\"https://drive.google.com/file/d/1ZpIiUAU36PDcuGR-utOyJqmcd0nKI99B/view\"},{\"alt\":\"DockerPulse log filters\",\"url\":\"https://drive.google.com/file/d/1v-1Vz_9ooKQFj_b5ha6EV3RwN-rMMhd5/view\"},{\"alt\":\"DockerPulse alarms\",\"url\":\"https://drive.google.com/file/d/1Ez8DYjOzkTctKXL85PxkxVFCTdqw0UHC/view\"}]" \
+    com.docker.desktop.extension.icon="https://drive.google.com/file/d/16bdsm-gjqcAexkyivneqzNa34QqBp0F6/view" \
+    com.docker.extension.detailed-description="DockerPulse adds feature-rich monitoring tools to Docker Desktop. Record and visualize up to 3 days of metrics for your containers, search and filter logs, and create alerts!" \
+    com.docker.extension.publisher-url="https://www.dockerpulse.com/" \
     com.docker.extension.additional-urls="" \
-    com.docker.extension.categories="" \
-    com.docker.extension.changelog=""
+    com.docker.extension.categories="utility-tools" \
+    com.docker.extension.changelog="<p>Extension changelog<ul><li>launch!</li></ul></p>"
 
 COPY docker-compose.yaml .
 COPY metadata.json .
