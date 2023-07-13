@@ -29,7 +29,7 @@ RUN npm run build
 # ============ Configure the Docker Extension ============ 
 FROM node:18.12-alpine3.16
 LABEL org.opencontainers.image.title="DockerPulse" \
-    org.opencontainers.image.description="A better tool for monitoring container stats and logs." \
+    org.opencontainers.image.description="Monitoring tools for Docker: metrics visualization (up to 3 days), log aggregation and filtering, and alerts." \
     org.opencontainers.image.vendor="DockerPulse" \
     com.docker.desktop.extension.api.version="0.3.4" \
     com.docker.extension.screenshots="[{\"alt\":\"DockerPulse stats page\",\"url\":\"https://raw.githubusercontent.com/oslabs-beta/DockerPulse/dev/screenshots/dockerpulse_1.png\"},{\"alt\":\"DockerPulse logs page\",\"url\":\"https://raw.githubusercontent.com/oslabs-beta/DockerPulse/dev/screenshots/dockerpulse_4.png\"},{\"alt\":\"DockerPulse log filters\",\"url\":\"https://raw.githubusercontent.com/oslabs-beta/DockerPulse/dev/screenshots/dockerpulse_3.png\"},{\"alt\":\"DockerPulse alarms\",\"url\":\"https://raw.githubusercontent.com/oslabs-beta/DockerPulse/dev/screenshots/dockerpulse_2.png\"}]" \
