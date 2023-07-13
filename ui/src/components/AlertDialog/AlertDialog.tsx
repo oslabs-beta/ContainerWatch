@@ -144,13 +144,14 @@ export default function AlertDialog({
 
           <FormControl>
             <TextField
+              disabled
               label="Email"
               variant="outlined"
               type="email"
               value={newUserAlert.email}
               onChange={(e) => setNewUserAlert({ ...newUserAlert, email: e.target.value })}
             />
-            <FormHelperText>Optional. Maximum one email per day.</FormHelperText>
+            <FormHelperText>Email alerts coming soon!</FormHelperText>
           </FormControl>
         </Stack>
       </DialogContent>
