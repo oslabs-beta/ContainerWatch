@@ -1,5 +1,5 @@
 IMAGE?=dockerpulse/dockerpulse
-TAG?=1.0.0
+TAG?=1.0.1
 
 BUILDER=buildx-multi-arch
 
