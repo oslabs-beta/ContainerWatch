@@ -1,7 +1,7 @@
 {
   "name": "backend",
   "version": "1.0.0",
-  "description": "Backend for DockerPulse",
+  "description": "Backend for ContainerWatch",
   "main": "dist/index.js",
   "scripts": {
     "start": "tsc && node dist/index.js",

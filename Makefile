@@ -1,4 +1,4 @@
-IMAGE?=dockerpulse/dockerpulse
+IMAGE?=containerwatch/containerwatch
 TAG?=1.0.1
 
 BUILDER=buildx-multi-arch
