@@ -1,9 +1,9 @@
 # Use the Docker socket from the extension backend:
 # https://docs.docker.com/desktop/extensions-sdk/guides/use-docker-socket-from-backend/
 services:
-  DockerPulse:
+  ContainerWatch:
     image: ${DESKTOP_PLUGIN_IMAGE}
-    container_name: dockerpulse
+    container_name: containerwatch
     volumes:
       - /var/run/docker.sock.raw:/var/run/docker.sock
       # Create named volumes which are mapped to the /grafana & /prometheus folder in the extension container
@@ -27,7 +27,7 @@ services:
       # Share the named volume with the prometheus container
       - shared-prometheus-files:/etc/prometheus
     depends_on:
-      - DockerPulse
+      - ContainerWatch
 
   grafana:
     image: grafana/grafana:latest

@@ -28,21 +28,21 @@ RUN npm run build
 
 # ============ Configure the Docker Extension ============ 
 FROM node:18.12-alpine3.16
-LABEL org.opencontainers.image.title="DockerPulse" \
+LABEL org.opencontainers.image.title="ContainerWatch" \
     org.opencontainers.image.description="Monitoring tools for Docker: metrics visualization (up to 3 days), log aggregation and filtering, and alerts." \
-    org.opencontainers.image.vendor="DockerPulse" \
+    org.opencontainers.image.vendor="ContainerWatch" \
     com.docker.desktop.extension.api.version="0.3.4" \
-    com.docker.extension.screenshots='[{"alt":"DockerPulse stats page","url":"https://raw.githubusercontent.com/oslabs-beta/DockerPulse/dev/screenshots/dockerpulse_1.png"},{"alt":"DockerPulse logs page","url":"https://raw.githubusercontent.com/oslabs-beta/DockerPulse/dev/screenshots/dockerpulse_4.png"},{"alt":"DockerPulse log filters","url":"https://raw.githubusercontent.com/oslabs-beta/DockerPulse/dev/screenshots/dockerpulse_3.png"},{"alt":"DockerPulse alarms","url":"https://raw.githubusercontent.com/oslabs-beta/DockerPulse/dev/screenshots/dockerpulse_2.png"}]' \
-    com.docker.desktop.extension.icon="https://raw.githubusercontent.com/oslabs-beta/DockerPulse/dev/screenshots/dockerpulse_logo.png" \
-    com.docker.extension.detailed-description="DockerPulse adds feature-rich monitoring tools to Docker Desktop. Record and visualize up to 3 days of metrics for your containers, search and filter logs, and create alerts!" \
-    com.docker.extension.publisher-url="https://www.dockerpulse.com/" \
+    com.docker.extension.screenshots='[{"alt":"ContainerWatch stats page","url":"https://raw.githubusercontent.com/oslabs-beta/ContainerWatch/dev/screenshots/dockerpulse_1.png"},{"alt":"ContainerWatch logs page","url":"https://raw.githubusercontent.com/oslabs-beta/ContainerWatch/dev/screenshots/dockerpulse_4.png"},{"alt":"ContainerWatch log filters","url":"https://raw.githubusercontent.com/oslabs-beta/ContainerWatch/dev/screenshots/dockerpulse_3.png"},{"alt":"ContainerWatch alarms","url":"https://raw.githubusercontent.com/oslabs-beta/ContainerWatch/dev/screenshots/dockerpulse_2.png"}]' \
+    com.docker.desktop.extension.icon="https://raw.githubusercontent.com/oslabs-beta/ContainerWatch/dev/screenshots/containerwatch_logo.png" \
+    com.docker.extension.detailed-description="ContainerWatch adds feature-rich monitoring tools to Docker Desktop. Record and visualize up to 3 days of metrics for your containers, search and filter logs, and create alerts!" \
+    com.docker.extension.publisher-url="https://www.containerwatch.com/" \
     com.docker.extension.additional-urls="" \
     com.docker.extension.categories="utility-tools" \
     com.docker.extension.changelog="<p>Extension changelog<ul><li>launch!</li></ul></p>"
 
 COPY docker-compose.yaml .
 COPY metadata.json .
-COPY dockerpulse.svg .
+COPY containerwatch.svg .
 COPY --from=backend-builder /backend backend
 COPY --from=client-builder /ui/build ui
 

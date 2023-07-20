@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Stack, Box, Typography, Tabs, Tab } from '@mui/material';
-import { ReactComponent as DockerPulseSVG } from '../../../assets/dockerpulse.svg';
+import { ReactComponent as ContainerWatchSVG } from '../../../assets/containerwatch.svg';
 
 const pages = [
   { id: 1, label: 'Stats', path: '/' },
@@ -20,9 +20,9 @@ export default function NavBar() {
     <Stack direction="column" spacing={2} sx={{ mb: 2 }}>
       <Stack direction="row" alignItems="center" spacing={1.5}>
         <Box sx={{ height: '24px', width: '24px' }}>
-          <DockerPulseSVG />
+          <ContainerWatchSVG />
         </Box>
-        <Typography variant="h3">DockerPulse</Typography>
+        <Typography variant="h3">ContainerWatch</Typography>
       </Stack>
       <Tabs value={value} onChange={handleChange}>
         {pages.map(({ id, label, path }) => (

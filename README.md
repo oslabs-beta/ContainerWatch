@@ -1,12 +1,12 @@
-<img align="right" width="140" src="https://github.com/oslabs-beta/DockerPulse/assets/121207468/aa33bc69-c81e-4b7b-af03-90e358318b83"/>
+<img align="right" width="140" src="https://github.com/oslabs-beta/ContainerWatch/assets/121207468/aa33bc69-c81e-4b7b-af03-90e358318b83"/>
 
-# DockerPulse
+# ContainerWatch
 
 Simplified Docker container monitoring! 🐳
 
-DockerPulse is an extension that adds feature-rich monitoring tools to Docker Desktop.
+ContainerWatch is an extension that adds feature-rich monitoring tools to Docker Desktop.
 
-<img src="https://github.com/oslabs-beta/DockerPulse/assets/121207468/1d4a3165-db1a-4956-845a-f97bf68518fd" />
+<img src="https://github.com/oslabs-beta/ContainerWatch/assets/121207468/1d4a3165-db1a-4956-845a-f97bf68518fd" />
 
 ## Table of Contents
 
@@ -20,27 +20,27 @@ DockerPulse is an extension that adds feature-rich monitoring tools to Docker De
 
 ### 📊 Metrics monitoring
 
-DockerPulse records the resource usage of all your Docker containers in a database with a data retention period of 15 days. You can visualize this data in a time-series graph, which provides visibility into the health of your containerized applications or microservices.
+ContainerWatch records the resource usage of all your Docker containers in a database with a data retention period of 15 days. You can visualize this data in a time-series graph, which provides visibility into the health of your containerized applications or microservices.
 
 ### 🔎 Log aggregation, filtering, and search
 
-DockerPulse aggregates logs from all your containers and displays them chronologically. You can filter logs by container, time range, a search string, and log type (`stderr` and `stdout`) to speed up your troubleshooting.
+ContainerWatch aggregates logs from all your containers and displays them chronologically. You can filter logs by container, time range, a search string, and log type (`stderr` and `stdout`) to speed up your troubleshooting.
 
 ### ⚠️ Alerts
 
-DockerPulse lets you create alerts that trigger when your Docker container’s resource usage exceeds a threshold (e.g. CPU utilization >25%).
+ContainerWatch lets you create alerts that trigger when your Docker container’s resource usage exceeds a threshold (e.g. CPU utilization >25%).
 
 ## Installation
 
-Add DockerPulse to Docker Desktop by selecting *Add Extensions* in the menu bar. The Extensions Marketplace will open on the Browse tab. Search for DockerPulse and select Install!
+Add ContainerWatch to Docker Desktop by selecting *Add Extensions* in the menu bar. The Extensions Marketplace will open on the Browse tab. Search for ContainerWatch and select Install!
 
 Or, you can install this extension through the command line. Clone this repository and run the following in the terminal:
 ```bash
-cd DockerPulse
+cd ContainerWatch
 make install-extension
 ```
 
-When installed, the left-hand menu will display a new tab for DockerPulse. You can also use `docker extension ls` to see that the extension has been installed successfully.
+When installed, the left-hand menu will display a new tab for ContainerWatch. You can also use `docker extension ls` to see that the extension has been installed successfully.
 
 ## How it works
 
@@ -54,7 +54,7 @@ When installed, the left-hand menu will display a new tab for DockerPulse. You c
 ![Prometheus](https://img.shields.io/badge/Prometheus-E6522C?style=for-the-badge&logo=Prometheus&logoColor=white)
 ![Grafana](https://img.shields.io/badge/grafana-%23F46800.svg?style=for-the-badge&logo=grafana&logoColor=white)
 
-DockerPulse is composed of a frontend application and a group of 3 **containerized services** running in the Docker Desktop VM:
+ContainerWatch is composed of a frontend application and a group of 3 **containerized services** running in the Docker Desktop VM:
 - **A Node.js backend service** which exposes metrics from the Docker Engine on a TCP port and provides an API for the frontend application
 - 📊 **Prometheus** scrapes the exposed metrics from the backend service and stores them in a space-efficient time-series database (TSDB)
 - 📈 **Grafana** queries the Prometheus TSDB and creates visualizations of the data, which are embedded in the frontend
@@ -77,7 +77,7 @@ Close and reopen the Docker Desktop dashboard and go to the extension. All the c
 
 **To view logs from the extension's backend service**
 1. Show the extension containers by following the steps above.
-2. Expand the `dockerpulse_dockerpulse-desktop-extension` group of containers and select the **dockerpulse** conatiner.
+2. Expand the `containerwatch_containerwatch-desktop-extension` group of containers and select the **containerwatch** conatiner.
 
 **To put the extension's frontend application in debug mode**
 ```bash

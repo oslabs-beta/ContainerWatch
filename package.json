@@ -1,5 +1,5 @@
 {
-  "name": "dockerpulse",
+  "name": "containerwatch",
   "version": "1.0.0",
   "description": "A Docker Desktop extension for container stats and logs.",
   "main": "",
@@ -8,14 +8,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/oslabs-beta/DockerPulse.git"
+    "url": "git+https://github.com/oslabs-beta/ContainerWatch.git"
   },
-  "author": "DockerPulse",
+  "author": "ContainerWatch",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/oslabs-beta/DockerPulse/issues"
+    "url": "https://github.com/oslabs-beta/ContainerWatch/issues"
   },
-  "homepage": "https://github.com/oslabs-beta/DockerPulse#readme",
+  "homepage": "https://github.com/oslabs-beta/ContainerWatch#readme",
   "devDependencies": {
     "eslint": "^8.43.0",
     "eslint-config-airbnb": "^19.0.4",

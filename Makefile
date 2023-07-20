@@ -1,5 +1,5 @@
-IMAGE?=dockerpulse/dockerpulse
-TAG?=1.0.1
+IMAGE?=containerwatch/containerwatch
+TAG?=1.0.0
 
 BUILDER=buildx-multi-arch
 
