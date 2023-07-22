@@ -28,21 +28,21 @@ RUN npm run build
 
 # ============ Configure the Docker Extension ============ 
 FROM node:18.12-alpine3.16
-LABEL org.opencontainers.image.title="DockerPulse" \
-    org.opencontainers.image.description="A better tool for monitoring container stats and logs." \
-    org.opencontainers.image.vendor="DockerPulse" \
+LABEL org.opencontainers.image.title="ContainerWatch" \
+    org.opencontainers.image.description="Monitoring tools for Docker: metrics visualization (up to 3 days), log aggregation and filtering, and alerts." \
+    org.opencontainers.image.vendor="ContainerWatch" \
     com.docker.desktop.extension.api.version="0.3.4" \
-    com.docker.extension.screenshots="" \
-    com.docker.desktop.extension.icon="" \
-    com.docker.extension.detailed-description="" \
-    com.docker.extension.publisher-url="" \
+    com.docker.extension.screenshots='[{"alt":"ContainerWatch stats page","url":"https://raw.githubusercontent.com/oslabs-beta/ContainerWatch/main/screenshots/stats.png"},{"alt":"ContainerWatch logs and filters preview","url":"https://raw.githubusercontent.com/oslabs-beta/ContainerWatch/main/screenshots/logs_and_logs_filters.png"},{"alt":"ContainerWatch logs","url":"https://raw.githubusercontent.com/oslabs-beta/ContainerWatch/main/screenshots/logs.png"},{"alt":"ContainerWatch filters","url":"https://raw.githubusercontent.com/oslabs-beta/ContainerWatch/main/screenshots/logs_filters.png"},{"alt":"ContainerWatch alerts","url":"https://raw.githubusercontent.com/oslabs-beta/ContainerWatch/main/screenshots/alerts.png"}]' \
+    com.docker.desktop.extension.icon="https://raw.githubusercontent.com/oslabs-beta/ContainerWatch/main/screenshots/containerwatch_logo.png" \
+    com.docker.extension.detailed-description="ContainerWatch adds feature-rich monitoring tools to Docker Desktop. Record and visualize up to 3 days of metrics for your containers, search and filter logs, and create alerts!" \
+    com.docker.extension.publisher-url="https://www.containerwatch.dev/" \
     com.docker.extension.additional-urls="" \
-    com.docker.extension.categories="" \
-    com.docker.extension.changelog=""
+    com.docker.extension.categories="utility-tools" \
+    com.docker.extension.changelog="<p>Extension changelog<ul><li>launch!</li></ul></p>"
 
 COPY docker-compose.yaml .
 COPY metadata.json .
-COPY dockerpulse.svg .
+COPY containerwatch.svg .
 COPY --from=backend-builder /backend backend
 COPY --from=client-builder /ui/build ui
 
