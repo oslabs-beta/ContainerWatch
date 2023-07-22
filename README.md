@@ -6,7 +6,7 @@ Simplified Docker container monitoring! 🐳
 
 ContainerWatch is an extension that adds feature-rich monitoring tools to Docker Desktop.
 
-<img src="https://github.com/oslabs-beta/ContainerWatch/assets/121207468/1d4a3165-db1a-4956-845a-f97bf68518fd" />
+<img src="https://github.com/oslabs-beta/ContainerWatch/assets/121207468/047c6ce3-631c-4623-adb3-d9369f9315ad" />
 
 ## Table of Contents
 
