@@ -108,7 +108,7 @@ We welcome contributions from the community. If you are interested in contributi
       <img src="https://github.com/leejun07.png" style="width:6rem;" /><br/>
       <strong>Jun Lee</strong><br/>
       <a href="https://github.com/leejun07">GitHub</a><br/>
-      <a href="https://www.linkedin.com/in/junlee97/">LinkedIn</a>
+      <a href="https://www.linkedin.com/in/leejun07/">LinkedIn</a>
     </td>
     <td style="width:200px">
       <img src="https://github.com/davidchuang5.png" style="width:6rem;" /><br/>
